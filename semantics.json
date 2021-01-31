@@ -1,0 +1,237 @@
+[
+  {
+    "name": "taskDescription",
+    "label": "Task description",
+    "type": "text",
+    "widget": "html",
+    "importance": "high",
+    "description": "Describe your task here.",
+    "enterMode": "div",
+    "tags": [
+      "strong",
+      "em",
+      "u",
+      "a",
+      "ul",
+      "ol",
+      "h2",
+      "h3",
+      "hr",
+      "pre",
+      "code"
+    ]
+  },
+  {
+    "name": "text",
+    "label": "Text",
+    "type": "text",
+    "importance": "high",
+    "widget": "html",
+    "description": "Enter the text that contains words to be highlighted.",
+    "enterMode": "div",
+    "tags": [
+      "strong",
+      "em",
+      "u"
+    ]
+  },
+  {
+    "name": "highlightOptions",
+    "label": "Highlight options",
+    "importance": "high",
+    "type": "list",
+    "widgets": [
+      {
+        "name": "VerticalTabs",
+        "label": "Default"
+      }
+    ],
+    "min": 1,
+    "entity": "Highlight option",
+    "field": {
+      "name": "highlightoption",
+      "type": "group",
+      "label": "Highlight option",
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "label": "Name",
+          "description": "Name used in the editor to set the highlight style required for part of your text.",
+          "importance": "medium"
+        },
+        {
+          "name": "color",
+          "type": "text",
+          "label": "Color",
+          "description": "Color for this highlight option",
+          "importance": "medium",
+          "default": "#fce900",
+          "widget": "colorSelector",
+          "spectrum": {
+            "showInput": true,
+            "showInitial": true,
+            "showPalette": true,
+            "palette": [
+              ["#e3000f", "#ed6ea7"],
+              ["#fce900", "#ea5725"],
+              ["#009bb4", "#9d74b1"],
+              ["#85bd3f", "#3ec0f0"]
+            ]
+          }
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "label": "Description",
+          "description": "Label of this highlight style in the exercise",
+          "importance": "medium",
+          "optional": true
+        }
+      ]
+    }
+  },
+  {
+    "name": "overallFeedback",
+    "type": "group",
+    "label": "Overall Feedback",
+    "importance": "low",
+    "expanded": true,
+    "fields": [
+      {
+        "name": "overallFeedback",
+        "type": "list",
+        "widgets": [
+          {
+            "name": "RangeList",
+            "label": "Default"
+          }
+        ],
+        "importance": "high",
+        "label": "Define custom feedback for any score range",
+        "description": "Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+        "entity": "range",
+        "min": 1,
+        "defaultNum": 1,
+        "optional": true,
+        "field": {
+          "name": "overallFeedback",
+          "type": "group",
+          "importance": "low",
+          "fields": [
+            {
+              "name": "from",
+              "type": "number",
+              "label": "Score Range",
+              "min": 0,
+              "max": 100,
+              "default": 0,
+              "unit": "%"
+            },
+            {
+              "name": "to",
+              "type": "number",
+              "min": 0,
+              "max": 100,
+              "default": 100,
+              "unit": "%"
+            },
+            {
+              "name": "feedback",
+              "type": "text",
+              "label": "Feedback for defined score range",
+              "importance": "low",
+              "placeholder": "Fill in the feedback",
+              "optional": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "name": "behaviour",
+    "type": "group",
+    "label": "Behavioural settings",
+    "importance": "low",
+    "description": "These options will let you control how the task behaves.",
+    "fields": [
+      {
+        "name": "enableRetry",
+        "label": "Enable \"Retry\"",
+        "type": "boolean",
+        "importance": "low",
+        "default": true,
+        "optional": true
+      },
+      {
+        "name": "enableSolutionsButton",
+        "label": "Enable \"Solution\"",
+        "type": "boolean",
+        "importance": "low",
+        "default": true,
+        "optional": true
+      }
+    ]
+  },
+  {
+    "name": "l10n",
+    "type": "group",
+    "common": true,
+    "label": "User interface",
+    "importance": "low",
+    "fields": [
+      {
+        "name": "checkAnswer",
+        "type": "text",
+        "label": "Text for \"Check\" button",
+        "importance": "low",
+        "default": "Check"
+      },
+      {
+        "name": "showSolution",
+        "type": "text",
+        "label": "Text for \"Show solution\" button",
+        "importance": "low",
+        "default": "Show solution"
+      },
+      {
+        "name": "tryAgain",
+        "label": "Text for \"Reset\" button",
+        "type": "text",
+        "importance": "low",
+        "default": "Reset"
+      }
+    ]
+  },
+  {
+    "name": "a11y",
+    "type": "group",
+    "common": true,
+    "label": "Readspeaker",
+    "importance": "low",
+    "fields": [
+      {
+        "name": "scoreBarLabel",
+        "type": "text",
+        "label": "Textual representation of the score bar for those using a readspeaker",
+        "importance": "low",
+        "default": "You got :num out of :total points"
+      },
+      {
+        "name": "buttonFullscreenEnter",
+        "type": "text",
+        "label": "Title for fullscreen button (enter)",
+        "importance": "low",
+        "default": "Enter fullscreen mode"
+      },
+      {
+        "name": "buttonFullscreenExit",
+        "type": "text",
+        "label": "Title for fullscreen button (exit)",
+        "importance": "low",
+        "default": "Exit fullscreen mode"
+      }
+    ]
+  }
+]

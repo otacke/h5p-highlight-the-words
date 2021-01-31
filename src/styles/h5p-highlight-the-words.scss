@@ -1,0 +1,28 @@
+.h5p-highlight-the-words {
+
+  .h5p-question-content {
+    margin: 0;
+  }
+
+  .h5p-highlight-the-words-ruler {
+    border-bottom: 2px solid $color-grey-15;
+  }
+
+  .h5p-highlight-the-words-exercise {
+    margin: $margin-base;
+
+    .h5p-highlight-the-words-text-container {
+      font-size: 1.25em;
+      width: 100%;
+
+      .h5p-highlight-the-words-text {
+        line-height: 1.5;
+        padding: $margin-50;
+      }
+    }
+  }
+
+  .h5p-highlight-the-words-task-description {
+    width: 100%;
+  }
+}

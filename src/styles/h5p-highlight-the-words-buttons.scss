@@ -65,4 +65,12 @@
       }
     }
   }
+
+  &.h5p-highlight-the-words-button-menu {
+    background-image: url(../images/button-toggle-menu-icon-blue.svg);
+
+    &.h5p-highlight-the-words-button-active {
+      background-image: url(../images/button-toggle-menu-icon-white.svg);
+    }
+  }
 }

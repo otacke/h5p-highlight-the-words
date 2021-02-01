@@ -27,6 +27,9 @@ export default class HighlightTheWordsTitlebar {
 
     // Set missing callbacks
     this.callbacks = Util.extend({
+      onButtonMenuClicked: () => {
+        console.warn('A function for handling the menu button is missing.');        
+      },
       onButtonFullscreenClicked: () => {
         console.warn('A function for handling the fullscreen button is missing.');
       },
@@ -35,6 +38,26 @@ export default class HighlightTheWordsTitlebar {
 
     this.titleBar = document.createElement('div');
     this.titleBar.classList.add('h5p-highlight-the-words-title-bar');
+
+    // Toggle button
+    this.buttonMenu = new HighlightTheWordsButton(
+      {
+        type: 'toggle',
+        classes: [
+          'h5p-highlight-the-words-button',
+          'h5p-highlight-the-words-button-menu'
+        ],
+        a11y: {
+          active: this.params.a11y.buttonMenuOpen,
+          inactive: this.params.a11y.buttonMenuClose
+        }
+      },
+      {
+        onClick: (() => {
+          this.callbacks.onButtonMenuClicked();
+        })
+      }
+    );
 
     // Color picker
     this.colorPickerContainer = document.createElement('div');
@@ -76,6 +99,7 @@ export default class HighlightTheWordsTitlebar {
       }
     );
 
+    this.titleBar.appendChild(this.buttonMenu.getDOM());
     this.titleBar.appendChild(this.colorPickerContainer);
     this.titleBar.appendChild(this.buttonFullscreen.getDOM());
   }

@@ -1,3 +1,4 @@
+import HighlightTheWordsMenu from './h5p-highlight-the-words-menu';
 import HighlightTheWordsTitlebar from './h5p-highlight-the-words-titlebar';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 import Util from './h5p-highlight-the-words-util';
@@ -45,34 +46,46 @@ export default class HighlightTheWordsContent {
         onColorChanged: (color) => {
           this.handleColorChanged(color);
         },
+        onButtonMenuClicked: () => {
+          this.handleMenuButtonClicked();
+        },
         onButtonFullscreenClicked: this.callbacks.onButtonFullscreenClicked
       }
     );
     this.content.appendChild(this.titlebar.getDOM());
 
-    const exercise = document.createElement('div');
-    exercise.classList.add('h5p-highlight-the-words-exercise');
+    // Page
+    const page = document.createElement('div');
+    page.classList.add('h5p-highlight-the-words-page');
+    this.content.appendChild(page);
+
+    this.menu = new HighlightTheWordsMenu();
+    page.appendChild(this.menu.getDOM());
+
+    // Excercise
+    this.exercise = document.createElement('div');
+    this.exercise.classList.add('h5p-highlight-the-words-exercise');
 
     // Task description
     if (params.taskDescription) {
-      exercise.appendChild(this.buildTaskDescription(params.taskDescription));
+      this.exercise.appendChild(this.buildTaskDescription(params.taskDescription));
 
       const ruler = document.createElement('div');
       ruler.classList.add('h5p-highlight-the-words-ruler');
-      exercise.appendChild(ruler);
+      this.exercise.appendChild(ruler);
     }
 
     // Text container
     this.originalText = params.text;
 
     const textContainer = this.buildTextContainer(this.originalText);
-    exercise.appendChild(textContainer);
+    this.exercise.appendChild(textContainer);
 
     const ruler = document.createElement('div');
     ruler.classList.add('h5p-highlight-the-words-ruler');
-    exercise.appendChild(ruler);
+    this.exercise.appendChild(ruler);
 
-    this.content.appendChild(exercise);
+    page.appendChild(this.exercise);
 
     this.addSelectEventHandler();
   }
@@ -83,6 +96,14 @@ export default class HighlightTheWordsContent {
    */
   getDOM() {
     return this.content;
+  }
+
+  /**
+   * Return DOM for exercise element.
+   * @return {HTMLElement} DOM for exercise element.
+   */
+  getExerciseDOM() {
+    return this.exercise;
   }
 
   /**
@@ -101,7 +122,7 @@ export default class HighlightTheWordsContent {
   /**
    * Build text container.
    * @param {string} text Text.
-   * @return {HTMLElement} Text container element element.
+   * @return {HTMLElement} Text container element.
    */
   buildTextContainer(text) {
     const textContainer = document.createElement('div');
@@ -401,5 +422,17 @@ export default class HighlightTheWordsContent {
    */
   handleColorChanged(color) {
     this.currentSelectColor = color;
+  }
+
+  /**
+   * Handle menu button clicked.
+   */
+  handleMenuButtonClicked() {
+    if (this.menu.isOpen()) {
+      this.menu.close();
+    }
+    else {
+      this.menu.open();
+    }
   }
 }

@@ -108,6 +108,11 @@ export default class HighlightTheWords extends H5P.Question {
                 this.content.toggleFullscreen(false);
               });
 
+              // Reattach buttons to exercise container
+              const questionButtons = document.querySelector('.h5p-question-buttons');
+              const exercise = this.content.getExerciseDOM();
+              exercise.appendChild(questionButtons);
+
               window.requestAnimationFrame(() => {
                 this.trigger('resize');
               });

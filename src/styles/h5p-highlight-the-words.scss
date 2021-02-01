@@ -4,25 +4,53 @@
     margin: 0;
   }
 
-  .h5p-highlight-the-words-ruler {
-    border-bottom: 2px solid $color-grey-15;
-  }
+  .h5p-highlight-the-words-page {
+    display: flex;
+    flex-direction: row;
 
-  .h5p-highlight-the-words-exercise {
-    margin: $margin-base;
+    .h5p-highlight-the-words-menu-container {
+      background-color: white;
+      background-size: cover;
+      box-shadow: 10px 10px 30px $color-shadow;
+      display: flex;
+      flex-direction: column;
+      min-height: 10em;
+      overflow: hidden;
+      transition: width .15s linear, flex-basis .15s linear, max-width .15s linear;
+      width: 0;
 
-    .h5p-highlight-the-words-text-container {
-      font-size: 1.25em;
+      &.h5p-highlight-the-words-menu-open {
+        width: 16em;
+        max-width: 16em;
+      }
+    }
+
+    .h5p-highlight-the-words-exercise {
+      margin: $margin-base;
       width: 100%;
 
-      .h5p-highlight-the-words-text {
-        line-height: 1.5;
-        padding: $margin-50;
+      .h5p-highlight-the-words-task-description {
+        width: 100%;
+      }
+
+      .h5p-highlight-the-words-text-container {
+        font-size: 1.25em;
+        width: 100%;
+
+        .h5p-highlight-the-words-text {
+          line-height: 1.5;
+          padding: $margin-50;
+        }
+      }
+
+      .h5p-question-buttons {
+        margin: 1em 0 0 0;
       }
     }
   }
 
-  .h5p-highlight-the-words-task-description {
-    width: 100%;
+  .h5p-highlight-the-words-ruler {
+    border-bottom: 2px solid $color-grey-15;
   }
+
 }

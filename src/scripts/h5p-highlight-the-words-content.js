@@ -162,7 +162,7 @@ export default class HighlightTheWordsContent {
       const colorDescription = document.createElement('div');
       colorDescription.classList.add('h5p-highlight-the-words-color-description');
       colorDescription.style.backgroundColor = option.color;
-      colorDescription.innerText = option.description;
+      colorDescription.innerHTML = option.description;
 
       colorDescriptionsWrapper.appendChild(colorDescription);
     });

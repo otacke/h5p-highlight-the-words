@@ -64,6 +64,11 @@ export default class HighlightTheWords extends H5P.Question {
         }
         return valid;
       })
+      .map(option => {
+        // Prepare for display
+        option.description = Util.stripHTML(Util.htmlDecode(option.description || '&nbsp;'));
+        return option;
+      })
       .reduce((result, option) => {
         // Only allow same color once
         const colors = result.map(result => result.color);

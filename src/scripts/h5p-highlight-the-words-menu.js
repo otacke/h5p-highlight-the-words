@@ -1,4 +1,5 @@
 // Import required classes
+import HighlightTheWordsPanel from './h5p-highlight-the-words-menu-panel';
 import Util from './h5p-highlight-the-words-util';
 
 /** Class representing the content */
@@ -8,13 +9,16 @@ export default class HighlightTheWordsMenu {
    * @param {object} params Parameters.
    * @param {object} [callbacks] Callbacks.
    */
-  constructor(params, callbacks) {
+  constructor(params = {}, callbacks = {}) {
     // Set missing params
     this.params = Util.extend({
       a11y: {},
+      l10n: {
+        colorDescriptions: 'Color descriptions'
+      },
       open: false,
       classes: []
-    }, params || {});
+    }, params);
 
     if (!Array.isArray(this.params.classes)) {
       this.params.classes = [this.params.classes];
@@ -24,7 +28,7 @@ export default class HighlightTheWordsMenu {
 
     // Sanitize callbacks
     this.callbacks = callbacks || {};
-    this.callbacks.onClick = this.callbacks.onClick || (() => {});
+    this.callbacks.onClick = callbacks.onClick || (() => {});
 
     // Menu
     this.menu = document.createElement('div');
@@ -35,6 +39,15 @@ export default class HighlightTheWordsMenu {
         this.menu.classList.add(className);
       });
     }
+
+    this.colorPanel = new HighlightTheWordsPanel({
+      expand: true,
+      collapsable: false,
+      label: this.params.l10n.colorDescriptions
+    });
+    this.colorPanel.setActive(true);
+
+    this.menu.appendChild(this.colorPanel.getDOM());
 
     if (this.params.open === true) {
       this.open();
@@ -74,5 +87,10 @@ export default class HighlightTheWordsMenu {
    */
   isOpen() {
     return this.stateOpen;
+  }
+
+  // TODO: True panel management
+  setPanelContent(content) {
+    this.colorPanel.setContent(content);
   }
 }

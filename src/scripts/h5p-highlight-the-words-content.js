@@ -64,8 +64,15 @@ export default class HighlightTheWordsContent {
     this.page.classList.add('h5p-highlight-the-words-page');
     this.content.appendChild(this.page);
 
-    this.menu = new HighlightTheWordsMenu();
+    this.menu = new HighlightTheWordsMenu({
+      l10n: {
+        colorDescriptions: params.l10n.colorDescriptions
+      }
+    });
     this.page.appendChild(this.menu.getDOM());
+
+    const colorDescription = this.buildColorDescription(params.highlightOptions);
+    this.menu.setPanelContent(colorDescription);
 
     // Excercise
     this.exercise = document.createElement('div');
@@ -141,6 +148,26 @@ export default class HighlightTheWordsContent {
     textContainer.appendChild(this.textArea);
 
     return textContainer;
+  }
+
+  buildColorDescription(options = []) {
+    const colorDescriptionsContainer = document.createElement('div');
+    colorDescriptionsContainer.classList.add('h5p-highlight-the-words-color-descriptions-container');
+
+    const colorDescriptionsWrapper = document.createElement('div');
+    colorDescriptionsWrapper.classList.add('h5p-highlight-the-words-color-descriptions-wrapper');
+    colorDescriptionsContainer.appendChild(colorDescriptionsWrapper);
+
+    options.forEach(option => {
+      const colorDescription = document.createElement('div');
+      colorDescription.classList.add('h5p-highlight-the-words-color-description');
+      colorDescription.style.backgroundColor = option.color;
+      colorDescription.innerText = option.description;
+
+      colorDescriptionsWrapper.appendChild(colorDescription);
+    });
+
+    return colorDescriptionsContainer;
   }
 
   /**

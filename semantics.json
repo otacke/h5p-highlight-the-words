@@ -202,6 +202,13 @@
         "type": "text",
         "importance": "low",
         "default": "Reset"
+      },
+      {
+        "name": "colorDescriptions",
+        "label": "Label for color descriptions",
+        "type": "text",
+        "importance": "low",
+        "default": "Color descriptions"
       }
     ]
   },

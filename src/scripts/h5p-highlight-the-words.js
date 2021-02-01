@@ -45,7 +45,9 @@ export default class HighlightTheWords extends H5P.Question {
         buttonMenuOpen: 'Open menu',
         buttonMenuClose: 'Close menu',
         buttonFullscreenEnter: 'Enter fullscreen mode',
-        buttonFullscreenExit: 'Exit fullscreen mode'
+        buttonFullscreenExit: 'Exit fullscreen mode',
+        colorFor: 'Color for @description',
+        eraser: 'Erase selection'
       }
     }, this.params);
 
@@ -76,11 +78,14 @@ export default class HighlightTheWords extends H5P.Question {
         {
           taskDescription: this.params.taskDescription,
           text: foo.text,
+          highlightOptions: this.params.highlightOptions,
           a11y: {
             buttonMenuOpen: this.params.a11y.buttonMenuOpen,
             buttonMenuClose: this.params.a11y.buttonMenuClose,
             buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
-            buttonFullscreenExit: this.params.a11y.buttonFullscreenExit
+            buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
+            colorFor: this.params.a11y.colorFor,
+            eraser: this.params.a11y.eraser
           }
         },
         {

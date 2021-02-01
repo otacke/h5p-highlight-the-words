@@ -219,6 +219,21 @@
         "default": "You got :num out of :total points"
       },
       {
+        "name": "colorFor",
+        "type": "text",
+        "label": "Textual representation of color pickers",
+        "description": "Announce color description. @description is a placeholder and will be replaced by the respective color's description.",
+        "importance": "low",
+        "default": "Color for @description"
+      },
+      {
+        "name": "eraser",
+        "type": "text",
+        "label": "Description for eraser color",
+        "importance": "low",
+        "default": "Erase selection"
+      },
+      {
         "name": "buttonMenuOpen",
         "type": "text",
         "label": "Title for menu button (open)",

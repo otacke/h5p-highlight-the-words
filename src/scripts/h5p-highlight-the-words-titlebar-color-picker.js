@@ -11,8 +11,17 @@ export default class HighlightTheWordsTitlebarColorPicker {
   constructor(params, callbacks) {
     // Set missing params
     this.params = Util.extend({
-      a11y: {}
+      highlightOptions: [],
+      a11y: {
+        colorFor: 'Color for @description',
+        eraser: 'Erase selection'
+      }
     }, params || {});
+
+    this.params.highlightOptions.push({
+      color: '',
+      description: this.params.a11y.eraser
+    });
 
     // Sanitize callbacks
     this.callbacks = callbacks || {};
@@ -22,18 +31,29 @@ export default class HighlightTheWordsTitlebarColorPicker {
     this.colorPickerContainer = document.createElement('div');
     this.colorPickerContainer.classList.add('h5p-highlight-the-words-color-picker-container');
 
-    const colors = ["#fce900", "#ea5725", "#e3000f", "#ed6ea7", "#9d74b1", "#009bb4", "#3ec0f0", "#85bd3f", ""];
-    colors.forEach(color => {
+    this.params.highlightOptions.forEach((option, index) => {
       const picker = document.createElement('button');
       picker.classList.add('h5p-highlight-the-words-color-picker-button');
-      picker.style.backgroundColor = color;
-      if (color === '') {
+
+      // Select first picker
+      if (index === 0) {
+        picker.classList.add('h5p-highlight-the-words-selected');
+        this.callbacks.onColorChanged(option.color);
+      }
+
+      // Set eraser
+      if (option.color === '') {
         picker.classList.add('h5p-highlight-the-words-color-picker-eraser');
       }
 
+      picker.setAttribute('aria-label', this.params.a11y.colorFor.replace(/@description/g, option.description));
+
+      picker.style.backgroundColor = option.color;
+
       picker.addEventListener('click', (event) => {
-        this.handleColorChanged(event.currentTarget, color);
+        this.handleColorChanged(event.currentTarget, option.color);
       });
+
       this.colorPickerContainer.appendChild(picker);
     });
   }

@@ -61,7 +61,13 @@ export default class HighlightTheWordsTitlebar {
     );
 
     // Color picker
-    this.colorPicker = new HighlightTheWordsTitlebarColorPicker({}, {
+    this.colorPicker = new HighlightTheWordsTitlebarColorPicker({
+      highlightOptions: params.highlightOptions,
+      a11y: {
+        colorFor: params.a11y.colorFor,
+        eraser: params.a11y.eraser
+      }
+    }, {
       onColorChanged: this.callbacks.onColorChanged
     });
 

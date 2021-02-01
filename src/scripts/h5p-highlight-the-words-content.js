@@ -41,8 +41,11 @@ export default class HighlightTheWordsContent {
           buttonMenuOpen: params.a11y.buttonMenuOpen,
           buttonMenuClose: params.a11y.buttonMenuClose,
           buttonFullscreenEnter: params.a11y.buttonFullscreenEnter,
-          buttonFullscreenExit: params.a11y.buttonFullscreenExit
-        }
+          buttonFullscreenExit: params.a11y.buttonFullscreenExit,
+          colorFor: params.a11y.colorFor,
+          eraser: params.a11y.eraser
+        },
+        highlightOptions: params.highlightOptions
       },
       {
         onColorChanged: (color) => {

@@ -1,5 +1,6 @@
 // Import required classes
 import HighlightTheWordsButton from './h5p-highlight-the-words-button';
+import HighlightTheWordsTitlebarColorPicker from './h5p-highlight-the-words-titlebar-color-picker';
 import Util from './h5p-highlight-the-words-util';
 
 /** Class representing the content */
@@ -60,22 +61,8 @@ export default class HighlightTheWordsTitlebar {
     );
 
     // Color picker
-    this.colorPickerContainer = document.createElement('div');
-    this.colorPickerContainer.classList.add('h5p-highlight-the-words-color-picker-container');
-
-    const colors = ["#fce900", "#ea5725", "#e3000f", "#ed6ea7", "#9d74b1", "#009bb4", "#3ec0f0", "#85bd3f", ""];
-    colors.forEach(color => {
-      const picker = document.createElement('button');
-      picker.classList.add('h5p-highlight-the-words-color-picker-button');
-      picker.style.backgroundColor = color;
-      if (color === '') {
-        picker.classList.add('h5p-highlight-the-words-color-picker-eraser');
-      }
-
-      picker.addEventListener('click', (event) => {
-        this.handleColorChanged(event.currentTarget, color);
-      });
-      this.colorPickerContainer.appendChild(picker);
+    this.colorPicker = new HighlightTheWordsTitlebarColorPicker({}, {
+      onColorChanged: this.callbacks.onColorChanged
     });
 
     // Fullscreen button
@@ -100,7 +87,7 @@ export default class HighlightTheWordsTitlebar {
     );
 
     this.titleBar.appendChild(this.buttonMenu.getDOM());
-    this.titleBar.appendChild(this.colorPickerContainer);
+    this.titleBar.appendChild(this.colorPicker.getDOM());
     this.titleBar.appendChild(this.buttonFullscreen.getDOM());
   }
 
@@ -136,14 +123,5 @@ export default class HighlightTheWordsTitlebar {
     if (typeof state === 'boolean') {
       this.buttonFullscreen.toggle(state);
     }
-  }
-
-  handleColorChanged(target, color) {
-    [...this.colorPickerContainer.childNodes].forEach(node => {
-      node.classList.remove('h5p-highlight-the-words-selected');
-    });
-    target.classList.add('h5p-highlight-the-words-selected');
-
-    this.callbacks.onColorChanged(color);
   }
 }

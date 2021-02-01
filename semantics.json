@@ -219,6 +219,20 @@
         "default": "You got :num out of :total points"
       },
       {
+        "name": "buttonMenuOpen",
+        "type": "text",
+        "label": "Title for menu button (open)",
+        "importance": "low",
+        "default": "Open menu"
+      },
+      {
+        "name": "buttonMenuClose",
+        "type": "text",
+        "label": "Title for menu button (close)",
+        "importance": "low",
+        "default": "Close menu"
+      },
+      {
         "name": "buttonFullscreenEnter",
         "type": "text",
         "label": "Title for fullscreen button (enter)",

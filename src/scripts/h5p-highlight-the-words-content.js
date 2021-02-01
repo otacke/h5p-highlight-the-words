@@ -38,6 +38,8 @@ export default class HighlightTheWordsContent {
     this.titlebar = new HighlightTheWordsTitlebar(
       {
         a11y: {
+          buttonMenuOpen: params.a11y.buttonMenuOpen,
+          buttonMenuClose: params.a11y.buttonMenuClose,
           buttonFullscreenEnter: params.a11y.buttonFullscreenEnter,
           buttonFullscreenExit: params.a11y.buttonFullscreenExit
         }
@@ -55,12 +57,12 @@ export default class HighlightTheWordsContent {
     this.content.appendChild(this.titlebar.getDOM());
 
     // Page
-    const page = document.createElement('div');
-    page.classList.add('h5p-highlight-the-words-page');
-    this.content.appendChild(page);
+    this.page = document.createElement('div');
+    this.page.classList.add('h5p-highlight-the-words-page');
+    this.content.appendChild(this.page);
 
     this.menu = new HighlightTheWordsMenu();
-    page.appendChild(this.menu.getDOM());
+    this.page.appendChild(this.menu.getDOM());
 
     // Excercise
     this.exercise = document.createElement('div');
@@ -85,7 +87,7 @@ export default class HighlightTheWordsContent {
     ruler.classList.add('h5p-highlight-the-words-ruler');
     this.exercise.appendChild(ruler);
 
-    page.appendChild(this.exercise);
+    this.page.appendChild(this.exercise);
 
     this.addSelectEventHandler();
   }
@@ -429,10 +431,26 @@ export default class HighlightTheWordsContent {
    */
   handleMenuButtonClicked() {
     if (this.menu.isOpen()) {
-      this.menu.close();
+      this.closeMenu();
     }
     else {
-      this.menu.open();
+      this.openMenu();
     }
+  }
+
+  /**
+   * Open menu.
+   */
+  openMenu() {
+    this.page.classList.add('h5p-highlight-the-words-menu-open');
+    this.menu.open();
+  }
+
+  /**
+   * Close menu.
+   */
+  closeMenu() {
+    this.page.classList.remove('h5p-highlight-the-words-menu-open');
+    this.menu.close();
   }
 }

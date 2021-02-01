@@ -42,6 +42,8 @@ export default class HighlightTheWords extends H5P.Question {
       },
       a11y: {
         scoreBarLabel: 'You got :num out of :total points',
+        buttonMenuOpen: 'Open menu',
+        buttonMenuClose: 'Close menu',
         buttonFullscreenEnter: 'Enter fullscreen mode',
         buttonFullscreenExit: 'Exit fullscreen mode'
       }
@@ -75,6 +77,8 @@ export default class HighlightTheWords extends H5P.Question {
           taskDescription: this.params.taskDescription,
           text: foo.text,
           a11y: {
+            buttonMenuOpen: this.params.a11y.buttonMenuOpen,
+            buttonMenuClose: this.params.a11y.buttonMenuClose,
             buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
             buttonFullscreenExit: this.params.a11y.buttonFullscreenExit
           }

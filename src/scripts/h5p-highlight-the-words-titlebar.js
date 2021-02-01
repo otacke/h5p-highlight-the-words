@@ -28,7 +28,7 @@ export default class HighlightTheWordsTitlebar {
     // Set missing callbacks
     this.callbacks = Util.extend({
       onButtonMenuClicked: () => {
-        console.warn('A function for handling the menu button is missing.');        
+        console.warn('A function for handling the menu button is missing.');
       },
       onButtonFullscreenClicked: () => {
         console.warn('A function for handling the fullscreen button is missing.');
@@ -48,8 +48,8 @@ export default class HighlightTheWordsTitlebar {
           'h5p-highlight-the-words-button-menu'
         ],
         a11y: {
-          active: this.params.a11y.buttonMenuOpen,
-          inactive: this.params.a11y.buttonMenuClose
+          active: this.params.a11y.buttonMenuClose,
+          inactive: this.params.a11y.buttonMenuOpen
         }
       },
       {

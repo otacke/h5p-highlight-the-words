@@ -15,9 +15,9 @@
 
     .h5p-highlight-the-words-color-picker-button {
       border: solid 2px white;
-      height: 2em;
+      height: $color-picker-size;
       margin: $margin-50;
-      width: 2em;
+      width: $color-picker-size;
 
       &:hover {
         cursor: pointer;

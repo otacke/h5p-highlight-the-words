@@ -266,15 +266,15 @@ export default class HighlightTheWordsContent {
     this.selections = this.selections
       .filter(selection => selection.start < params.start || selection.end > params.end) // remove consumed selections
       .map(selection => {
-        // Shrink existing selction if overlapping with new selection
+        // Shrink existing selection if overlapping with new selection
         if (selection.start >= params.start && selection.start < params.end && selection.end >= params.end) {
-          selection.text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, params.end, selection.end);
           selection.start = params.end;
         }
         if (selection.end > params.start && selection.end <= params.end) {
-          selection.text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, selection.start, params.start);
           selection.end = params.start;
         }
+
+        selection.text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, selection.start, selection.end);
 
         return selection;
       });
@@ -297,10 +297,30 @@ export default class HighlightTheWordsContent {
     this.selections.push(params);
 
     this.selections = this.selections
+      .sort((a, b) => a.start - b.start)
+      .reduce((newSelections, selection, index) => {
+        if (this.selections.length === 1) {
+          return [selection];
+        }
+        if (index === this.selections.length - 1) {
+          return [...newSelections, selection];
+        }
+
+        // Merge all adjacent selections with same color
+        if (
+          selection.color === this.selections[index + 1].color &&
+          selection.end >= this.selections[index + 1].start
+        ) {
+          this.selections[index + 1].start = selection.start;
+          this.selections[index + 1].text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, this.selections[index + 1].start, this.selections[index + 1].end);
+          selection.color = '';
+        }
+
+        return [...newSelections, selection];
+      }, [])
       .filter(selection => {
         return selection.color !== ''; // Remove deleted selections
-      })
-      .sort((a, b) => a.start - b.start);
+      });
   }
 
   /**

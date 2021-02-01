@@ -54,9 +54,25 @@ export default class HighlightTheWords extends H5P.Question {
     // TODO: Sanitize input
 
     // Sanitize highlight options
-    this.params.highlightOptions = this.params.highlightOptions.filter(option => {
-      return (option.name && option.color);
-    });
+    this.params.highlightOptions = this.params.highlightOptions
+      .filter(option => {
+        // Drop incomplete options
+        const valid = (option.name && option.color);
+        if (!valid) {
+          console.warn(`${this.getTitle()}: Please check your highlight options. They contain incomplete entries.`);
+        }
+        return valid;
+      })
+      .reduce((result, option) => {
+        // Only allow same color once
+        const colors = result.map(result => result.color);
+        if (colors.indexOf(option.color) !== -1) {
+          console.warn(`${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`);
+          return result;
+        }
+
+        return [...result, option];
+      }, []);
 
     // Set default language for xAPI
     const defaultLanguage = (extras.metadata) ? extras.metadata.defaultLanguage || 'en' : 'en';

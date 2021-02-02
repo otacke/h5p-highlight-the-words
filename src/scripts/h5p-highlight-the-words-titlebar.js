@@ -130,4 +130,16 @@ export default class HighlightTheWordsTitlebar {
       this.buttonFullscreen.toggle(state);
     }
   }
+
+  handleResize() {
+    this.titleBarComputedStyle = this.titleBarComputedStyle || window.getComputedStyle(this.titleBar);
+
+    const maxColorPickerWidth = this.titleBar.offsetWidth -
+      parseFloat(this.titleBarComputedStyle.paddingLeft) -
+      parseFloat(this.titleBarComputedStyle.paddingRight) -
+      this.buttonMenu.getDOM().offsetWidth -
+      this.buttonFullscreen.getDOM().offsetWidth;
+
+    this.colorPicker.handleResize(maxColorPickerWidth);
+  }
 }

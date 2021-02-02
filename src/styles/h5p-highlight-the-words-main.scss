@@ -8,8 +8,9 @@ $color-base-95: rgba($color-base, .95);
 $color-grey-14: #eee;
 $color-grey-4: #444;
 $color-grey-3: #333;
+$color-grey-3-50: rgba($color-grey-3, .5);
 
-$color-shadow: rgba(166, 166, 166, 0.2);
+$color-shadow: rgba(166, 166, 166, .2);
 
 $color-scrollbar: #6C7992;
 $color-scrollbar-35: rgba($color-scrollbar, .35);
@@ -19,7 +20,7 @@ $margin-base: 1em;
 $margin-50: $margin-base / 2;
 
 $color-picker-size: 2.5em;
-$border-radius-small: 0.25em;
+$border-radius-small: .25em;
 
 @import "h5p-highlight-the-words";
 @import "h5p-highlight-the-words-titlebar";

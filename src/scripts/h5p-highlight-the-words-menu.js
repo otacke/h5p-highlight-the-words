@@ -50,6 +50,10 @@ export default class HighlightTheWordsMenu {
       });
     }
 
+    this.menuWrapper = document.createElement('div');
+    this.menuWrapper.classList.add('h5p-highlight-the-words-menu-wrapper');
+    this.menu.appendChild(this.menuWrapper);
+
     // TODO: Create panel manager
     this.colorPanel = new HighlightTheWordsPanel({
       expand: true,
@@ -57,8 +61,23 @@ export default class HighlightTheWordsMenu {
       label: this.params.l10n.colorLegend
     });
     this.colorPanel.setActive(true);
+    this.menuWrapper.appendChild(this.colorPanel.getDOM());
 
-    this.menu.appendChild(this.colorPanel.getDOM());
+    for (let i = 0; i < 3; i++) {
+      const foo = document.createElement('div');
+      foo.style.backgroundColor = '#ff0088';
+      foo.style.height = '300px';
+      foo.style.window = '100%';
+
+      const colorPanel = new HighlightTheWordsPanel({
+        expand: false,
+        collapsible: true,
+        label: this.params.l10n.colorLegend
+      });
+      colorPanel.setActive(true);
+      colorPanel.setContent(foo);
+      this.menuWrapper.appendChild(colorPanel.getDOM());
+    }
 
     if (this.params.open === true) {
       this.open();
@@ -111,6 +130,22 @@ export default class HighlightTheWordsMenu {
     }
     else {
       this.colorPanel.disable();
+    }
+  }
+
+  /**
+   * Set dimensions to fullscreen.
+   * @param {boolean} enterFullScreen If true, enter fullscreen, else exit.
+   */
+  toggleFullscreen(enterFullScreen = false) {
+    if (enterFullScreen) {
+      // Technically margin is missing, but should be fine.
+      this.menuWrapper.style.maxHeight = `${window.innerHeight - this.menuWrapper.offsetTop}px`;
+      this.menuWrapper.style.overflowY = 'auto';
+    }
+    else {
+      this.menuWrapper.style.maxHeight = '';
+      this.menuWrapper.style.overflowY = '';
     }
   }
 }

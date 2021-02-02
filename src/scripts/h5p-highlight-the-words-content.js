@@ -475,6 +475,17 @@ export default class HighlightTheWordsContent {
    */
   toggleFullscreen(enterFullScreen = false) {
     this.titlebar.toggleFullscreenButton(enterFullScreen);
+    this.menu.toggleFullscreen(enterFullScreen);
+
+    if (enterFullScreen) {
+      // Technically margin is missing, but should be fine.
+      this.page.style.maxHeight = `${window.innerHeight - this.page.offsetTop}px`;
+      this.page.style.overflowY = 'auto';
+    }
+    else {
+      this.page.style.maxHeight = '';
+      this.page.style.overflowY = '';
+    }
   }
 
   /**

@@ -14,7 +14,6 @@ export default class HighlightTheWordsMenuPanel {
       a11y: {},
       expanded: false,
       label: '',
-      content: null,
       collapsible: true,
       classes: []
     }, params);
@@ -62,10 +61,6 @@ export default class HighlightTheWordsMenuPanel {
     this.panelBody = document.createElement('div');
     this.panelBody.classList.add('h5p-highlight-the-words-panel-body');
     this.panel.appendChild(this.panelBody);
-
-    if (this.params.content) {
-      this.setContent(this.params.content);
-    }
 
     if (this.params.classes) {
       this.params.classes.forEach((className) => {

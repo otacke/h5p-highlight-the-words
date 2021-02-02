@@ -11,7 +11,9 @@ export default class HighlightTheWordsContent {
   constructor(params = {}, callbacks = {}) {
     // Sanitize
     this.callbacks = callbacks;
-    this.callbacks.handleButtonFullscreen = callbacks.handleButtonFullscreen || (() => {});
+
+    this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
+    this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
 
     // Selections to be dealt with
     this.pendingSelection = null;
@@ -67,6 +69,8 @@ export default class HighlightTheWordsContent {
       l10n: {
         colorLegend: params.l10n.colorLegend
       }
+    }, {
+      onMenuToggled: this.callbacks.onResizeRequired
     });
     this.page.appendChild(this.menu.getDOM());
 

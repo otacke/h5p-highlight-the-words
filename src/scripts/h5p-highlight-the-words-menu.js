@@ -29,7 +29,7 @@ export default class HighlightTheWordsMenu {
 
     // Sanitize callbacks
     this.callbacks = callbacks || {};
-    this.callbacks.onClick = callbacks.onClick || (() => {});
+    this.callbacks.onMenuToggled = callbacks.onMenuToggled || (() => {});
 
     // Menu
     this.menu = document.createElement('div');
@@ -115,6 +115,8 @@ export default class HighlightTheWordsMenu {
     else {
       this.colorPanel.disable();
     }
+
+    this.callbacks.onMenuToggled(this.isOpen());
   }
 
   /**

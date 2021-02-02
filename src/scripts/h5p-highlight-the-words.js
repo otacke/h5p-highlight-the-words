@@ -118,6 +118,9 @@ export default class HighlightTheWords extends H5P.Question {
         {
           onButtonFullscreenClicked: () => {
             this.toggleFullscreen();
+          },
+          onResizeRequired: () => {
+            this.handleResizeRequired();
           }
         }
       );
@@ -396,6 +399,10 @@ export default class HighlightTheWords extends H5P.Question {
     else {
       H5P.exitFullScreen();
     }
+  }
+
+  handleResizeRequired() {
+    this.trigger('resize');
   }
 }
 

@@ -63,22 +63,6 @@ export default class HighlightTheWordsMenu {
     this.colorPanel.setActive(true);
     this.menuWrapper.appendChild(this.colorPanel.getDOM());
 
-    for (let i = 0; i < 3; i++) {
-      const foo = document.createElement('div');
-      foo.style.backgroundColor = '#ff0088';
-      foo.style.height = '300px';
-      foo.style.window = '100%';
-
-      const colorPanel = new HighlightTheWordsPanel({
-        expand: false,
-        collapsible: true,
-        label: this.params.l10n.colorLegend
-      });
-      colorPanel.setActive(true);
-      colorPanel.setContent(foo);
-      this.menuWrapper.appendChild(colorPanel.getDOM());
-    }
-
     if (this.params.open === true) {
       this.open();
     }

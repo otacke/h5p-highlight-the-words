@@ -24,6 +24,15 @@
         max-width: 16em;
       }
 
+      .h5p-highlight-the-words-menu-title-container {
+        background-color: $color-base;
+        color: white;
+        overflow: hidden;
+        padding: 0.75em 1em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .h5p-highlight-the-words-panel {
         align-items: center;
         background-color: white;
@@ -66,8 +75,8 @@
           padding: 0 1.125em;
           width: 100%;
 
-          &.h5p-highlight-the-words-panel-collapsable {
-            &:hover {
+          &.h5p-highlight-the-words-panel-collapsible {
+            &:not(.h5p-highlight-the-words-panel-disabled):hover {
               background-color: $color-base-05;
               cursor: pointer;
             }

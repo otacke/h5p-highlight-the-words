@@ -15,7 +15,7 @@ export default class HighlightTheWordsMenuPanel {
       expanded: false,
       label: '',
       content: null,
-      collapsable: true,
+      collapsible: true,
       classes: []
     }, params);
 
@@ -34,26 +34,29 @@ export default class HighlightTheWordsMenuPanel {
     this.panel.classList.add('h5p-highlight-the-words-panel');
 
     // Head
-    const panelHead = document.createElement('button');
-    panelHead.classList.add('h5p-highlight-the-words-panel-head');
-    if (this.params.collapsable) {
-      panelHead.classList.add('h5p-highlight-the-words-panel-collapsable');
-      panelHead.addEventListener('click', (event) => {
+    this.panelHead = document.createElement('button');
+    this.panelHead.classList.add('h5p-highlight-the-words-panel-head');
+    if (this.params.collapsible) {
+      this.panelHead.classList.add('h5p-highlight-the-words-panel-collapsible');
+      this.panelHead.addEventListener('click', (event) => {
         this.handleClick(event.currentTarget);
       });
     }
-    this.panel.appendChild(panelHead);
 
-    if (this.params.collapsable) {
+    this.disable();
+
+    this.panel.appendChild(this.panelHead);
+
+    if (this.params.collapsible) {
       this.stateIndicator = document.createElement('div');
       this.stateIndicator.classList.add('h5p-highlight-the-words-panel-state-indicator');
-      panelHead.appendChild(this.stateIndicator);
+      this.panelHead.appendChild(this.stateIndicator);
     }
 
     const label = document.createElement('div');
     label.classList.add('h5p-highlight-the-words-panel-label');
     label.innerText = this.params.label;
-    panelHead.appendChild(label);
+    this.panelHead.appendChild(label);
 
     // Body
     this.panelBody = document.createElement('div');
@@ -70,7 +73,7 @@ export default class HighlightTheWordsMenuPanel {
       });
     }
 
-    if (this.params.expand === true || !this.params.collapsable) {
+    if (this.params.expand === true || !this.params.collapsible) {
       this.expand();
     }
     else {
@@ -114,6 +117,26 @@ export default class HighlightTheWordsMenuPanel {
       this.panel.classList.add('h5p-highlight-the-words-panel-remove');
     }
     this.stateActive = state;
+  }
+
+  /**
+   * Enable panel.
+   */
+  enable() {
+    if (this.params.collapsible) {
+      this.panelHead.setAttribute('tabIndex', 0);
+    }
+
+    this.panel.classList.remove('h5p-highlight-the-words-panel-disabled');
+  }
+
+  /**
+   * Disable panel.
+   */
+  disable() {
+    this.panelHead.setAttribute('tabIndex', -1);
+
+    this.panel.classList.add('h5p-highlight-the-words-panel-disabled');
   }
 
   /**

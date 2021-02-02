@@ -12,6 +12,7 @@ export default class HighlightTheWordsMenu {
   constructor(params = {}, callbacks = {}) {
     // Set missing params
     this.params = Util.extend({
+      title: 'Menu',
       a11y: {},
       l10n: {
         colorLegend: 'Color legend'
@@ -33,6 +34,15 @@ export default class HighlightTheWordsMenu {
     // Menu
     this.menu = document.createElement('div');
     this.menu.classList.add('h5p-highlight-the-words-menu-container');
+    this.menu.addEventListener('transitionend', () => {
+      this.handleMenuTransitioned();
+    });
+
+    // Menu title
+    const menuTitle = document.createElement('div');
+    menuTitle.classList.add('h5p-highlight-the-words-menu-title-container');
+    menuTitle.innerText = this.params.title;
+    this.menu.appendChild(menuTitle);
 
     if (this.params.classes) {
       this.params.classes.forEach((className) => {
@@ -40,9 +50,10 @@ export default class HighlightTheWordsMenu {
       });
     }
 
+    // TODO: Create panel manager
     this.colorPanel = new HighlightTheWordsPanel({
       expand: true,
-      collapsable: false,
+      collapsible: false,
       label: this.params.l10n.colorLegend
     });
     this.colorPanel.setActive(true);
@@ -92,5 +103,14 @@ export default class HighlightTheWordsMenu {
   // TODO: True panel management
   setPanelContent(content) {
     this.colorPanel.setContent(content);
+  }
+
+  handleMenuTransitioned() {
+    if (this.isOpen()) {
+      this.colorPanel.enable();
+    }
+    else {
+      this.colorPanel.disable();
+    }
   }
 }

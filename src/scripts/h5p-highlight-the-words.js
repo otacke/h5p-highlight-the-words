@@ -100,6 +100,7 @@ export default class HighlightTheWords extends H5P.Question {
         {
           taskDescription: this.params.taskDescription,
           text: foo.text,
+          menuTitle: this.getTitle(),
           highlightOptions: this.params.highlightOptions,
           a11y: {
             buttonMenuOpen: this.params.a11y.buttonMenuOpen,

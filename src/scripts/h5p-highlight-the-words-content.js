@@ -65,6 +65,7 @@ export default class HighlightTheWordsContent {
     this.content.appendChild(this.page);
 
     this.menu = new HighlightTheWordsMenu({
+      title: params.menuTitle,
       l10n: {
         colorLegend: params.l10n.colorLegend
       }

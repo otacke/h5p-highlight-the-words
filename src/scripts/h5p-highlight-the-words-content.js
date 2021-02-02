@@ -161,8 +161,16 @@ export default class HighlightTheWordsContent {
     options.forEach(option => {
       const colorDescription = document.createElement('div');
       colorDescription.classList.add('h5p-highlight-the-words-color-description');
-      colorDescription.style.backgroundColor = option.color;
-      colorDescription.innerHTML = option.description;
+
+      const colorField = document.createElement('div');
+      colorField.classList.add('h5p-highlight-the-words-color-field');
+      colorField.style.backgroundColor = option.color;
+      colorDescription.appendChild(colorField);
+
+      const colorLabel = document.createElement('div');
+      colorLabel.classList.add('h5p-highlight-the-words-color-label');
+      colorLabel.innerHTML = option.description;
+      colorDescription.appendChild(colorLabel);
 
       colorDescriptionsWrapper.appendChild(colorDescription);
     });

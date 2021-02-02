@@ -105,13 +105,27 @@
               margin: 0.5em;
 
               .h5p-highlight-the-words-color-description {
-                border-radius: $border-radius-small;
-                margin-bottom: 0.5em;
-                overflow: hidden;
-                padding: 0.5em;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+                align-items: center;
+                display: flex;
+                flex-direction: row;
+
+                .h5p-highlight-the-words-color-field {
+                  border-radius: $border-radius-small;
+                  flex-shrink: 0;
+                  height: 1em;
+                  width: 0.5em;
+                  margin-right: 0.5em;
+                }
+
+                .h5p-highlight-the-words-color-label {
+                  font-size: .85em;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
               }
+
+
             }
           }
         }

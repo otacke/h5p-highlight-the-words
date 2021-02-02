@@ -39,7 +39,7 @@ export default class HighlightTheWords extends H5P.Question {
         checkAnswer: 'Check answer',
         showSolution: 'Show solution',
         tryAgain: 'Retry',
-        colorDescriptions: 'Color descriptions'
+        colorLegend: 'Color legend'
       },
       a11y: {
         scoreBarLabel: 'You got :num out of :total points',
@@ -110,7 +110,7 @@ export default class HighlightTheWords extends H5P.Question {
             eraser: this.params.a11y.eraser
           },
           l10n: {
-            colorDescriptions: this.params.l10n.colorDescriptions
+            colorLegend: this.params.l10n.colorLegend
           }
         },
         {

@@ -204,11 +204,11 @@
         "default": "Reset"
       },
       {
-        "name": "colorDescriptions",
-        "label": "Label for color descriptions",
+        "name": "colorLegend",
+        "label": "Label for color legend",
         "type": "text",
         "importance": "low",
-        "default": "Color descriptions"
+        "default": "Color legend"
       }
     ]
   },

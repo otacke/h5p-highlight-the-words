@@ -14,7 +14,7 @@ export default class HighlightTheWordsMenu {
     this.params = Util.extend({
       a11y: {},
       l10n: {
-        colorDescriptions: 'Color descriptions'
+        colorLegend: 'Color legend'
       },
       open: false,
       classes: []
@@ -43,7 +43,7 @@ export default class HighlightTheWordsMenu {
     this.colorPanel = new HighlightTheWordsPanel({
       expand: true,
       collapsable: false,
-      label: this.params.l10n.colorDescriptions
+      label: this.params.l10n.colorLegend
     });
     this.colorPanel.setActive(true);
 

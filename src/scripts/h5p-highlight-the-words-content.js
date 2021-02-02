@@ -66,13 +66,13 @@ export default class HighlightTheWordsContent {
 
     this.menu = new HighlightTheWordsMenu({
       l10n: {
-        colorDescriptions: params.l10n.colorDescriptions
+        colorLegend: params.l10n.colorLegend
       }
     });
     this.page.appendChild(this.menu.getDOM());
 
-    const colorDescription = this.buildColorDescription(params.highlightOptions);
-    this.menu.setPanelContent(colorDescription);
+    const colorLegend = this.buildColorLegend(params.highlightOptions);
+    this.menu.setPanelContent(colorLegend);
 
     // Excercise
     this.exercise = document.createElement('div');
@@ -150,13 +150,13 @@ export default class HighlightTheWordsContent {
     return textContainer;
   }
 
-  buildColorDescription(options = []) {
-    const colorDescriptionsContainer = document.createElement('div');
-    colorDescriptionsContainer.classList.add('h5p-highlight-the-words-color-descriptions-container');
+  buildColorLegend(options = []) {
+    const colorLegendContainer = document.createElement('div');
+    colorLegendContainer.classList.add('h5p-highlight-the-words-color-legend-container');
 
-    const colorDescriptionsWrapper = document.createElement('div');
-    colorDescriptionsWrapper.classList.add('h5p-highlight-the-words-color-descriptions-wrapper');
-    colorDescriptionsContainer.appendChild(colorDescriptionsWrapper);
+    const colorLegendWrapper = document.createElement('div');
+    colorLegendWrapper.classList.add('h5p-highlight-the-words-color-legend-wrapper');
+    colorLegendContainer.appendChild(colorLegendWrapper);
 
     options.forEach(option => {
       const colorDescription = document.createElement('div');
@@ -172,10 +172,10 @@ export default class HighlightTheWordsContent {
       colorLabel.innerHTML = option.description;
       colorDescription.appendChild(colorLabel);
 
-      colorDescriptionsWrapper.appendChild(colorDescription);
+      colorLegendWrapper.appendChild(colorDescription);
     });
 
-    return colorDescriptionsContainer;
+    return colorLegendContainer;
   }
 
   /**

@@ -19,8 +19,6 @@ export default class HighlightTheWordsContent {
     // Active selections
     this.selections = [];
 
-    this.currentSelectColor = 'rgb(252, 233, 0)';
-
     params.text = params.text.replace(/(\r\n|\n|\r)/gm, '');
     this.maskHTML = TextProcessing.createHTMLMask(params.text);
 
@@ -48,8 +46,8 @@ export default class HighlightTheWordsContent {
         highlightOptions: params.highlightOptions
       },
       {
-        onColorChanged: (color) => {
-          this.handleColorChanged(color);
+        onColorChanged: (colors) => {
+          this.handleColorChanged(colors);
         },
         onButtonMenuClicked: () => {
           this.handleMenuButtonClicked();
@@ -165,7 +163,7 @@ export default class HighlightTheWordsContent {
 
       const colorField = document.createElement('div');
       colorField.classList.add('h5p-highlight-the-words-color-field');
-      colorField.style.backgroundColor = option.color;
+      colorField.style.backgroundColor = option.backgroundColor;
       colorDescription.appendChild(colorField);
 
       const colorLabel = document.createElement('div');
@@ -235,7 +233,8 @@ export default class HighlightTheWordsContent {
       text: this.pendingSelection.toString(),
       start: (start < end) ? start : end,
       end: (end > start) ? end : start,
-      color: this.currentSelectColor
+      backgroundColor: this.currentSelectColors.backgroundColor,
+      color: this.currentSelectColors.color
     });
 
     this.updateTextContainer();
@@ -287,6 +286,7 @@ export default class HighlightTheWordsContent {
    * @param {number} params.start Start position.
    * @param {number} params.end End position.
    * @param {string} params.text Selected text.
+   * @param {string} params.backgroundColor Selected background color.
    * @param {string} params.color Selected color.
    */
   addSelection(params) {
@@ -294,7 +294,7 @@ export default class HighlightTheWordsContent {
       typeof params.start !== 'number' || params.start < 0 ||
       typeof params.end !== 'number' || params.end < params.start ||
       typeof params.text !== 'string' || //params.text.length !== params.end - params.start ||
-      typeof params.color !== 'string'
+      typeof params.backgroundColor !== 'string' || typeof params.color !== 'string'
     ) {
       return; // Invalid input
     }
@@ -344,18 +344,18 @@ export default class HighlightTheWordsContent {
 
         // Merge all adjacent selections with same color
         if (
-          selection.color === this.selections[index + 1].color &&
+          selection.backgroundColor === this.selections[index + 1].backgroundColor &&
           selection.end >= this.selections[index + 1].start
         ) {
           this.selections[index + 1].start = selection.start;
           this.selections[index + 1].text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, this.selections[index + 1].start, this.selections[index + 1].end);
-          selection.color = '';
+          selection.backgroundColor = '';
         }
 
         return [...newSelections, selection];
       }, [])
       .filter(selection => {
-        return selection.color !== ''; // Remove deleted selections
+        return selection.backgroundColor !== ''; // Remove deleted selections
       });
   }
 
@@ -372,14 +372,14 @@ export default class HighlightTheWordsContent {
    * @param {object[]} selection Selections by user.
    */
   getSelectionOutput(selection) {
-    if (!selection.color) {
+    if (!selection.backgroundColor) {
       return { // Not selected, use original text
         text: this.originalTextDecoded.substring(selection.start, selection.end),
         mask: this.maskHTMLDecoded.substring(selection.start, selection.end)
       };
     }
 
-    const spanPre = `<span style="background-color: ${selection.color};">`;
+    const spanPre = `<span style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
     const spanPost = '</span>';
 
     let text = this.originalTextDecoded.substring(selection.start, selection.end);
@@ -479,10 +479,12 @@ export default class HighlightTheWordsContent {
 
   /**
    * Handle color changed.
-   * @param {string} color Color to be used.
+   * @param {object} colors Colors to be used.
+   * @param {object} colors.color Color to be used.
+   * @param {object} colors.backgroundColor Background color to be used.
    */
-  handleColorChanged(color) {
-    this.currentSelectColor = color;
+  handleColorChanged(colors) {
+    this.currentSelectColors = colors;
   }
 
   /**

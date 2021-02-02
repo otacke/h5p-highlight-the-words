@@ -58,7 +58,7 @@ export default class HighlightTheWords extends H5P.Question {
     this.params.highlightOptions = this.params.highlightOptions
       .filter(option => {
         // Drop incomplete options
-        const valid = (option.name && option.color);
+        const valid = (option.name && option.backgroundColor);
         if (!valid) {
           console.warn(`${this.getTitle()}: Please check your highlight options. They contain incomplete entries.`);
         }
@@ -67,12 +67,13 @@ export default class HighlightTheWords extends H5P.Question {
       .map(option => {
         // Prepare for display
         option.description = Util.stripHTML(Util.htmlDecode(option.description || '&nbsp;'));
+        option.color = Util.computeTextColor(option.backgroundColor);
         return option;
       })
       .reduce((result, option) => {
         // Only allow same color once
-        const colors = result.map(result => result.color);
-        if (colors.indexOf(option.color) !== -1) {
+        const colors = result.map(result => result.backgroundColor);
+        if (colors.indexOf(option.backgroundColor) !== -1) {
           console.warn(`${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`);
           return result;
         }

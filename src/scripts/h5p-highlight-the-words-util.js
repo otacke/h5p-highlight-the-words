@@ -99,6 +99,32 @@ class Util {
 
     return i;
   }
+
+  /**
+   * Compute text color to given color.
+   * @param {string} colorCode RGB color code in 6 char hex: #rrggbb.
+   * @param {number} [threshold=0.6] Threshold in [0; 1] for black.
+   * @return {string} RGB contrast color code in 6 char hex: #rrggbb.
+   */
+  static computeTextColor(colorCode, threshold = 0.6) {
+    if (typeof colorCode !== 'string' || !/#[0-9a-f]{6}/.test(colorCode)) {
+      return null;
+    }
+
+    colorCode = colorCode.substr(1);
+
+    // RGB as percentage
+    const rgb = [
+      parseInt(colorCode.substr(0, 2), 16) / 255,
+      parseInt(colorCode.substr(2, 2), 16) / 255,
+      parseInt(colorCode.substr(4, 2), 16) / 255
+    ];
+
+    // luma (Rec. 709, HDTV standard)
+    const luma = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+
+    return (luma > threshold) ? '#000000' : '#ffffff';
+  }
 }
 
 export default Util;

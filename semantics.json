@@ -62,7 +62,7 @@
           "importance": "medium"
         },
         {
-          "name": "color",
+          "name": "backgroundColor",
           "type": "text",
           "label": "Color",
           "description": "Color for this highlight option",

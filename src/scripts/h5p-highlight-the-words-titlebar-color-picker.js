@@ -20,6 +20,7 @@ export default class HighlightTheWordsTitlebarColorPicker {
 
     this.params.highlightOptions.push({
       color: '',
+      backgroundColor: '',
       description: this.params.a11y.eraser
     });
 
@@ -38,7 +39,10 @@ export default class HighlightTheWordsTitlebarColorPicker {
       // Select first picker
       if (index === 0) {
         picker.classList.add('h5p-highlight-the-words-selected');
-        this.callbacks.onColorChanged(option.color);
+        this.callbacks.onColorChanged({
+          backgroundColor: option.backgroundColor,
+          color: option.color
+        });
       }
 
       // Set eraser
@@ -48,10 +52,13 @@ export default class HighlightTheWordsTitlebarColorPicker {
 
       picker.setAttribute('aria-label', this.params.a11y.colorFor.replace(/@description/g, option.description));
 
-      picker.style.backgroundColor = option.color;
+      picker.style.backgroundColor = option.backgroundColor;
 
       picker.addEventListener('click', (event) => {
-        this.handleColorChanged(event.currentTarget, option.color);
+        this.handleColorChanged(event.currentTarget, {
+          backgroundColor: option.backgroundColor,
+          color: option.color
+        });
       });
 
       this.colorPickerContainer.appendChild(picker);

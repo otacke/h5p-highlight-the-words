@@ -81,11 +81,4 @@ export default class HighlightTheWordsTitlebarColorPicker {
 
     this.callbacks.onColorChanged(color);
   }
-
-  handleResize(maxWidth) {
-    [...this.colorPickerContainer.childNodes].forEach(node => {
-      node.style.width = '1em';
-      node.style.height = '1em';
-    });
-  }
 }

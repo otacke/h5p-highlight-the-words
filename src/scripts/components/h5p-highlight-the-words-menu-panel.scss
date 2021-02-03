@@ -1,0 +1,106 @@
+@import './../../styles/h5p-highlight-the-words-main.scss';
+
+.h5p-highlight-the-words-panel {
+  align-items: center;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &.h5p-highlight-the-words-panel-expanded {
+    .h5p-highlight-the-words-panel-head {
+      background-color: $color-base-10;
+
+      .h5p-highlight-the-words-panel-state-indicator {
+        background-image: url("../../images/symbol-expanded-grey-4.svg");
+      }
+    }
+
+    .h5p-highlight-the-words-panel-body {
+      display: block;
+    }
+  }
+
+  &.h5p-highlight-the-words-panel-active {
+    .h5p-highlight-the-words-panel-head {
+      background-color: $color-base-10;
+      color: $color-base;
+    }
+  }
+
+  .h5p-highlight-the-words-panel-head {
+    align-items: center;
+    background-color: white;
+    border: 0;
+    color: $color-grey-4;
+    display: flex;
+    flex-direction: row;
+    font-weight: 700;
+    line-height: 1.5em;
+    height: 3em;
+    margin-left: 0;
+    padding: 0 1.125em;
+    width: 100%;
+
+    &.h5p-highlight-the-words-panel-collapsible {
+      &:not(.h5p-highlight-the-words-panel-disabled):hover {
+        background-color: $color-base-05;
+        cursor: pointer;
+      }
+    }
+
+    &:active {
+      background-color: $color-base-10;
+    }
+
+    .h5p-highlight-the-words-panel-state-indicator {
+      background-image: url("../../images/symbol-collapsed-grey-4.svg");
+      background-size: cover;
+      flex-shrink: 0;
+      height: .75em;
+      margin-right: .75em;
+      width: .75em;
+    }
+
+    .h5p-highlight-the-words-panel-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .h5p-highlight-the-words-panel-body {
+    border-bottom: solid 1px $color-grey-14;
+    display: none;
+    width: 100%;
+
+    .h5p-highlight-the-words-color-legend-container {
+      width: 100%;
+
+      .h5p-highlight-the-words-color-legend-wrapper {
+        margin: 0.5em;
+
+        .h5p-highlight-the-words-color-description {
+          align-items: center;
+          display: flex;
+          flex-direction: row;
+
+          .h5p-highlight-the-words-color-field {
+            border-radius: $border-radius-small;
+            flex-shrink: 0;
+            height: 1em;
+            width: 0.5em;
+            margin-right: 0.5em;
+          }
+
+          .h5p-highlight-the-words-color-label {
+            font-size: .85em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}

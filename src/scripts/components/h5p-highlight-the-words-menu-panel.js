@@ -1,5 +1,7 @@
 // Import required classes
-import Util from './h5p-highlight-the-words-util';
+import Util from './../h5p-highlight-the-words-util';
+
+import './h5p-highlight-the-words-menu-panel.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsMenuPanel {

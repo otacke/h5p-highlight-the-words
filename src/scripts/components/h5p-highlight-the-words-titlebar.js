@@ -1,7 +1,9 @@
 // Import required classes
 import HighlightTheWordsButton from './h5p-highlight-the-words-button';
 import HighlightTheWordsTitlebarColorPicker from './h5p-highlight-the-words-titlebar-color-picker';
-import Util from './h5p-highlight-the-words-util';
+import Util from './../h5p-highlight-the-words-util';
+
+import './h5p-highlight-the-words-titlebar.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsTitlebar {

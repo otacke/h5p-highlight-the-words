@@ -1,5 +1,5 @@
-import HighlightTheWordsMenu from './h5p-highlight-the-words-menu';
-import HighlightTheWordsTitlebar from './h5p-highlight-the-words-titlebar';
+import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
+import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 import Util from './h5p-highlight-the-words-util';
 

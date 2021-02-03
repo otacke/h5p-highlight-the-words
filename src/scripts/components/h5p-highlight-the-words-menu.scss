@@ -1,0 +1,27 @@
+@import './../../styles/h5p-highlight-the-words-main.scss';
+
+.h5p-highlight-the-words-menu-container {
+  background-color: white;
+  background-size: cover;
+  box-shadow: 10px 10px 30px $color-shadow;
+  display: flex;
+  flex-direction: column;
+  min-height: 10em;
+  overflow: hidden;
+  transition: width .15s linear, flex-basis .15s linear, max-width .15s linear;
+  width: 0;
+
+  &.h5p-highlight-the-words-menu-open {
+    width: 16em;
+    max-width: 16em;
+  }
+
+  .h5p-highlight-the-words-menu-title-container {
+    background-color: $color-base;
+    color: white;
+    overflow: hidden;
+    padding: 0.75em 1em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -198,12 +198,12 @@ export default class HighlightTheWordsContent {
   /**
    * Handle selection end event.
    */
-  handleSelectionEnd() {
+  handleSelectionEnd(event) {
     document.removeEventListener('selectionchange', this.selectionChangedListener);
 
     if (
-      !this.pendingSelection || // Just to be safe
-      this.pendingSelection.isCollapsed || // Nothing selected
+      event.path.indexOf(this.textArea) === -1 || // Not in text area
+      !this.pendingSelection || // Can have been cleared
       !Util.isChild(this.pendingSelection.anchorNode, this.textArea) ||
       !Util.isChild(this.pendingSelection.focusNode, this.textArea)
     ) {
@@ -218,6 +218,12 @@ export default class HighlightTheWordsContent {
     let end = this.pendingSelection.focusOffset;
     end += this.computeSelectionOffset(this.pendingSelection.focusNode);
     end = Util.nthIndexOf(this.maskHTML, '1', end) + 1;
+
+    if (this.pendingSelection.isCollapsed) {
+      // TODO: Can be used to do more with this selection
+      // const existingSelection = this.findSelection(start);
+      return; // Select on double click
+    }
 
     // New selection
     this.addSelection({

@@ -1,6 +1,5 @@
 // Import required classes
 import Util from './../h5p-highlight-the-words-util';
-
 import './h5p-highlight-the-words-color-legend.scss';
 
 /** Class representing the content */
@@ -9,20 +8,17 @@ export default class HighlightTheWordsColorLegend {
    * @constructor
    *
    * @param {object} params Parameter from editor.
-   * @param {object} [callbacks] Callbacks.
    */
-  constructor(params, callbacks) {
+  constructor(params) {
     // Set missing params
     this.params = Util.extend({
-      options: []
+      options: [],
+      classes: []
     }, params || {});
 
     if (!Array.isArray(this.params.classes)) {
       this.params.classes = [this.params.classes];
     }
-
-    // Sanitize callbacks
-    this.callbacks = callbacks || {};
 
     this.colorLegendContainer = document.createElement('div');
     this.colorLegendContainer.classList.add('h5p-highlight-the-words-color-legend-container');
@@ -37,7 +33,7 @@ export default class HighlightTheWordsColorLegend {
     colorLegendWrapper.classList.add('h5p-highlight-the-words-color-legend-wrapper');
     this.colorLegendContainer.appendChild(colorLegendWrapper);
 
-    params.options.forEach(option => {
+    this.params.options.forEach(option => {
       const colorDescription = document.createElement('div');
       colorDescription.classList.add('h5p-highlight-the-words-color-description');
 

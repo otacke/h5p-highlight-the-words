@@ -1,6 +1,5 @@
 // Import required classes
 import Util from './../h5p-highlight-the-words-util';
-
 import './h5p-highlight-the-words-menu-panel.scss';
 
 /** Class representing the content */
@@ -14,11 +13,16 @@ export default class HighlightTheWordsMenuPanel {
     // Set missing params
     this.params = Util.extend({
       a11y: {},
+      classes: [],
+      collapsible: true,
       expanded: false,
       label: '',
-      collapsible: true,
-      classes: []
+      passive: false
     }, params);
+
+    if (this.params.passive) {
+      this.params.collapsible = false;
+    }
 
     if (!Array.isArray(this.params.classes)) {
       this.params.classes = [this.params.classes];
@@ -33,16 +37,19 @@ export default class HighlightTheWordsMenuPanel {
     // Panel
     this.panel = document.createElement('div');
     this.panel.classList.add('h5p-highlight-the-words-panel');
+    if (this.params.collapsible) {
+      this.panel.classList.add('h5p-highlight-the-words-panel-collapsible');
+    }
+    if (this.params.menuItem) {
+      this.panel.classList.add('h5p-highlight-the-words-panel-menu-item');
+    }
 
     // Head
     this.panelHead = document.createElement('button');
     this.panelHead.classList.add('h5p-highlight-the-words-panel-head');
-    if (this.params.collapsible) {
-      this.panelHead.classList.add('h5p-highlight-the-words-panel-collapsible');
-      this.panelHead.addEventListener('click', (event) => {
-        this.handleClick(event.currentTarget);
-      });
-    }
+    this.panelHead.addEventListener('click', () => {
+      this.handleClick();
+    });
 
     this.disable();
 
@@ -64,17 +71,25 @@ export default class HighlightTheWordsMenuPanel {
     this.panelBody.classList.add('h5p-highlight-the-words-panel-body');
     this.panel.appendChild(this.panelBody);
 
+    if (this.params.content) {
+      this.setContent(this.params.content.getDOM());
+    }
+
     if (this.params.classes) {
       this.params.classes.forEach((className) => {
         this.params.classList.add(className);
       });
     }
 
-    if (this.params.expand === true || !this.params.collapsible) {
-      this.expand();
+    if (this.params.expanded === true) {
+      this.expand(true);
     }
     else {
-      this.collapse();
+      this.collapse(true);
+    }
+
+    if (this.params.passive === true) {
+      this.disable(true);
     }
   }
 
@@ -88,16 +103,26 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Open.
+   * @param {boolean} [force=false] Force expansion.
    */
-  expand() {
+  expand(force = false) {
+    if (!force && !this.params.collapsible) {
+      return;
+    }
+
     this.panel.classList.add('h5p-highlight-the-words-panel-expanded');
     this.stateExpanded = true;
   }
 
   /**
    * Close.
+   * @param {boolean} [force=false] Force collapse.
    */
-  collapse() {
+  collapse(force = false) {
+    if (!force && !this.params.collapsible) {
+      return;
+    }
+
     this.stateExpanded = false;
     this.panel.classList.remove('h5p-highlight-the-words-panel-expanded');
   }
@@ -111,15 +136,19 @@ export default class HighlightTheWordsMenuPanel {
       this.panel.classList.add('h5p-highlight-the-words-panel-active');
     }
     else {
-      this.panel.classList.add('h5p-highlight-the-words-panel-remove');
+      this.panel.classList.remove('h5p-highlight-the-words-panel-active');
     }
     this.stateActive = state;
   }
 
   /**
-   * Enable panel.
+   * @param {boolean} [force=false] Force enable.
    */
-  enable() {
+  enable(force = false) {
+    if (!force && this.params.passive) {
+      return;
+    }
+
     if (this.params.collapsible) {
       this.panelHead.setAttribute('tabIndex', 0);
     }
@@ -129,8 +158,13 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Disable panel.
+   * @param {boolean} [force=false] Force disable.
    */
-  disable() {
+  disable(force) {
+    if (!force && this.params.passive) {
+      return;
+    }
+
     this.panelHead.setAttribute('tabIndex', -1);
 
     this.panel.classList.add('h5p-highlight-the-words-panel-disabled');
@@ -138,27 +172,31 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Set content.
-   * @param {HTMLElement} [element] Use as content, erase if nullish.
+   * @param {HTMLElement} [content] Use as content, erase if nullish.
    */
-  setContent(element) {
+  setContent(content) {
     this.panelBody.innerHTML = '';
 
-    if (!element) {
+    if (!content) {
       return;
     }
 
-    this.panelBody.appendChild(element);
+    this.panelBody.appendChild(content);
   }
 
   /**
-   * Determine whether menu is open.
-   * @return {boolean} True, if menu is open, else false.
+   * Determine whether panel is expanded.
+   * @return {boolean} True, if panel is expanded, else false.
    */
   isExpanded() {
     return this.stateExpanded;
   }
 
   handleClick() {
+    if (this.params.passive) {
+      return;
+    }
+
     if (this.isExpanded()) {
       this.collapse();
     }

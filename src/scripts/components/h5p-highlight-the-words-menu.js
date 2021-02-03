@@ -1,7 +1,6 @@
 // Import required classes
-import HighlightTheWordsPanel from './h5p-highlight-the-words-menu-panel';
+import HighlightTheWordsPanelSet from './h5p-highlight-the-words-menu-panel-set';
 import Util from './../h5p-highlight-the-words-util';
-
 import './h5p-highlight-the-words-menu.scss';
 
 /** Class representing the content */
@@ -16,9 +15,7 @@ export default class HighlightTheWordsMenu {
     this.params = Util.extend({
       title: 'Menu',
       a11y: {},
-      l10n: {
-        colorLegend: 'Color legend'
-      },
+      l10n: {},
       open: false,
       classes: []
     }, params);
@@ -32,6 +29,7 @@ export default class HighlightTheWordsMenu {
     // Sanitize callbacks
     this.callbacks = callbacks || {};
     this.callbacks.onMenuToggled = callbacks.onMenuToggled || (() => {});
+    this.callbacks.onItemChanged = callbacks.onItemChanged || (() => {});
 
     // Menu
     this.menu = document.createElement('div');
@@ -40,30 +38,27 @@ export default class HighlightTheWordsMenu {
       this.handleMenuTransitioned();
     });
 
-    // Menu title
-    const menuTitle = document.createElement('div');
-    menuTitle.classList.add('h5p-highlight-the-words-menu-title-container');
-    menuTitle.innerText = this.params.title;
-    this.menu.appendChild(menuTitle);
-
     if (this.params.classes) {
       this.params.classes.forEach((className) => {
         this.menu.classList.add(className);
       });
     }
 
-    this.menuWrapper = document.createElement('div');
-    this.menuWrapper.classList.add('h5p-highlight-the-words-menu-wrapper');
-    this.menu.appendChild(this.menuWrapper);
+    // Menu title
+    const menuTitle = document.createElement('div');
+    menuTitle.classList.add('h5p-highlight-the-words-menu-title-container');
+    menuTitle.innerText = this.params.title;
+    this.menu.appendChild(menuTitle);
 
-    // TODO: Create panel manager
-    this.colorPanel = new HighlightTheWordsPanel({
-      expand: true,
-      collapsible: false,
-      label: this.params.l10n.colorLegend
-    });
-    this.colorPanel.setActive(true);
-    this.menuWrapper.appendChild(this.colorPanel.getDOM());
+    this.panelSet = new HighlightTheWordsPanelSet(
+      {
+        panels: this.params.panelSet.panels
+      },
+      {
+        onClick: this.callbacks.onItemChanged
+      }
+    );
+    this.menu.appendChild(this.panelSet.getDOM());
 
     if (this.params.open === true) {
       this.open();
@@ -105,17 +100,20 @@ export default class HighlightTheWordsMenu {
     return this.stateOpen;
   }
 
-  // TODO: True panel management
-  setPanelContent(content) {
-    this.colorPanel.setContent(content);
-  }
-
+  /**
+   * Handle menu transition in DOM.
+   */
   handleMenuTransitioned() {
+    if (!this.panelSet) {
+      return;
+    }
+
+    // Enable/disable panel set to prevent tabbing into it
     if (this.isOpen()) {
-      this.colorPanel.enable();
+      this.panelSet.enable();
     }
     else {
-      this.colorPanel.disable();
+      this.panelSet.disable();
     }
 
     this.callbacks.onMenuToggled(this.isOpen());

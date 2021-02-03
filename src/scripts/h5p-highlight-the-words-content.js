@@ -65,21 +65,32 @@ export default class HighlightTheWordsContent {
     this.page.classList.add('h5p-highlight-the-words-page');
     this.content.appendChild(this.page);
 
+    // Menu
     this.menu = new HighlightTheWordsMenu({
       title: params.menuTitle,
-      l10n: {
-        colorLegend: params.l10n.colorLegend
-      },
-      panels: []
+      panelSet: {
+        panels: [
+          {
+            id: 'colorLegend',
+            options: {
+              expanded: true,
+              collapsible: false,
+              label: params.l10n.colorLegend,
+              content: new HighlightTheWordsColorLegend({
+                options: params.highlightOptions
+              }),
+              passive: true
+            },
+          }
+        ]
+      }
     }, {
-      onMenuToggled: this.callbacks.onResizeRequired
+      onMenuToggled: this.callbacks.onResizeRequired,
+      onItemChanged: (id) => {
+        this.handleMenuItemChanged(id);
+      }
     });
     this.page.appendChild(this.menu.getDOM());
-
-    const colorLegend = new HighlightTheWordsColorLegend({
-      options: params.highlightOptions
-    });
-    this.menu.setPanelContent(colorLegend.getDOM());
 
     // Excercise
     this.exercise = document.createElement('div');
@@ -488,6 +499,16 @@ export default class HighlightTheWordsContent {
     else {
       this.openMenu();
     }
+  }
+
+  /**
+   * Handle menu item changed.
+   * @param {string} id Id of content.
+   */
+  handleMenuItemChanged(id) {
+    // Handle menu item changes here
+    let dummy = id;
+    id = dummy;
   }
 
   /**

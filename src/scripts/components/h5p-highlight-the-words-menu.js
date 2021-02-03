@@ -124,14 +124,6 @@ export default class HighlightTheWordsMenu {
    * @param {boolean} enterFullScreen If true, enter fullscreen, else exit.
    */
   toggleFullscreen(enterFullScreen = false) {
-    if (enterFullScreen) {
-      // Technically margin is missing, but should be fine.
-      this.menuWrapper.style.maxHeight = `${window.innerHeight - this.menuWrapper.offsetTop}px`;
-      this.menuWrapper.style.overflowY = 'auto';
-    }
-    else {
-      this.menuWrapper.style.maxHeight = '';
-      this.menuWrapper.style.overflowY = '';
-    }
+    this.panelSet.toggleFullscreen(enterFullScreen);
   }
 }

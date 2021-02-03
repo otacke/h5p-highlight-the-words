@@ -1,5 +1,6 @@
 import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
 import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
+import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 import Util from './h5p-highlight-the-words-util';
 
@@ -68,14 +69,17 @@ export default class HighlightTheWordsContent {
       title: params.menuTitle,
       l10n: {
         colorLegend: params.l10n.colorLegend
-      }
+      },
+      panels: []
     }, {
       onMenuToggled: this.callbacks.onResizeRequired
     });
     this.page.appendChild(this.menu.getDOM());
 
-    const colorLegend = this.buildColorLegend(params.highlightOptions);
-    this.menu.setPanelContent(colorLegend);
+    const colorLegend = new HighlightTheWordsColorLegend({
+      options: params.highlightOptions
+    });
+    this.menu.setPanelContent(colorLegend.getDOM());
 
     // Excercise
     this.exercise = document.createElement('div');
@@ -151,34 +155,6 @@ export default class HighlightTheWordsContent {
     textContainer.appendChild(this.textArea);
 
     return textContainer;
-  }
-
-  buildColorLegend(options = []) {
-    const colorLegendContainer = document.createElement('div');
-    colorLegendContainer.classList.add('h5p-highlight-the-words-color-legend-container');
-
-    const colorLegendWrapper = document.createElement('div');
-    colorLegendWrapper.classList.add('h5p-highlight-the-words-color-legend-wrapper');
-    colorLegendContainer.appendChild(colorLegendWrapper);
-
-    options.forEach(option => {
-      const colorDescription = document.createElement('div');
-      colorDescription.classList.add('h5p-highlight-the-words-color-description');
-
-      const colorField = document.createElement('div');
-      colorField.classList.add('h5p-highlight-the-words-color-field');
-      colorField.style.backgroundColor = option.backgroundColor;
-      colorDescription.appendChild(colorField);
-
-      const colorLabel = document.createElement('div');
-      colorLabel.classList.add('h5p-highlight-the-words-color-label');
-      colorLabel.innerHTML = option.description;
-      colorDescription.appendChild(colorLabel);
-
-      colorLegendWrapper.appendChild(colorDescription);
-    });
-
-    return colorLegendContainer;
   }
 
   /**

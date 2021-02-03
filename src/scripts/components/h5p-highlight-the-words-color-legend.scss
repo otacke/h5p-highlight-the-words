@@ -1,0 +1,30 @@
+@import './../../styles/h5p-highlight-the-words-main.scss';
+
+.h5p-highlight-the-words-color-legend-container {
+  width: 100%;
+
+  .h5p-highlight-the-words-color-legend-wrapper {
+    margin: 0.5em;
+
+    .h5p-highlight-the-words-color-description {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+
+      .h5p-highlight-the-words-color-field {
+        border-radius: $border-radius-small;
+        flex-shrink: 0;
+        height: 1em;
+        width: 0.5em;
+        margin-right: 0.5em;
+      }
+
+      .h5p-highlight-the-words-color-label {
+        font-size: .85em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}

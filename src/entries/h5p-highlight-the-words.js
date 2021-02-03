@@ -1,4 +1,4 @@
-import "../styles/h5p-highlight-the-words-main.scss";
+import "../styles/h5p-highlight-the-words.scss";
 import HighlightTheWords from "../scripts/h5p-highlight-the-words";
 
 // Load library

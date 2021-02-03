@@ -477,12 +477,15 @@ export default class HighlightTheWordsContent {
     if (enterFullScreen) {
       // Technically margin is missing, but should be fine.
       this.page.style.maxHeight = `${window.innerHeight - this.page.offsetTop}px`;
+      this.page.style.height = this.page.style.maxHeight;
       this.page.style.overflowY = 'auto';
     }
     else {
       this.page.style.maxHeight = '';
       this.page.style.overflowY = '';
     }
+
+    this.callbacks.onResizeRequired();
   }
 
   /**

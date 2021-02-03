@@ -140,7 +140,9 @@ export default class HighlightTheWords extends H5P.Question {
               this.content.enableFullscreenButton();
 
               this.on('enterFullScreen', () => {
-                this.content.toggleFullscreen(true);
+                setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+                  this.content.toggleFullscreen(true);
+                }, 100);
               });
 
               this.on('exitFullScreen', () => {

@@ -1,7 +1,9 @@
 import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
 import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
 import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend';
+import TextProcessing from './h5p-highlight-the-words-text-processing';
 import SelectionHandler from './h5p-highlight-the-words-selection-handler';
+import Util from './h5p-highlight-the-words-util';
 
 /** Class representing the content */
 export default class HighlightTheWordsContent {
@@ -9,13 +11,24 @@ export default class HighlightTheWordsContent {
    * @constructor
    */
   constructor(params = {}, callbacks = {}) {
-    // Sanitize
-    this.callbacks = callbacks;
+    // TODO: Sanitize
+    this.params = Util.extend({
+      a11y: {},
+      l10n: {}
+    }, params);
 
+
+    this.callbacks = callbacks;
     this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
     this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
 
-    params.text = params.text.replace(/(\r\n|\n|\r)/gm, '');
+    // TODO: This can be made nicer
+    const foo = TextProcessing.processText(
+      this.params.text,
+      this.params.highlightOptions.map(option => option.name)
+    );
+    this.params.text = foo.text.replace(/(\r\n|\n|\r)/gm, '');
+    this.solutions = foo.highlights;
 
     this.content = document.createElement('div');
     this.content.classList.add('h5p-highlight-the-words-content');
@@ -26,7 +39,7 @@ export default class HighlightTheWordsContent {
 
     // Menu
     this.menu = new HighlightTheWordsMenu({
-      title: params.menuTitle,
+      title: this.params.menuTitle,
       panelSet: {
         panels: [
           {
@@ -34,9 +47,9 @@ export default class HighlightTheWordsContent {
             options: {
               expanded: true,
               collapsible: false,
-              label: params.l10n.colorLegend,
+              label: this.params.l10n.colorLegend,
               content: new HighlightTheWordsColorLegend({
-                options: params.highlightOptions
+                options: this.params.highlightOptions
               }),
               passive: true
             },
@@ -55,8 +68,8 @@ export default class HighlightTheWordsContent {
     this.exercise.classList.add('h5p-highlight-the-words-exercise');
 
     // Task description
-    if (params.taskDescription) {
-      this.exercise.appendChild(this.buildTaskDescription(params.taskDescription));
+    if (this.params.taskDescription) {
+      this.exercise.appendChild(this.buildTaskDescription(this.params.taskDescription));
 
       const ruler = document.createElement('div');
       ruler.classList.add('h5p-highlight-the-words-ruler');
@@ -64,7 +77,7 @@ export default class HighlightTheWordsContent {
     }
 
     // Text container
-    this.originalText = params.text;
+    this.originalText = this.params.text;
 
     const textContainer = this.buildTextContainer(this.originalText);
     this.exercise.appendChild(textContainer);
@@ -76,8 +89,10 @@ export default class HighlightTheWordsContent {
     // TODO: Clean up build process of content
     this.selectionHandler = new SelectionHandler(
       {
-        text: params.text,
-        textArea: this.textArea
+        text: this.params.text,
+        textArea: this.textArea,
+        solutions: this.solutions,
+        highlightOptions: this.params.highlightOptions
       },
       {
         onSelectionChanged: (html) => {
@@ -92,14 +107,14 @@ export default class HighlightTheWordsContent {
     this.titlebar = new HighlightTheWordsTitlebar(
       {
         a11y: {
-          buttonMenuOpen: params.a11y.buttonMenuOpen,
-          buttonMenuClose: params.a11y.buttonMenuClose,
-          buttonFullscreenEnter: params.a11y.buttonFullscreenEnter,
-          buttonFullscreenExit: params.a11y.buttonFullscreenExit,
-          colorFor: params.a11y.colorFor,
-          eraser: params.a11y.eraser
+          buttonMenuOpen: this.params.a11y.buttonMenuOpen,
+          buttonMenuClose: this.params.a11y.buttonMenuClose,
+          buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
+          buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
+          colorFor: this.params.a11y.colorFor,
+          eraser: this.params.a11y.eraser
         },
-        highlightOptions: params.highlightOptions
+        highlightOptions: this.params.highlightOptions
       },
       {
         onColorChanged: (colors) => {
@@ -248,5 +263,25 @@ export default class HighlightTheWordsContent {
   closeMenu() {
     this.page.classList.remove('h5p-highlight-the-words-menu-open');
     this.menu.close();
+  }
+
+  /**
+   * Get latest score.
+   * @return {number} Latest score.
+   */
+  getScore() {
+    const score = this.selectionHandler
+      .getSelections()
+      .reduce((sum, selection) => sum + selection.score, 0);
+
+    return Math.max(0, score);
+  }
+
+  /**
+   * Get maximum possible score.
+   * @return {number} Maximum score possible.
+   */
+  getMaxScore() {
+    return this.solutions.length;
   }
 }

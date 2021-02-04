@@ -8,6 +8,14 @@ class SelectionHandler {
    */
   constructor(params = {}, callbacks = {}) {
     // TODO: Sanitizing
+    this.params = Util.extend({
+    }, params);
+
+    this.colorToNameLookup = {};
+    this.params.highlightOptions.forEach(option => {
+      this.colorToNameLookup[option.backgroundColor] = option.name;
+    });
+
     this.textArea = params.textArea;
     this.maskHTML = TextProcessing.createHTMLMask(params.text);
 
@@ -29,6 +37,14 @@ class SelectionHandler {
     this.pendingSelection = null;
 
     this.addSelectEventHandler();
+  }
+
+  /**
+   * Get selections.
+   * @return {object} Selections.
+   */
+  getSelections() {
+    return this.selections || [];
   }
 
   /**
@@ -197,7 +213,7 @@ class SelectionHandler {
     this.selections.push(params);
 
     this.selections = this.selections
-      .sort((a, b) => a.start - b.start)
+      .sort((a, b) => a.start - b.start) // Sort ascending
       .reduce((newSelections, selection, index) => {
         if (this.selections.length === 1) {
           return [selection];
@@ -219,7 +235,19 @@ class SelectionHandler {
         return [...newSelections, selection];
       }, [])
       .filter(selection => {
-        return selection.backgroundColor !== ''; // Remove deleted selections
+        // Remove deleted selections
+        return selection.backgroundColor !== '';
+      })
+      .map(selection => {
+        // Evaluate
+        const found = this.params.solutions.filter(solution =>
+          solution.name === this.colorToNameLookup[selection.backgroundColor] &&
+          solution.start === selection.start &&
+          solution.end === selection.end
+        );
+
+        selection.score = (found.length === 1) ? 1 : -1;
+        return selection;
       });
   }
 

@@ -232,7 +232,8 @@ class TextProcessing {
       textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
 
       text = text.substr(matchPositionEnd + 1);
-      position += textOutput.length; // Don't forget previous runs
+
+      position = textOutput.length; // Don't forget previous runs
     }
 
     return {

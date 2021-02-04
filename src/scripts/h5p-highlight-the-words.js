@@ -1,6 +1,5 @@
 // Import required classes
 import HighlightTheWordsContent from './h5p-highlight-the-words-content';
-import TextProcessing from './h5p-highlight-the-words-text-processing';
 import Util from './h5p-highlight-the-words-util';
 
 /**
@@ -88,11 +87,6 @@ export default class HighlightTheWords extends H5P.Question {
     // this.previousState now holds the saved content state of the previous session
     this.previousState = this.extras.previousState || {};
 
-    const foo = TextProcessing.processText(
-      this.params.text,
-      this.params.highlightOptions.map(option => option.name)
-    );
-
     /**
      * Register the DOM elements with H5P.Question
      */
@@ -100,7 +94,7 @@ export default class HighlightTheWords extends H5P.Question {
       this.content = new HighlightTheWordsContent(
         {
           taskDescription: this.params.taskDescription,
-          text: foo.text,
+          text: this.params.text,
           menuTitle: this.getTitle(),
           highlightOptions: this.params.highlightOptions,
           a11y: {
@@ -212,11 +206,11 @@ export default class HighlightTheWords extends H5P.Question {
   /**
    * Get latest score.
    *
-   * @return {number} latest score.
+   * @return {number} Latest score.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-2}
    */
   getScore() {
-    return 0; // TODO: Return real score here
+    return this.content.getScore();
   }
 
   /**
@@ -226,7 +220,8 @@ export default class HighlightTheWords extends H5P.Question {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-3}
    */
   getMaxScore() {
-    return 0; // TODO: Return real maximum score here
+    this.maxScore = this.maxScore || this.content.getMaxScore();
+    return this.maxScore;
   }
 
   /**

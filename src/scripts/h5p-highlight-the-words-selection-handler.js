@@ -20,7 +20,7 @@ class SelectionHandler {
     this.maskHTML = TextProcessing.createHTMLMask(params.text);
 
     this.callbacks = callbacks || {};
-    this.callbacks.onSelectionChanged = callbacks.onSelectionChanged || (() => {});
+    this.callbacks.onTextUpdated = callbacks.onTextUpdated || (() => {});
 
     // TODO: Get rid of these two functions
     const structureEncoded = TextProcessing.buildTextStructure(params.text);
@@ -36,7 +36,23 @@ class SelectionHandler {
 
     this.pendingSelection = null;
 
+    this.disabled = false;
+
     this.addSelectEventHandler();
+  }
+
+  /**
+   * Disable.
+   */
+  disable() {
+    this.disabled = true;
+  }
+
+  /**
+   * Enable.
+   */
+  enable() {
+    this.disabled = false;
   }
 
   /**
@@ -56,6 +72,10 @@ class SelectionHandler {
 
     this.selectionChangedListener = this.handleSelectionChange.bind(this);
     this.textArea.addEventListener('selectstart', (event) => {
+      if (this.disabled) {
+        return;
+      }
+
       // Prevent accidentally selecting with multiple clicks, // TODO: Remove?
       if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
         return;
@@ -70,6 +90,10 @@ class SelectionHandler {
    * Handle selection change event.
    */
   handleSelectionChange() {
+    if (this.disabled) {
+      return;
+    }
+
     // Will always be from textContainer
     this.pendingSelection = document.getSelection();
   }
@@ -78,6 +102,10 @@ class SelectionHandler {
    * Handle selection end event.
    */
   handleSelectionEnd(event) {
+    if (this.disabled) {
+      return;
+    }
+
     document.removeEventListener('selectionchange', this.selectionChangedListener);
 
     if (
@@ -260,10 +288,18 @@ class SelectionHandler {
   }
 
   /**
+   * Remove all selections.
+   */
+  removeSelections() {
+    this.selections = [];
+  }
+
+  /**
    * Get ouptut text and mask for a selection.
    * @param {object[]} selection Selections by user.
+   * @param {string} [mode=null] Mode, scores|solution.
    */
-  getSelectionOutput(selection) { ///
+  getSelectionOutput(selection, mode) { ///
     if (!selection.backgroundColor) {
       return { // Not selected, use original text
         text: this.originalTextDecoded.substring(selection.start, selection.end),
@@ -271,7 +307,12 @@ class SelectionHandler {
       };
     }
 
-    const spanPre = `<span style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+    let spanPre = `<span style="position: relative; background-color: ${selection.backgroundColor}; color: ${selection.color};"`;
+    if (mode === 'scores') {
+      const className = (selection.score === 1) ? 'h5p-highlight-the-words-correct' : 'h5p-highlight-the-words-wrong';
+      spanPre = `${spanPre} class="${className}"`;
+    }
+    spanPre = `${spanPre}>`;
     const spanPost = '</span>';
 
     let text = this.originalTextDecoded.substring(selection.start, selection.end);
@@ -320,8 +361,10 @@ class SelectionHandler {
    * Update text container.
    * Rebuilds the innerHTML from the original text, because modifying the
    * HTML strings would be hell
+   *
+   * @param {string} [mode=null] Mode, scores|solution.
    */
-  updateTextContainer() { ///
+  updateTextContainer(mode = null) { ///
     // Break up selections, assuming no overlaps and sorted
     let selectionSplits = [];
     let donePosition = 0;
@@ -344,14 +387,13 @@ class SelectionHandler {
     }
 
     const results = selectionSplits.map(selection => {
-      return this.getSelectionOutput(selection);
+      return this.getSelectionOutput(selection, mode);
     });
 
     const newText = results.reduce((text, segment) => `${text}${segment.text}`, '');
     const newMask = results.reduce((mask, segment) => `${mask}${segment.mask}`, '');
 
-    // TODO: Callback
-    this.callbacks.onSelectionChanged(TextProcessing.htmlEncodeMasked(newText, newMask));
+    this.callbacks.onTextUpdated(TextProcessing.htmlEncodeMasked(newText, newMask));
   }
 
 }

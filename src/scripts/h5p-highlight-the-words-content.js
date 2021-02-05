@@ -95,8 +95,8 @@ export default class HighlightTheWordsContent {
         highlightOptions: this.params.highlightOptions
       },
       {
-        onSelectionChanged: (html) => {
-          this.handleSelectionChanged(html);
+        onTextUpdated: (html) => {
+          this.handleTextUpdated(html);
         }
       }
     );
@@ -181,6 +181,30 @@ export default class HighlightTheWordsContent {
   }
 
   /**
+   * Disable.
+   */
+  disable() {
+    this.selectionHandler.disable();
+    this.textArea.classList.add('h5p-highlight-the-words-disabled');
+  }
+
+  /**
+   * Enable.
+   */
+  enable() {
+    this.selectionHandler.enable();
+    this.textArea.classList.remove('h5p-highlight-the-words-disabled');
+  }
+
+  /**
+   * Reset.
+   */
+  reset() {
+    this.selectionHandler.removeSelections();
+    this.updateTextContainer();
+  }
+
+  /**
    * Enable fullscreen button in titlebar.
    */
   enableFullscreenButton() {
@@ -242,11 +266,24 @@ export default class HighlightTheWordsContent {
   }
 
   /**
-   * Handle selection in text changed.
+   * Handle text updated.
    * @param {string} html HTML to display in text area.
    */
-  handleSelectionChanged(html) {
+  handleTextUpdated(html) {
     this.textArea.innerHTML = html;
+
+    // Display score points if available
+    const scorePoints = new H5P.Question.ScorePoints();
+
+    const corrects = document.querySelectorAll('.h5p-highlight-the-words-correct');
+    [...corrects].forEach(correct => {
+      correct.appendChild(scorePoints.getElement(true));
+    });
+
+    const wrongs = document.querySelectorAll('.h5p-highlight-the-words-wrong');
+    [...wrongs].forEach(correct => {
+      correct.appendChild(scorePoints.getElement(false));
+    });
   }
 
   /**
@@ -283,5 +320,13 @@ export default class HighlightTheWordsContent {
    */
   getMaxScore() {
     return this.solutions.length;
+  }
+
+  /**
+   * Update text container
+
+   */
+  updateTextContainer(mode) {
+    this.selectionHandler.updateTextContainer(mode);
   }
 }

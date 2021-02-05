@@ -164,7 +164,6 @@ export default class HighlightTheWords extends H5P.Question {
   addButtons() {
     // Check answer button
     this.addButton('check-answer', this.params.l10n.checkAnswer, () => {
-      // TODO: Implement something useful to do on click
       this.hideButton('check-answer');
 
       if (this.params.behaviour.enableSolutionsButton) {
@@ -174,6 +173,9 @@ export default class HighlightTheWords extends H5P.Question {
       if (this.params.behaviour.enableRetry) {
         this.showButton('try-again');
       }
+
+      this.content.disable();
+      this.content.updateTextContainer('scores');
     }, true, {}, {});
 
     // Show solution button
@@ -241,7 +243,8 @@ export default class HighlightTheWords extends H5P.Question {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-5}
    */
   resetTask() {
-    // TODO: Reset what needs to be reset
+    this.content.reset();
+    this.content.enable();
   }
 
   /**

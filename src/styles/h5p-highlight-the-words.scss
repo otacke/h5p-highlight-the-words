@@ -26,17 +26,21 @@
           line-height: 1.5;
           padding: $margin-50;
 
+          .h5p-highlight-the-words-selection {
+            position: relative;
+          }
+
+          .h5p-question-plus-one,
+          .h5p-question-minus-one {
+            top: -1em;
+          }
+
           &.h5p-highlight-the-words-disabled {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
           }
-        }
-
-        .h5p-question-plus-one,
-        .h5p-question-minus-one {
-          top: -1em;
         }
       }
 

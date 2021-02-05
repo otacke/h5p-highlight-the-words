@@ -28,7 +28,15 @@ export default class HighlightTheWordsContent {
       this.params.highlightOptions.map(option => option.name)
     );
     this.params.text = foo.text.replace(/(\r\n|\n|\r)/gm, '');
-    this.solutions = foo.highlights;
+    this.solutions = foo.highlights.map(solution => {
+      const highlightOption = this.params.highlightOptions
+        .filter(option => option.name === solution.name)
+        .shift();
+      solution.backgroundColor = highlightOption.backgroundColor;
+      solution.color = highlightOption.color;
+
+      return solution;
+    });
 
     this.content = document.createElement('div');
     this.content.classList.add('h5p-highlight-the-words-content');
@@ -95,8 +103,8 @@ export default class HighlightTheWordsContent {
         highlightOptions: this.params.highlightOptions
       },
       {
-        onTextUpdated: (html) => {
-          this.handleTextUpdated(html);
+        onTextUpdated: (html, mode) => {
+          this.handleTextUpdated(html, mode);
         }
       }
     );
@@ -205,6 +213,13 @@ export default class HighlightTheWordsContent {
   }
 
   /**
+   * Show solutions.
+   */
+  showSolution() {
+    this.updateTextContainer('solution');
+  }
+
+  /**
    * Enable fullscreen button in titlebar.
    */
   enableFullscreenButton() {
@@ -268,8 +283,11 @@ export default class HighlightTheWordsContent {
   /**
    * Handle text updated.
    * @param {string} html HTML to display in text area.
+   * @param {string} [mode=null] Mode, scores|solution.
    */
-  handleTextUpdated(html) {
+  handleTextUpdated(html, mode) {
+    // TODO: Display solution in second text area (next to/below text)
+
     this.textArea.innerHTML = html;
 
     // Display score points if available
@@ -324,7 +342,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Update text container
-
+   * @param {string} [mode=null] Mode, scores|solution.
    */
   updateTextContainer(mode) {
     this.selectionHandler.updateTextContainer(mode);

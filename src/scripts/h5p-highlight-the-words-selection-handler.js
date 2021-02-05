@@ -307,12 +307,15 @@ class SelectionHandler {
       };
     }
 
-    let spanPre = `<span style="position: relative; background-color: ${selection.backgroundColor}; color: ${selection.color};"`;
+    const classNames = ['h5p-highlight-the-words-selection'];
     if (mode === 'scores') {
-      const className = (selection.score === 1) ? 'h5p-highlight-the-words-correct' : 'h5p-highlight-the-words-wrong';
-      spanPre = `${spanPre} class="${className}"`;
+      const className = (selection.score === 1) ?
+        'h5p-highlight-the-words-correct' :
+        'h5p-highlight-the-words-wrong';
+      classNames.push(className);
     }
-    spanPre = `${spanPre}>`;
+
+    const spanPre = `<span class="${classNames.join(' ')}" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
     const spanPost = '</span>';
 
     let text = this.originalTextDecoded.substring(selection.start, selection.end);
@@ -364,12 +367,16 @@ class SelectionHandler {
    *
    * @param {string} [mode=null] Mode, scores|solution.
    */
-  updateTextContainer(mode = null) { ///
+  updateTextContainer(mode = null) {
+    const selections = (mode !== 'solution') ?
+      this.selections :
+      this.params.solutions;
+
     // Break up selections, assuming no overlaps and sorted
     let selectionSplits = [];
     let donePosition = 0;
 
-    this.selections.forEach(selection => {
+    selections.forEach(selection => {
       if (selection.start > donePosition) {
         selectionSplits.push({
           start: donePosition,
@@ -393,7 +400,7 @@ class SelectionHandler {
     const newText = results.reduce((text, segment) => `${text}${segment.text}`, '');
     const newMask = results.reduce((mask, segment) => `${mask}${segment.mask}`, '');
 
-    this.callbacks.onTextUpdated(TextProcessing.htmlEncodeMasked(newText, newMask));
+    this.callbacks.onTextUpdated(TextProcessing.htmlEncodeMasked(newText, newMask), mode);
   }
 
 }

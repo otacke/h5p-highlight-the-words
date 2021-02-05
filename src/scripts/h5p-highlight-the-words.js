@@ -180,7 +180,9 @@ export default class HighlightTheWords extends H5P.Question {
 
     // Show solution button
     this.addButton('show-solution', this.params.l10n.showSolution, () => {
-      // TODO: Implement something useful to do on click
+      this.hideButton('show-solution');
+
+      this.showSolutions();
     }, false, {}, {});
 
     // Retry button
@@ -232,7 +234,8 @@ export default class HighlightTheWords extends H5P.Question {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-4}
    */
   showSolutions() {
-    // TODO: Implement showing the solutions
+    this.content.disable();
+    this.content.showSolution();
 
     this.trigger('resize');
   }

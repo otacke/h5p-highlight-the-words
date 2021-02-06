@@ -307,16 +307,17 @@ class SelectionHandler {
       };
     }
 
-    const classNames = ['h5p-highlight-the-words-selection'];
+    const spanPre = `<span class="h5p-highlight-the-words-selection" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+
+    const classNames = ['h5p-highlight-the-words-score-point'];
     if (mode === 'scores') {
       const className = (selection.score === 1) ?
         'h5p-highlight-the-words-correct' :
         'h5p-highlight-the-words-wrong';
       classNames.push(className);
     }
-
-    const spanPre = `<span class="${classNames.join(' ')}" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
-    const spanPost = '</span>';
+    // Separate span for score point to get correct position for multi-line selections
+    const spanPost = `</span><span class="${classNames.join(' ')}"></span>`;
 
     let text = this.originalTextDecoded.substring(selection.start, selection.end);
     let mask = this.maskHTMLDecoded.substring(selection.start, selection.end);

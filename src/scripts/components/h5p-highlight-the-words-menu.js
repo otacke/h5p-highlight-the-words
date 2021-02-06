@@ -123,7 +123,7 @@ export default class HighlightTheWordsMenu {
    * Set dimensions to fullscreen.
    * @param {boolean} enterFullScreen If true, enter fullscreen, else exit.
    */
-  toggleFullscreen(enterFullScreen = false) {
-    this.panelSet.toggleFullscreen(enterFullScreen);
+  setFixedHeight(enterFullScreen = false) {
+    this.panelSet.setFixedHeight(enterFullScreen);
   }
 }

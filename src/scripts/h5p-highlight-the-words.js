@@ -173,6 +173,14 @@ export default class HighlightTheWords extends H5P.Question {
         }, 150); // Required for feedback and scorbar to be gone again
       }
     });
+
+    window.addEventListener('orientationchange', () => {
+      if (H5P.isFullscreen) {
+        setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+          this.content.setFixedHeight(true);
+        }, 100);
+      }
+    }, false);
   }
 
   /**

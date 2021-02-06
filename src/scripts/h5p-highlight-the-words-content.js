@@ -251,9 +251,20 @@ export default class HighlightTheWordsContent {
    */
   toggleFullscreen(enterFullScreen = false) {
     this.titlebar.toggleFullscreenButton(enterFullScreen);
-    this.menu.toggleFullscreen(enterFullScreen);
 
-    if (enterFullScreen) {
+    this.setFixedHeight(enterFullScreen);
+
+    this.callbacks.onResizeRequired();
+  }
+
+  /**
+   * Fix height to current screen size.
+   * @param {boolean} state If true, fix height.
+   */
+  setFixedHeight(state) {
+    this.menu.setFixedHeight(state);
+
+    if (state) {
       // Technically margin is missing, but should be fine.
       this.page.style.maxHeight = `${window.innerHeight - this.page.offsetTop}px`;
       this.page.style.height = this.page.style.maxHeight;
@@ -261,10 +272,9 @@ export default class HighlightTheWordsContent {
     }
     else {
       this.page.style.maxHeight = '';
+      this.page.style.height = '';
       this.page.style.overflowY = '';
     }
-
-    this.callbacks.onResizeRequired();
   }
 
   /**

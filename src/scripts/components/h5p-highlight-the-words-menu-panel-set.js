@@ -89,7 +89,7 @@ export default class HighlightTheWordsMenuPanelSet {
    * Set dimensions to fullscreen.
    * @param {boolean} enterFullScreen If true, enter fullscreen, else exit.
    */
-  toggleFullscreen(enterFullScreen = false) {
+  setFixedHeight(enterFullScreen = false) {
     if (enterFullScreen) {
       // Technically margin is missing, but should be fine.
       this.panelset.style.maxHeight = `${window.innerHeight - this.panelset.offsetTop}px`;

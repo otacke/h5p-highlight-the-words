@@ -18,32 +18,45 @@
         width: 100%;
       }
 
-      .h5p-highlight-the-words-text-container {
-        font-size: 1.25em;
-        width: 100%;
+      .h5p-highlight-the-words-text-areas-container {
+        display: flex;
+        flex-direction: row;
 
-        .h5p-highlight-the-words-text {
-          line-height: 1.5;
-          padding: $margin-50;
+        .h5p-highlight-the-words-text-container {
+          font-size: 1.25em;
+          width: 100%;
 
-          .h5p-highlight-the-words-selection {
-            position: relative;
-          }
-
-          .h5p-highlight-the-words-score-point {
-            position: relative;
-          }
-
-          .h5p-question-plus-one,
-          .h5p-question-minus-one {
-            top: -1em;
+          &.h5p-highlight-the-words-solution {
+            border-left: 2px dashed $color-grey-14;
           }
 
           &.h5p-highlight-the-words-disabled {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            display: none;
+          }
+
+          .h5p-highlight-the-words-text {
+            line-height: 1.5;
+            padding: $margin-50;
+
+            .h5p-highlight-the-words-selection {
+              position: relative;
+            }
+
+            .h5p-highlight-the-words-score-point {
+              position: relative;
+            }
+
+            .h5p-question-plus-one,
+            .h5p-question-minus-one {
+              top: -1em;
+            }
+
+            &.h5p-highlight-the-words-disabled {
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+            }
           }
         }
       }
@@ -82,6 +95,19 @@
 
     .h5p-highlight-the-words-exercise {
       display: none;
+    }
+  }
+}
+
+@media only screen and (max-width: 639px) {
+  .h5p-highlight-the-words .h5p-question-content .h5p-highlight-the-words-page .h5p-highlight-the-words-exercise {
+    .h5p-highlight-the-words-text-areas-container {
+      flex-direction: column;
+
+      .h5p-highlight-the-words-text-container.h5p-highlight-the-words-solution {
+        border-left: 0;
+        border-top: 2px dashed $color-grey-14;
+      }
     }
   }
 }

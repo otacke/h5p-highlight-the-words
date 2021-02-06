@@ -38,6 +38,9 @@ export default class HighlightTheWordsContent {
       return solution;
     });
 
+    // Text container (TODO: originalText needed?)
+    this.originalText = this.params.text;
+
     this.content = document.createElement('div');
     this.content.classList.add('h5p-highlight-the-words-content');
 
@@ -84,11 +87,22 @@ export default class HighlightTheWordsContent {
       this.exercise.appendChild(ruler);
     }
 
-    // Text container
-    this.originalText = this.params.text;
+    const textAreasContainer = document.createElement('div');
+    textAreasContainer.classList.add('h5p-highlight-the-words-text-areas-container');
+    this.exercise.appendChild(textAreasContainer);
 
-    const textContainer = this.buildTextContainer(this.originalText);
-    this.exercise.appendChild(textContainer);
+    let [textContainer, textArea] = this.buildTextContainer(this.originalText);
+    textAreasContainer.appendChild(textContainer);
+    this.textArea = textArea;
+
+    [textContainer, textArea] = this.buildTextContainer('');
+    textContainer.classList.add('h5p-highlight-the-words-disabled');
+    textContainer.classList.add('h5p-highlight-the-words-solution');
+    textArea.classList.add('h5p-highlight-the-words-solution');
+    textAreasContainer.appendChild(textContainer);
+
+    this.textContainerSolution = textContainer;
+    this.textAreaSolution = textArea;
 
     const ruler = document.createElement('div');
     ruler.classList.add('h5p-highlight-the-words-ruler');
@@ -178,14 +192,13 @@ export default class HighlightTheWordsContent {
     const textContainer = document.createElement('div');
     textContainer.classList.add('h5p-highlight-the-words-text-container');
 
-    // TODO: Don't define textArea here but outside of function
-    this.textArea = document.createElement('div');
-    this.textArea.classList.add('h5p-highlight-the-words-text');
+    const textArea = document.createElement('div');
+    textArea.classList.add('h5p-highlight-the-words-text');
 
-    this.textArea.innerHTML = text;
-    textContainer.appendChild(this.textArea);
+    textArea.innerHTML = text;
+    textContainer.appendChild(textArea);
 
-    return textContainer;
+    return [textContainer, textArea];
   }
 
   /**
@@ -209,7 +222,8 @@ export default class HighlightTheWordsContent {
    */
   reset() {
     this.selectionHandler.removeSelections();
-    this.updateTextContainer();
+    this.updateTextContainer('reset');
+    this.textContainerSolution.classList.add('h5p-highlight-the-words-disabled');
   }
 
   /**
@@ -217,6 +231,7 @@ export default class HighlightTheWordsContent {
    */
   showSolution() {
     this.updateTextContainer('solution');
+    this.textContainerSolution.classList.remove('h5p-highlight-the-words-disabled');
   }
 
   /**
@@ -286,22 +301,31 @@ export default class HighlightTheWordsContent {
    * @param {string} [mode=null] Mode, scores|solution.
    */
   handleTextUpdated(html, mode) {
-    // TODO: Display solution in second text area (next to/below text)
+    if (mode === 'reset') {
+      this.textArea.innerHTML = html;
+      this.textAreaSolution.innerHTML = '';
+    }
+    else if (mode === 'solution') {
+      this.textAreaSolution.innerHTML = html;
+    }
+    else {
+      this.textArea.innerHTML = html;
+    }
 
-    this.textArea.innerHTML = html;
+    if (mode === 'scores') {
+      // Display score points if available
+      const scorePoints = new H5P.Question.ScorePoints();
 
-    // Display score points if available
-    const scorePoints = new H5P.Question.ScorePoints();
+      const corrects = this.textArea.querySelectorAll('.h5p-highlight-the-words-correct');
+      [...corrects].forEach(correct => {
+        correct.appendChild(scorePoints.getElement(true));
+      });
 
-    const corrects = document.querySelectorAll('.h5p-highlight-the-words-correct');
-    [...corrects].forEach(correct => {
-      correct.appendChild(scorePoints.getElement(true));
-    });
-
-    const wrongs = document.querySelectorAll('.h5p-highlight-the-words-wrong');
-    [...wrongs].forEach(correct => {
-      correct.appendChild(scorePoints.getElement(false));
-    });
+      const wrongs = this.textArea.querySelectorAll('.h5p-highlight-the-words-wrong');
+      [...wrongs].forEach(correct => {
+        correct.appendChild(scorePoints.getElement(false));
+      });
+    }
   }
 
   /**

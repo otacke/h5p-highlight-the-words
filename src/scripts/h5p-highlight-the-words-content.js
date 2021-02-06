@@ -106,6 +106,7 @@ export default class HighlightTheWordsContent {
 
     const ruler = document.createElement('div');
     ruler.classList.add('h5p-highlight-the-words-ruler');
+    ruler.classList.add('h5p-highlight-the-words-margin-bottom');
     this.exercise.appendChild(ruler);
 
     // TODO: Clean up build process of content

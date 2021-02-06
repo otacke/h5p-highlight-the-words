@@ -86,76 +86,93 @@ export default class HighlightTheWords extends H5P.Question {
 
     // this.previousState now holds the saved content state of the previous session
     this.previousState = this.extras.previousState || {};
+  }
 
-    /**
-     * Register the DOM elements with H5P.Question
-     */
-    this.registerDomElements = () => {
-      this.content = new HighlightTheWordsContent(
-        {
-          taskDescription: this.params.taskDescription,
-          text: this.params.text,
-          menuTitle: this.getTitle(),
-          highlightOptions: this.params.highlightOptions,
-          a11y: {
-            buttonMenuOpen: this.params.a11y.buttonMenuOpen,
-            buttonMenuClose: this.params.a11y.buttonMenuClose,
-            buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
-            buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
-            colorFor: this.params.a11y.colorFor,
-            eraser: this.params.a11y.eraser
-          },
-          l10n: {
-            colorLegend: this.params.l10n.colorLegend
-          }
+  /**
+   * Register the DOM elements with H5P.Question
+   */
+  registerDomElements() {
+    this.content = new HighlightTheWordsContent(
+      {
+        taskDescription: this.params.taskDescription,
+        text: this.params.text,
+        menuTitle: this.getTitle(),
+        highlightOptions: this.params.highlightOptions,
+        a11y: {
+          buttonMenuOpen: this.params.a11y.buttonMenuOpen,
+          buttonMenuClose: this.params.a11y.buttonMenuClose,
+          buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
+          buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
+          colorFor: this.params.a11y.colorFor,
+          eraser: this.params.a11y.eraser
         },
-        {
-          onButtonFullscreenClicked: () => {
-            this.toggleFullscreen();
-          },
-          onResizeRequired: () => {
-            this.handleResizeRequired();
+        l10n: {
+          colorLegend: this.params.l10n.colorLegend
+        }
+      },
+      {
+        onButtonFullscreenClicked: () => {
+          this.toggleFullscreen();
+        },
+        onResizeRequired: () => {
+          this.handleResizeRequired();
+        }
+      }
+    );
+
+    // Register content with H5P.Question
+    this.setContent(this.content.getDOM());
+
+    // Register feedback/scorebar so we can re-attach it
+    this.setFeedback('', 0, this.getMaxScore());
+
+    // Register Buttons
+    this.addButtons();
+
+    document.addEventListener('readystatechange', () => {
+      if (document.readyState === 'complete') {
+
+        // Hide temporary feedback
+        this.removeFeedback();
+
+        setTimeout(() => {
+          // Add fullscreen button on first call after H5P.Question has created the DOM
+          this.container = document.querySelector('.h5p-container');
+          if (this.container) {
+            this.content.enableFullscreenButton();
+
+            this.on('enterFullScreen', () => {
+              setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+                this.content.toggleFullscreen(true);
+              }, 100);
+            });
+
+            this.on('exitFullScreen', () => {
+              this.content.toggleFullscreen(false);
+            });
+
+            // Reattach H5P.Question containers to exercise
+            const exercise = this.content.getExerciseDOM();
+            const questionFeedback = document.querySelector('.h5p-question-feedback');
+            exercise.appendChild(questionFeedback);
+
+            const questionScorebar = document.querySelector('.h5p-question-scorebar');
+            exercise.appendChild(questionScorebar);
+
+            const questionButtons = document.querySelector('.h5p-question-buttons');
+            exercise.appendChild(questionButtons);
+
+            window.requestAnimationFrame(() => {
+              questionFeedback.classList.add('h5p-highlight-the-words-initialized');
+              questionScorebar.classList.add('h5p-highlight-the-words-initialized');
+              questionButtons.classList.add('h5p-highlight-the-words-initialized');
+
+              this.trigger('resize');
+            });
           }
-        }
-      );
-
-      // Register content with H5P.Question
-      this.setContent(this.content.getDOM());
-
-      // Register Buttons
-      this.addButtons();
-
-      document.addEventListener('readystatechange', () => {
-        if (document.readyState === 'complete') {
-          setTimeout(() => {
-            // Add fullscreen button on first call after H5P.Question has created the DOM
-            this.container = document.querySelector('.h5p-container');
-            if (this.container) {
-              this.content.enableFullscreenButton();
-
-              this.on('enterFullScreen', () => {
-                setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
-                  this.content.toggleFullscreen(true);
-                }, 100);
-              });
-
-              this.on('exitFullScreen', () => {
-                this.content.toggleFullscreen(false);
-              });
-
-              // Reattach buttons to exercise container
-              const questionButtons = document.querySelector('.h5p-question-buttons');
-              const exercise = this.content.getExerciseDOM();
-              exercise.appendChild(questionButtons);
-
-              window.requestAnimationFrame(() => {
-                this.trigger('resize');
-              });
-            }
-          }, 0);
-        }
-      });
-    };
+        }, 150); // Required for feedback and scorbar to be gone again
+      }
+    });
   }
 
   /**
@@ -164,37 +181,79 @@ export default class HighlightTheWords extends H5P.Question {
   addButtons() {
     // Check answer button
     this.addButton('check-answer', this.params.l10n.checkAnswer, () => {
-      this.hideButton('check-answer');
-
-      if (this.params.behaviour.enableSolutionsButton) {
-        this.showButton('show-solution');
-      }
-
-      if (this.params.behaviour.enableRetry) {
-        this.showButton('try-again');
-      }
-
-      this.content.disable();
-      this.content.updateTextContainer('scores');
-    }, true, {}, {});
+      this.handleCheckAnswer();
+    }, true, {
+      'aria-label': this.params.a11y.checkAnswer
+    }, {});
 
     // Show solution button
     this.addButton('show-solution', this.params.l10n.showSolution, () => {
-      this.hideButton('show-solution');
-
-      this.showSolutions();
-    }, false, {}, {});
+      this.handleShowSolution();
+    }, false, {
+      'aria-label': this.params.a11y.showSolution
+    }, {});
 
     // Retry button
     this.addButton('try-again', this.params.l10n.tryAgain, () => {
-      this.showButton('check-answer');
-      this.hideButton('show-solution');
-      this.hideButton('try-again');
+      this.handleRetry();
+    }, false, {
+      'aria-label': this.params.a11y.retry
+    }, {});
+  }
 
-      this.resetTask();
+  /**
+   * Handle check answer button
+   */
+  handleCheckAnswer() {
+    this.hideButton('check-answer');
 
-      this.trigger('resize');
-    }, false, {}, {});
+    if (this.params.behaviour.enableSolutionsButton) {
+      this.showButton('show-solution');
+    }
+
+    if (this.params.behaviour.enableRetry) {
+      this.showButton('try-again');
+    }
+
+    this.content.disable();
+    this.content.updateTextContainer('scores');
+
+    const textScore = H5P.Question.determineOverallFeedback(
+      this.params.overallFeedback, this.getScore() / this.getMaxScore());
+
+    // Output via H5P.Question
+    const ariaMessage = (this.params.a11y.yourResult || '@score / @total')
+      .replace('@score', this.getScore())
+      .replace('@total', this.getMaxScore());
+
+    this.setFeedback(
+      (textScore).trim(),
+      this.getScore(),
+      this.getMaxScore(),
+      ariaMessage
+    );
+  }
+
+  /**
+   * Handle show solution button
+   */
+  handleShowSolution() {
+    this.hideButton('show-solution');
+
+    this.showSolutions();
+  }
+
+  /**
+   * Handle retry button
+   */
+  handleRetry() {
+    this.showButton('check-answer');
+    this.hideButton('show-solution');
+    this.hideButton('try-again');
+
+    this.resetTask();
+
+    this.trigger('resize');
   }
 
   /**
@@ -246,6 +305,7 @@ export default class HighlightTheWords extends H5P.Question {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-5}
    */
   resetTask() {
+    this.removeFeedback();
     this.content.reset();
     this.content.enable();
   }

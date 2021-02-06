@@ -2,6 +2,28 @@
 
 .h5p-highlight-the-words {
 
+  .h5p-question-feedback {
+    &:not(.h5p-highlight-the-words-initialized) {
+      display: none;
+    }
+  }
+
+  .h5p-question-scorebar {
+    margin-bottom: 0;
+
+    &:not(.h5p-highlight-the-words-initialized) {
+      display: none;
+    }
+  }
+
+  .h5p-question-buttons {
+    margin-bottom: 0;
+
+    &:not(.h5p-highlight-the-words-initialized) {
+      display: none;
+    }
+  }
+
   .h5p-question-content {
     margin: 0;
   }
@@ -60,15 +82,15 @@
           }
         }
       }
-
-      .h5p-question-buttons {
-        margin: 1em 0 0 0;
-      }
     }
   }
 
   .h5p-highlight-the-words-ruler {
     border-bottom: 2px solid $color-grey-14;
+
+    &.h5p-highlight-the-words-margin-bottom {
+      margin-bottom: 1em;
+    }
   }
 
   ::-webkit-scrollbar {

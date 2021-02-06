@@ -235,7 +235,9 @@ export default class HighlightTheWordsContent {
    */
   showSolution() {
     this.updateTextContainer('solution');
-    this.textContainerSolution.classList.remove('h5p-highlight-the-words-disabled');
+    setTimeout(() => { // Prevent flickering
+      this.textContainerSolution.classList.remove('h5p-highlight-the-words-disabled');
+    }, 0);
   }
 
   /**

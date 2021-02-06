@@ -263,7 +263,7 @@ export default class HighlightTheWords extends H5P.Question {
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-1}
    */
   getAnswerGiven() {
-    return false; // TODO: Return your value here
+    return this.content.getAnswerGiven();
   }
 
   /**

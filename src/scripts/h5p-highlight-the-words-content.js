@@ -22,6 +22,8 @@ export default class HighlightTheWordsContent {
     this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
     this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
 
+    this.answerGiven = false;
+
     // TODO: This can be made nicer
     const foo = TextProcessing.processText(
       this.params.text,
@@ -224,6 +226,7 @@ export default class HighlightTheWordsContent {
   reset() {
     this.selectionHandler.removeSelections();
     this.updateTextContainer('reset');
+    this.answerGiven = false;
     this.textContainerSolution.classList.add('h5p-highlight-the-words-disabled');
   }
 
@@ -311,6 +314,7 @@ export default class HighlightTheWordsContent {
     }
     else {
       this.textArea.innerHTML = html;
+      this.answerGiven = true;
     }
 
     if (mode === 'scores') {
@@ -343,6 +347,14 @@ export default class HighlightTheWordsContent {
   closeMenu() {
     this.page.classList.remove('h5p-highlight-the-words-menu-open');
     this.menu.close();
+  }
+
+  /**
+   * Check if result has been submitted or input has been given.
+   * @return {boolean} True, if answer was given.
+   */
+  getAnswerGiven() {
+    return this.answerGiven;
   }
 
   /**

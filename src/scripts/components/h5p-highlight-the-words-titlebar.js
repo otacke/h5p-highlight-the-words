@@ -65,7 +65,7 @@ export default class HighlightTheWordsTitlebar {
     // Color picker
     this.colorPicker = new HighlightTheWordsTitlebarColorPicker({
       highlightOptions: params.highlightOptions,
-      previousBackgroundColor: this.params.colors.backgroundColor,
+      previousBackgroundColor: this.params?.colors?.backgroundColor,
       a11y: {
         colorFor: params.a11y.colorFor,
         eraser: params.a11y.eraser

@@ -139,6 +139,7 @@ class SelectionHandler {
 
     // New selection
     this.addSelection({
+      name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
       text: this.pendingSelection.toString(),
       start: (start < end) ? start : end,
       end: (end > start) ? end : start,

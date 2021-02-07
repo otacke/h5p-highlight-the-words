@@ -340,10 +340,8 @@ export default class HighlightTheWords extends H5P.Question {
     xAPIEvent.setScoredResult(this.getScore(), this.getMaxScore(), this,
       true, this.isPassed());
 
-    /*
-     * TODO: Add other properties here as required, e.g. xAPIEvent.data.statement.result.response
-     * https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#245-result
-     */
+    // TODO: Still needs a proper answer representation
+    xAPIEvent.data.statement.result.response = this.content.getResponse();
 
     return xAPIEvent;
   }
@@ -369,6 +367,7 @@ export default class HighlightTheWords extends H5P.Question {
    */
   getxAPIDefinition() {
     const definition = {};
+    definition.name = {};
     definition.name[this.languageTag] = this.getTitle();
     // Fallback for h5p-php-reporting, expects en-US
     definition.name['en-US'] = definition.name[this.languageTag];
@@ -376,18 +375,10 @@ export default class HighlightTheWords extends H5P.Question {
     definition.description[this.languageTag] = this.getDescription();
     // Fallback for h5p-php-reporting, expects en-US
     definition.description['en-US'] = definition.description[this.languageTag];
-
-    // TODO: Set IRI as required for your verb, cmp. http://xapi.vocab.pub/verbs/#
     definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
-
-    // TODO: Set as required, cmp. https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#interaction-types
-    definition.interactionType = 'other';
-
-    /*
-     * TODO: Add other object properties as required, e.g. definition.correctResponsesPattern
-     * cmp. https://github.com/adlnet/xAPI-Spec/blob/master/xAPI-Data.md#244-object
-     */
-
+    definition.interactionType = 'other'; // Neither choice nor fill-in
+    // Not sure how the format should be put into xAPI logic
+    definition.correctResponsesPattern = this.content.getCorrectResponsesPattern();
     return definition;
   }
 
@@ -397,7 +388,7 @@ export default class HighlightTheWords extends H5P.Question {
    * @return {boolean} True if user passed or task is not scored.
    */
   isPassed() {
-    return true;
+    return this.getScore() >= this.getMaxScore();
   }
 
   /**

@@ -409,6 +409,14 @@ export default class HighlightTheWordsContent {
     };
   }
 
+  getCorrectResponsesPattern() {
+    return [];
+  }
+
+  getResponse() {
+    return '';
+  }
+
   /**
    * Update text container
    * @param {string} [mode=null] Mode, scores|solution.

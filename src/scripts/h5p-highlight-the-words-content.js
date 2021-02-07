@@ -24,24 +24,31 @@ export default class HighlightTheWordsContent {
 
     this.answerGiven = false;
 
+    this.params.text = this.params.text.replace(/(\r\n|\n|\r)/gm, '');
+
     // TODO: This can be made nicer
     const foo = TextProcessing.processText(
       this.params.text,
       this.params.highlightOptions.map(option => option.name)
     );
     this.params.text = foo.text.replace(/(\r\n|\n|\r)/gm, '');
+
     this.solutions = foo.highlights.map(solution => {
       const highlightOption = this.params.highlightOptions
         .filter(option => option.name === solution.name)
         .shift();
+
+      // Decode HTML entities to get real text + length
+      solution.text = TextProcessing.htmlDecode(solution.text);
+      solution.end = solution.start + solution.text.length;
+
+      // Get colors from highlight options
       solution.backgroundColor = highlightOption.backgroundColor;
       solution.color = highlightOption.color;
 
       return solution;
     });
-
-    // Text container (TODO: originalText needed?)
-    this.originalText = this.params.text;
+    this.solutions = SelectionHandler.recomputeSolutionPositions(this.solutions, this.params.text);
 
     this.content = document.createElement('div');
     this.content.classList.add('h5p-highlight-the-words-content');
@@ -93,7 +100,7 @@ export default class HighlightTheWordsContent {
     textAreasContainer.classList.add('h5p-highlight-the-words-text-areas-container');
     this.exercise.appendChild(textAreasContainer);
 
-    let [textContainer, textArea] = this.buildTextContainer(this.originalText);
+    let [textContainer, textArea] = this.buildTextContainer(this.params.text);
     textAreasContainer.appendChild(textContainer);
     this.textArea = textArea;
 

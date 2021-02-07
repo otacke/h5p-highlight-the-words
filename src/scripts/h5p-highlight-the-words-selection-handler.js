@@ -404,5 +404,30 @@ class SelectionHandler {
     this.callbacks.onTextUpdated(TextProcessing.htmlEncodeMasked(newText, newMask), mode);
   }
 
+  /**
+   * Recompute positions for solution after decoding.
+   * @param {object} solutions Solutions.
+   * @param {string} Encoded text.
+   * @return {object} Solutions with new start/end positions.
+   */
+  static recomputeSolutionPositions(solutions, textEncoded) {
+    const regexpEntities = /&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});/ig;
+
+    let solutionsCopy = solutions.slice();
+
+    let occurrences;
+    while ((occurrences = regexpEntities.exec(textEncoded)) !== null) {
+      solutionsCopy = solutionsCopy.map(solution => {
+        if (solution.start > occurrences.index) {
+
+          solution.start = solution.start - occurrences[0].length + 1;
+          solution.end = solution.end - occurrences[0].length + 1;
+        }
+        return solution;
+      });
+    }
+
+    return solutionsCopy;
+  }
 }
 export default SelectionHandler;

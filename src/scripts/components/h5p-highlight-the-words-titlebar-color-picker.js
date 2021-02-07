@@ -64,6 +64,10 @@ export default class HighlightTheWordsTitlebarColorPicker {
       });
 
       this.colorPickerContainer.appendChild(picker);
+
+      if (this.params.previousBackgroundColor === option.backgroundColor) {
+        picker.click();
+      }
     });
   }
 

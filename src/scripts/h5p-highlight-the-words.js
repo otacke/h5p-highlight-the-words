@@ -51,8 +51,6 @@ export default class HighlightTheWords extends H5P.Question {
       }
     }, this.params);
 
-    // TODO: Sanitize input
-
     // Sanitize highlight options
     this.params.highlightOptions = this.params.highlightOptions
       .filter(option => {
@@ -98,6 +96,7 @@ export default class HighlightTheWords extends H5P.Question {
         text: this.params.text,
         menuTitle: this.getTitle(),
         highlightOptions: this.params.highlightOptions,
+        previousState: this.previousState,
         a11y: {
           buttonMenuOpen: this.params.a11y.buttonMenuOpen,
           buttonMenuClose: this.params.a11y.buttonMenuClose,
@@ -433,13 +432,7 @@ export default class HighlightTheWords extends H5P.Question {
    * @return {object} Current state.
    */
   getCurrentState() {
-    /*
-     * TODO: Return any data object that will indicate the state that should
-     * be loaded on start, here it's a random number
-     */
-    return {
-      random: Math.random(100)
-    };
+    return this.content.getCurrentState();
   }
 
   /**

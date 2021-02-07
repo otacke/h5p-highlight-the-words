@@ -29,7 +29,7 @@ class SelectionHandler {
     this.originalTextDecoded = structureDecoded.text;
     this.maskHTMLDecoded = structureDecoded.mask;
 
-    this.selections = [];
+    this.selections = params.selections || [];
 
     this.selectionChangedListener = null;
     this.lastSelectStart = null;
@@ -39,6 +39,11 @@ class SelectionHandler {
     this.disabled = false;
 
     this.addSelectEventHandler();
+
+    // Restore previous state
+    if (this.selections.length > 0) {
+      this.updateTextContainer();
+    }
   }
 
   /**

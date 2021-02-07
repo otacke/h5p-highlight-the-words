@@ -17,7 +17,6 @@ export default class HighlightTheWordsContent {
       l10n: {}
     }, params);
 
-
     this.callbacks = callbacks;
     this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
     this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
@@ -124,7 +123,8 @@ export default class HighlightTheWordsContent {
         text: this.params.text,
         textArea: this.textArea,
         solutions: this.solutions,
-        highlightOptions: this.params.highlightOptions
+        highlightOptions: this.params.highlightOptions,
+        selections: this.params.previousState?.selections
       },
       {
         onTextUpdated: (html, mode) => {
@@ -146,7 +146,8 @@ export default class HighlightTheWordsContent {
           colorFor: this.params.a11y.colorFor,
           eraser: this.params.a11y.eraser
         },
-        highlightOptions: this.params.highlightOptions
+        highlightOptions: this.params.highlightOptions,
+        colors: this.params.previousState?.colors
       },
       {
         onColorChanged: (colors) => {
@@ -293,6 +294,7 @@ export default class HighlightTheWordsContent {
    * @param {object} colors.backgroundColor Background color to be used.
    */
   handleColorChanged(colors) {
+    this.currentColors = colors;
     this.selectionHandler.setColors(colors);
   }
 
@@ -394,6 +396,17 @@ export default class HighlightTheWordsContent {
    */
   getMaxScore() {
     return this.solutions.length;
+  }
+
+  /**
+   * Retrieve current state.
+   * @return {object} Current state.
+   */
+  getCurrentState() {
+    return {
+      colors: this.currentColors,
+      selections: this.selectionHandler.getSelections()
+    };
   }
 
   /**

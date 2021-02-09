@@ -252,6 +252,8 @@ export default class HighlightTheWords extends H5P.Question {
       this.getMaxScore(),
       ariaMessage
     );
+
+    this.trigger(this.getXAPIAnswerEvent());
   }
 
   /**
@@ -353,9 +355,6 @@ export default class HighlightTheWords extends H5P.Question {
     xAPIEvent.setScoredResult(this.getScore(), this.getMaxScore(), this,
       true, this.isPassed());
 
-    // TODO: Still needs a proper answer representation
-    xAPIEvent.data.statement.result.response = this.content.getResponse();
-
     return xAPIEvent;
   }
 
@@ -370,6 +369,13 @@ export default class HighlightTheWords extends H5P.Question {
     Util.extend(
       xAPIEvent.getVerifiedStatementValue(['object', 'definition']),
       this.getxAPIDefinition());
+
+    // Regular xAPI interaction types don't fit
+    xAPIEvent.data.statement.context.extensions = {};
+    Util.extend(
+      xAPIEvent.getVerifiedStatementValue(['context', 'extensions']),
+      this.getxAPIContextExtensions());
+
     return xAPIEvent;
   }
 
@@ -380,19 +386,37 @@ export default class HighlightTheWords extends H5P.Question {
    */
   getxAPIDefinition() {
     const definition = {};
+
     definition.name = {};
     definition.name[this.languageTag] = this.getTitle();
     // Fallback for h5p-php-reporting, expects en-US
     definition.name['en-US'] = definition.name[this.languageTag];
+
     definition.description = {};
     definition.description[this.languageTag] = this.getDescription();
     // Fallback for h5p-php-reporting, expects en-US
     definition.description['en-US'] = definition.description[this.languageTag];
+
+    // Regular xAPI interaction types don't fit
     definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
-    definition.interactionType = 'other'; // Neither choice nor fill-in
-    // Not sure how the format should be put into xAPI logic
-    definition.correctResponsesPattern = this.content.getCorrectResponsesPattern();
+    definition.interactionType = 'other';
+    definition.extensions = {
+      'https://h5p.org/x-api/h5p-machine-name': 'H5P.HighlightTheWords'
+    };
+
     return definition;
+  }
+
+  /**
+   * Get the xAPI context extensions.
+   *
+   * @return {object} XAPI contextExtensions.
+   */
+  getxAPIContextExtensions() {
+    return {
+      result: this.content.getOutput('xapi-result'),
+      solution: this.content.getOutput('xapi-solution')
+    };
   }
 
   /**

@@ -409,12 +409,12 @@ export default class HighlightTheWordsContent {
     };
   }
 
-  getCorrectResponsesPattern() {
-    return [];
-  }
-
-  getResponse() {
-    return '';
+  /**
+   * Get output text.
+   * @param {string} mode Mode for output.
+   */
+  getOutput(mode) {
+    return this.selectionHandler.getOutput(mode);
   }
 
   /**

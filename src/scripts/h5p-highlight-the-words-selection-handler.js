@@ -313,17 +313,39 @@ class SelectionHandler {
       };
     }
 
-    const spanPre = `<span class="h5p-highlight-the-words-selection" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+    let spanPre = '';
+    let spanPost = '';
 
-    const classNames = ['h5p-highlight-the-words-score-point'];
-    if (mode === 'scores') {
-      const className = (selection.score === 1) ?
-        'h5p-highlight-the-words-correct' :
-        'h5p-highlight-the-words-wrong';
-      classNames.push(className);
+    // Output per mode required
+    if (mode === 'xapi-result') {
+      let scoreClass = '';
+      if (selection.score === 1) {
+        scoreClass = 'h5p-highlight-the-words-user-response-correct';
+      }
+      else if (selection.score === -1) {
+        scoreClass = 'h5p-highlight-the-words-user-response-wrong';
+      }
+
+      spanPre = `<span class="${scoreClass}"><span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      spanPost = '</span></span>';
     }
-    // Separate span for score point to get correct position for multi-line selections
-    const spanPost = `</span><span class="${classNames.join(' ')}"></span>`;
+    else if (mode === 'xapi-solution') {
+      spanPre = `<span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      spanPost = '</span>';
+    }
+    else {
+      spanPre = `<span class="h5p-highlight-the-words-selection" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+
+      const classNames = ['h5p-highlight-the-words-score-point'];
+      if (mode === 'scores') {
+        const className = (selection.score === 1) ?
+          'h5p-highlight-the-words-correct' :
+          'h5p-highlight-the-words-wrong';
+        classNames.push(className);
+      }
+      // Separate span for score point to get correct position for multi-line selections
+      spanPost = `</span><span class="${classNames.join(' ')}"></span>`;
+    }
 
     let text = this.originalTextDecoded.substring(selection.start, selection.end);
     let mask = this.maskHTMLDecoded.substring(selection.start, selection.end);
@@ -368,16 +390,14 @@ class SelectionHandler {
   }
 
   /**
-   * Update text container.
-   * Rebuilds the innerHTML from the original text, because modifying the
-   * HTML strings would be hell
-   *
-   * @param {string} [mode=null] Mode, scores|solution.
+   * Get output suitable for different purposes, e.g. scores, solution, xAPI.
+   * @param {string} mode Mode.
+   * @return {string} Output text.
    */
-  updateTextContainer(mode = null) {
-    const selections = (mode !== 'solution') ?
-      this.selections :
-      this.params.solutions;
+  getOutput(mode) {
+    const selections = (mode === 'solution' || mode === 'xapi-solution') ?
+      this.params.solutions :
+      this.selections;
 
     // Break up selections, assuming no overlaps and sorted
     let selectionSplits = [];
@@ -407,7 +427,18 @@ class SelectionHandler {
     const newText = results.reduce((text, segment) => `${text}${segment.text}`, '');
     const newMask = results.reduce((mask, segment) => `${mask}${segment.mask}`, '');
 
-    this.callbacks.onTextUpdated(TextProcessing.htmlEncodeMasked(newText, newMask), mode);
+    return TextProcessing.htmlEncodeMasked(newText, newMask);
+  }
+
+  /**
+   * Update text container.
+   * Rebuilds the innerHTML from the original text, because modifying the
+   * HTML strings would be hell
+   *
+   * @param {string} [mode=null] Mode, scores|solution.
+   */
+  updateTextContainer(mode = null) {
+    this.callbacks.onTextUpdated(this.getOutput(mode), mode);
   }
 
   /**

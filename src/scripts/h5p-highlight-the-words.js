@@ -128,50 +128,16 @@ export default class HighlightTheWords extends H5P.Question {
     // Register Buttons
     this.addButtons();
 
-    document.addEventListener('readystatechange', () => {
-      if (document.readyState === 'complete') {
-
-        // Hide temporary feedback
-        this.removeFeedback();
-
-        setTimeout(() => {
-          // Add fullscreen button on first call after H5P.Question has created the DOM
-          this.container = document.querySelector('.h5p-container');
-          if (this.container) {
-            this.content.enableFullscreenButton();
-
-            this.on('enterFullScreen', () => {
-              setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
-                this.content.toggleFullscreen(true);
-              }, 100);
-            });
-
-            this.on('exitFullScreen', () => {
-              this.content.toggleFullscreen(false);
-            });
-
-            // Reattach H5P.Question containers to exercise
-            const exercise = this.content.getExerciseDOM();
-            const questionFeedback = document.querySelector('.h5p-question-feedback');
-            exercise.appendChild(questionFeedback);
-
-            const questionScorebar = document.querySelector('.h5p-question-scorebar');
-            exercise.appendChild(questionScorebar);
-
-            const questionButtons = document.querySelector('.h5p-question-buttons');
-            exercise.appendChild(questionButtons);
-
-            window.requestAnimationFrame(() => {
-              questionFeedback.classList.add('h5p-highlight-the-words-initialized');
-              questionScorebar.classList.add('h5p-highlight-the-words-initialized');
-              questionButtons.classList.add('h5p-highlight-the-words-initialized');
-
-              this.trigger('resize');
-            });
-          }
-        }, 150); // Required for feedback and scorbar to be gone again
-      }
-    });
+    if (document.readyState === 'complete') {
+      this.handleInitialized();
+    }
+    else {
+      document.addEventListener('readystatechange', () => {
+        if (document.readyState === 'complete') {
+          this.handleInitialized();
+        }
+      });
+    }
 
     window.addEventListener('orientationchange', () => {
       if (H5P.isFullscreen) {
@@ -180,6 +146,53 @@ export default class HighlightTheWords extends H5P.Question {
         }, 100);
       }
     }, false);
+  }
+
+  /**
+   * Handle content initialized
+   */
+  handleInitialized() {
+    // Hide temporary feedback
+    this.removeFeedback();
+
+    setTimeout(() => {
+      // Add fullscreen button on first call after H5P.Question has created the DOM
+      this.container = document.querySelector('.h5p-container');
+      if (this.container) {
+        this.content.enableFullscreenButton();
+
+        this.on('enterFullScreen', () => {
+          setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+            this.content.toggleFullscreen(true);
+          }, 100);
+        });
+
+        this.on('exitFullScreen', () => {
+          this.content.toggleFullscreen(false);
+        });
+
+        // Reattach H5P.Question containers to exercise
+        const exercise = this.content.getExerciseDOM();
+        const questionFeedback = document.querySelector('.h5p-question-feedback');
+        exercise.appendChild(questionFeedback);
+        questionFeedback.classList.remove('h5p-question-visible');
+
+        const questionScorebar = document.querySelector('.h5p-question-scorebar');
+        exercise.appendChild(questionScorebar);
+        questionScorebar.classList.remove('h5p-question-visible');
+
+        const questionButtons = document.querySelector('.h5p-question-buttons');
+        exercise.appendChild(questionButtons);
+
+        window.requestAnimationFrame(() => {
+          questionFeedback.classList.add('h5p-highlight-the-words-initialized');
+          questionScorebar.classList.add('h5p-highlight-the-words-initialized');
+          questionButtons.classList.add('h5p-highlight-the-words-initialized');
+
+          this.trigger('resize');
+        });
+      }
+    }, 150); // Required for feedback and scorbar to be gone again
   }
 
   /**

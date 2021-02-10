@@ -202,10 +202,12 @@ class TextProcessing {
       // Check highlight text for name
       let highlightText = text.substring(matchPositionStart + 1, matchPositionEnd);
       const namePosition = this.indexOfUnescaped(highlightText, '::');
+
       if (namePosition === -1) {
         console.warn(`It seems that you forgot to add a name to the highlight text "${highlightText}"`);
         textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
         text = text.substr(matchPositionEnd + 1);
+        position = textOutput.length; // Don't forget previous runs
         continue;
       }
 
@@ -213,10 +215,18 @@ class TextProcessing {
       const name = highlightText.substr(namePosition + 2);
 
       highlightText = highlightText.substr(0, namePosition);
+
+      // Replace \* with * inside highlightText
+      while (this.indexOfUnescaped(highlightText, '\\*') !== -1) {
+        const innerAsterisk = this.indexOfUnescaped(highlightText, '\\*');
+        highlightText = `${highlightText.substring(0, innerAsterisk)}${highlightText.substring(innerAsterisk + 1)}`;
+      }
+
       if (highlightNames.indexOf(name) === -1) {
         console.warn(`It seems that there is no specification for ${name}.`);
         textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
         text = text.substr(matchPositionEnd + 1);
+        position = textOutput.length; // Don't forget previous runs
         continue;
       }
 
@@ -260,8 +270,8 @@ class TextProcessing {
 
     const positionEscapedEscape = text.indexOf(`\\\\${char}`, start);
     if (positionEscapedEscape === -1 || positionEscapedEscape + 1 !== positionEscaped) {
-      const nextPosition = this.indexOfUnescaped(text.substr(position + 1), char, start);
-      return (nextPosition === -1) ? -1 : position + nextPosition;
+      const nextPosition = this.indexOfUnescaped(text, char, position + 1);
+      return (nextPosition === -1) ? -1 : nextPosition;
     }
     else {
       return position - 1; // char is not escaped, position found

@@ -87,7 +87,22 @@ class Util {
     return this.isChild(parent, potentialParent);
   }
 
+  /**
+   * Get n-th occurrence of indexOf in text.
+   * @param {string} text Text to look in.
+   * @param {string} pattern Pattern to look for.
+   * @param {number} n N-th occurrence.
+   * @return {number} Index or -1 if not found.
+   */
   static nthIndexOf(text, pattern, n) {
+    if (typeof text !== 'string' || typeof pattern !== 'string') {
+      return -1;
+    }
+
+    if (typeof n !== 'number' || n < 1) {
+      n = 1;
+    }
+
     let i = -1;
 
     while (n-- && i++ < text.length) {
@@ -101,7 +116,7 @@ class Util {
   }
 
   /**
-   * Compute text color to given color.
+   * Compute text color (black/white) to given color as contrast.
    * @param {string} colorCode RGB color code in 6 char hex: #rrggbb.
    * @param {number} [threshold=0.6] Threshold in [0; 1] for black.
    * @return {string} RGB contrast color code in 6 char hex: #rrggbb.

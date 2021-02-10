@@ -13,7 +13,7 @@ export default class HighlightTheWords extends H5P.Question {
    * @param {object} [extras] Saved state, metadata, etc.
    */
   constructor(params, contentId, extras = {}) {
-    super('highlight-the-words'); // CSS class selector for content's iframe: h5p-hello-world
+    super('highlight-the-words'); // CSS class selector for content's iframe
 
     this.params = params;
     this.contentId = contentId;
@@ -47,7 +47,11 @@ export default class HighlightTheWords extends H5P.Question {
         buttonFullscreenEnter: 'Enter fullscreen mode',
         buttonFullscreenExit: 'Exit fullscreen mode',
         colorFor: 'Color for @description',
-        eraser: 'Erase selection'
+        eraser: 'Erase selection',
+        checkAnswer: 'Check the selections. The selections will be marked as correct or incorrect.',
+        showSolution: 'Show the solution. The solution will be displayed in addition to the selections.',
+        retry: 'Retry the task. Reset all selections and start the task over again.',
+        yourResult: 'You got @score out of @total points.'
       }
     }, this.params);
 
@@ -111,7 +115,7 @@ export default class HighlightTheWords extends H5P.Question {
       },
       {
         onButtonFullscreenClicked: () => {
-          this.toggleFullscreen();
+          this.handleFullscreenClicked();
         },
         onResizeRequired: () => {
           this.handleResizeRequired();
@@ -122,12 +126,13 @@ export default class HighlightTheWords extends H5P.Question {
     // Register content with H5P.Question
     this.setContent(this.content.getDOM());
 
-    // Register feedback/scorebar so we can re-attach it
+    // Register feedback/scorebar so we can re-attach it elsewhere
     this.setFeedback('', 0, this.getMaxScore());
 
     // Register Buttons
     this.addButtons();
 
+    // Wait for content DOM to be completed
     if (document.readyState === 'complete') {
       this.handleInitialized();
     }
@@ -139,6 +144,7 @@ export default class HighlightTheWords extends H5P.Question {
       });
     }
 
+    // Resize fullscreen dimensions when rotating screen
     window.addEventListener('orientationchange', () => {
       if (H5P.isFullscreen) {
         setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
@@ -149,54 +155,7 @@ export default class HighlightTheWords extends H5P.Question {
   }
 
   /**
-   * Handle content initialized
-   */
-  handleInitialized() {
-    // Hide temporary feedback
-    this.removeFeedback();
-
-    setTimeout(() => {
-      // Add fullscreen button on first call after H5P.Question has created the DOM
-      this.container = document.querySelector('.h5p-container');
-      if (this.container) {
-        this.content.enableFullscreenButton();
-
-        this.on('enterFullScreen', () => {
-          setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
-            this.content.toggleFullscreen(true);
-          }, 100);
-        });
-
-        this.on('exitFullScreen', () => {
-          this.content.toggleFullscreen(false);
-        });
-
-        // Reattach H5P.Question containers to exercise
-        const exercise = this.content.getExerciseDOM();
-        const questionFeedback = document.querySelector('.h5p-question-feedback');
-        exercise.appendChild(questionFeedback);
-        questionFeedback.classList.remove('h5p-question-visible');
-
-        const questionScorebar = document.querySelector('.h5p-question-scorebar');
-        exercise.appendChild(questionScorebar);
-        questionScorebar.classList.remove('h5p-question-visible');
-
-        const questionButtons = document.querySelector('.h5p-question-buttons');
-        exercise.appendChild(questionButtons);
-
-        window.requestAnimationFrame(() => {
-          questionFeedback.classList.add('h5p-highlight-the-words-initialized');
-          questionScorebar.classList.add('h5p-highlight-the-words-initialized');
-          questionButtons.classList.add('h5p-highlight-the-words-initialized');
-
-          this.trigger('resize');
-        });
-      }
-    }, 150); // Required for feedback and scorbar to be gone again
-  }
-
-  /**
-   * Add all the buttons that shall be passed to H5P.Question.
+   * Add all buttons that shall be passed to H5P.Question.
    */
   addButtons() {
     // Check answer button
@@ -219,6 +178,207 @@ export default class HighlightTheWords extends H5P.Question {
     }, false, {
       'aria-label': this.params.a11y.retry
     }, {});
+  }
+
+  /**
+   * Check if result has been submitted or input has been given.
+   * @return {boolean} True, if answer was given.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-1}
+   */
+  getAnswerGiven() {
+    return this.content.getAnswerGiven();
+  }
+
+  /**
+   * Get latest score.
+   * @return {number} Latest score.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-2}
+   */
+  getScore() {
+    return this.content.getScore();
+  }
+
+  /**
+   * Get maximum possible score.
+   * @return {number} Score necessary for mastering.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-3}
+   */
+  getMaxScore() {
+    this.maxScore = this.maxScore || this.content.getMaxScore();
+    return this.maxScore;
+  }
+
+  /**
+   * Show solutions.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-4}
+   */
+  showSolutions() {
+    this.content.disable();
+    this.content.showSolution();
+
+    this.trigger('resize');
+  }
+
+  /**
+   * Reset task.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-5}
+   */
+  resetTask() {
+    this.removeFeedback();
+    this.content.reset();
+    this.content.enable();
+  }
+
+  /**
+   * Get xAPI data.
+   * @return {object} XAPI statement.
+   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-6}
+   */
+  getXAPIData() {
+    return {
+      statement: this.getXAPIAnswerEvent().data.statement
+    };
+  }
+
+  /**
+   * Build xAPI answer event.
+   * @return {H5P.XAPIEvent} XAPI answer event.
+   */
+  getXAPIAnswerEvent() {
+    const xAPIEvent = this.createXAPIEvent('answered');
+
+    xAPIEvent.setScoredResult(this.getScore(), this.getMaxScore(), this,
+      true, this.isPassed());
+
+    return xAPIEvent;
+  }
+
+  /**
+   * Create an xAPI event.
+   * @param {string} verb Short id of the verb we want to trigger.
+   * @return {H5P.XAPIEvent} Event template.
+   */
+  createXAPIEvent(verb) {
+    const xAPIEvent = this.createXAPIEventTemplate(verb);
+    Util.extend(
+      xAPIEvent.getVerifiedStatementValue(['object', 'definition']),
+      this.getxAPIDefinition());
+
+    // Regular xAPI interaction types don't fit
+    xAPIEvent.data.statement.context.extensions = {};
+    Util.extend(
+      xAPIEvent.getVerifiedStatementValue(['context', 'extensions']),
+      this.getxAPIContextExtensions());
+
+    return xAPIEvent;
+  }
+
+  /**
+   * Get the xAPI definition for the xAPI object.
+   * @return {object} XAPI definition.
+   */
+  getxAPIDefinition() {
+    const definition = {};
+
+    definition.name = {};
+    definition.name[this.languageTag] = this.getTitle();
+    // Fallback for h5p-php-reporting, expects en-US
+    definition.name['en-US'] = definition.name[this.languageTag];
+
+    definition.description = {};
+    definition.description[this.languageTag] = this.getDescription();
+    // Fallback for h5p-php-reporting, expects en-US
+    definition.description['en-US'] = definition.description[this.languageTag];
+
+    // Regular xAPI interaction types don't fit
+    definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
+    definition.interactionType = 'other';
+    definition.extensions = {
+      'https://h5p.org/x-api/h5p-machine-name': 'H5P.HighlightTheWords'
+    };
+
+    return definition;
+  }
+
+  /**
+   * Get the xAPI context extensions.
+   * @return {object} XAPI contextExtensions.
+   */
+  getxAPIContextExtensions() {
+    return {
+      result: this.content.getOutput('xapi-result'),
+      solution: this.content.getOutput('xapi-solution')
+    };
+  }
+
+  /**
+   * Determine whether the task has been passed by the user.
+   * @return {boolean} True if user passed or task is not scored.
+   */
+  isPassed() {
+    return this.getScore() >= this.getMaxScore();
+  }
+
+  /**
+   * Get tasks title.
+   * @return {string} Title.
+   */
+  getTitle() {
+    let raw;
+    if (this.extras.metadata) {
+      raw = this.extras.metadata.title;
+    }
+    raw = raw || HighlightTheWords.DEFAULT_DESCRIPTION;
+
+    // H5P Core function: createTitle
+    return H5P.createTitle(raw);
+  }
+
+  /**
+   * Get tasks description.
+   * @return {string} Description.
+   */
+  getDescription() {
+    return this.params.taskDescription || HighlightTheWords.DEFAULT_DESCRIPTION;
+  }
+
+  /**
+   * Answer call to return the current state.
+   *
+   * @return {object} Current state.
+   */
+  getCurrentState() {
+    return this.content.getCurrentState();
+  }
+
+  /**
+   * Toggle fullscreen button.
+   * @param {string|boolean} state enter|false for enter, exit|true for exit.
+   */
+  toggleFullscreen(state) {
+    if (!this.container) {
+      return;
+    }
+
+    if (typeof state === 'string') {
+      if (state === 'enter') {
+        state = false;
+      }
+      else if (state === 'exit') {
+        state = true;
+      }
+    }
+
+    if (typeof state !== 'boolean') {
+      state = !H5P.isFullscreen;
+    }
+
+    if (state === true) {
+      H5P.fullScreen(H5P.jQuery(this.container), this);
+    }
+    else {
+      H5P.exitFullScreen();
+    }
   }
 
   /**
@@ -279,220 +439,62 @@ export default class HighlightTheWords extends H5P.Question {
   }
 
   /**
-   * Check if result has been submitted or input has been given.
-   *
-   * @return {boolean} True, if answer was given.
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-1}
+   * Handle content initialized
    */
-  getAnswerGiven() {
-    return this.content.getAnswerGiven();
-  }
-
-  /**
-   * Get latest score.
-   *
-   * @return {number} Latest score.
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-2}
-   */
-  getScore() {
-    return this.content.getScore();
-  }
-
-  /**
-   * Get maximum possible score.
-   *
-   * @return {number} Score necessary for mastering.
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-3}
-   */
-  getMaxScore() {
-    this.maxScore = this.maxScore || this.content.getMaxScore();
-    return this.maxScore;
-  }
-
-  /**
-   * Show solutions.
-   *
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-4}
-   */
-  showSolutions() {
-    this.content.disable();
-    this.content.showSolution();
-
-    this.trigger('resize');
-  }
-
-  /**
-   * Reset task.
-   *
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-5}
-   */
-  resetTask() {
+  handleInitialized() {
+    // Hide temporary feedback
     this.removeFeedback();
-    this.content.reset();
-    this.content.enable();
-  }
 
-  /**
-   * Get xAPI data.
-   *
-   * @return {object} XAPI statement.
-   * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-6}
-   */
-  getXAPIData() {
-    return {
-      statement: this.getXAPIAnswerEvent().data.statement
-    };
-  }
+    setTimeout(() => {
+      // Add fullscreen button on first call after H5P.Question has created the DOM
+      this.container = document.querySelector('.h5p-container');
+      if (this.container) {
+        this.content.enableFullscreenButton();
 
-  /**
-   * Build xAPI answer event.
-   *
-   * @return {H5P.XAPIEvent} XAPI answer event.
-   */
-  getXAPIAnswerEvent() {
-    const xAPIEvent = this.createXAPIEvent('answered');
+        this.on('enterFullScreen', () => {
+          setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+            this.content.toggleFullscreen(true);
+          }, 100);
+        });
 
-    xAPIEvent.setScoredResult(this.getScore(), this.getMaxScore(), this,
-      true, this.isPassed());
+        this.on('exitFullScreen', () => {
+          this.content.toggleFullscreen(false);
+        });
 
-    return xAPIEvent;
-  }
+        // Reattach H5P.Question containers to exercise
+        const exercise = this.content.getExerciseDOM();
+        const questionFeedback = document.querySelector('.h5p-question-feedback');
+        exercise.appendChild(questionFeedback);
+        questionFeedback.classList.remove('h5p-question-visible');
 
-  /**
-   * Create an xAPI event for Dictation.
-   *
-   * @param {string} verb Short id of the verb we want to trigger.
-   * @return {H5P.XAPIEvent} Event template.
-   */
-  createXAPIEvent(verb) {
-    const xAPIEvent = this.createXAPIEventTemplate(verb);
-    Util.extend(
-      xAPIEvent.getVerifiedStatementValue(['object', 'definition']),
-      this.getxAPIDefinition());
+        const questionScorebar = document.querySelector('.h5p-question-scorebar');
+        exercise.appendChild(questionScorebar);
+        questionScorebar.classList.remove('h5p-question-visible');
 
-    // Regular xAPI interaction types don't fit
-    xAPIEvent.data.statement.context.extensions = {};
-    Util.extend(
-      xAPIEvent.getVerifiedStatementValue(['context', 'extensions']),
-      this.getxAPIContextExtensions());
+        const questionButtons = document.querySelector('.h5p-question-buttons');
+        exercise.appendChild(questionButtons);
 
-    return xAPIEvent;
-  }
+        window.requestAnimationFrame(() => {
+          questionFeedback.classList.add('h5p-highlight-the-words-initialized');
+          questionScorebar.classList.add('h5p-highlight-the-words-initialized');
+          questionButtons.classList.add('h5p-highlight-the-words-initialized');
 
-  /**
-   * Get the xAPI definition for the xAPI object.
-   *
-   * @return {object} XAPI definition.
-   */
-  getxAPIDefinition() {
-    const definition = {};
-
-    definition.name = {};
-    definition.name[this.languageTag] = this.getTitle();
-    // Fallback for h5p-php-reporting, expects en-US
-    definition.name['en-US'] = definition.name[this.languageTag];
-
-    definition.description = {};
-    definition.description[this.languageTag] = this.getDescription();
-    // Fallback for h5p-php-reporting, expects en-US
-    definition.description['en-US'] = definition.description[this.languageTag];
-
-    // Regular xAPI interaction types don't fit
-    definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
-    definition.interactionType = 'other';
-    definition.extensions = {
-      'https://h5p.org/x-api/h5p-machine-name': 'H5P.HighlightTheWords'
-    };
-
-    return definition;
-  }
-
-  /**
-   * Get the xAPI context extensions.
-   *
-   * @return {object} XAPI contextExtensions.
-   */
-  getxAPIContextExtensions() {
-    return {
-      result: this.content.getOutput('xapi-result'),
-      solution: this.content.getOutput('xapi-solution')
-    };
-  }
-
-  /**
-   * Determine whether the task has been passed by the user.
-   *
-   * @return {boolean} True if user passed or task is not scored.
-   */
-  isPassed() {
-    return this.getScore() >= this.getMaxScore();
-  }
-
-  /**
-   * Get tasks title.
-   *
-   * @return {string} Title.
-   */
-  getTitle() {
-    let raw;
-    if (this.extras.metadata) {
-      raw = this.extras.metadata.title;
-    }
-    raw = raw || HighlightTheWords.DEFAULT_DESCRIPTION;
-
-    // H5P Core function: createTitle
-    return H5P.createTitle(raw);
-  }
-
-  /**
-   * Get tasks description.
-   *
-   * @return {string} Description.
-   */
-  // TODO: Have a field for a task description in the editor if you need one.
-  getDescription() {
-    return this.params.taskDescription || HighlightTheWords.DEFAULT_DESCRIPTION;
-  }
-
-  /**
-   * Answer call to return the current state.
-   *
-   * @return {object} Current state.
-   */
-  getCurrentState() {
-    return this.content.getCurrentState();
-  }
-
-  /**
-   * Toggle fullscreen button.
-   * @param {string|boolean} state enter|false for enter, exit|true for exit.
-   */
-  toggleFullscreen(state) {
-    if (!this.container) {
-      return;
-    }
-
-    if (typeof state === 'string') {
-      if (state === 'enter') {
-        state = false;
+          this.trigger('resize');
+        });
       }
-      else if (state === 'exit') {
-        state = true;
-      }
-    }
-
-    if (typeof state !== 'boolean') {
-      state = !H5P.isFullscreen;
-    }
-
-    if (state === true) {
-      H5P.fullScreen(H5P.jQuery(this.container), this);
-    }
-    else {
-      H5P.exitFullScreen();
-    }
+    }, 150); // Required for feedback and scorbar to be gone again
   }
 
+  /**
+   * Handle fullscreen button clicked.
+   */
+  handleFullscreenClicked() {
+    this.toggleFullscreen();
+  }
+
+  /**
+   * Handle resize required by components.
+   */
   handleResizeRequired() {
     this.trigger('resize');
   }

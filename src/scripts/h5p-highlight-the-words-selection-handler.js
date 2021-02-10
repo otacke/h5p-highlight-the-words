@@ -7,35 +7,37 @@ class SelectionHandler {
    * @constructor
    */
   constructor(params = {}, callbacks = {}) {
-    // TODO: Sanitizing
     this.params = Util.extend({
+      text: '',
+      highlightOptions: [],
+      solutions: []
     }, params);
 
+    this.callbacks = callbacks || {};
+    this.callbacks.onTextUpdated = callbacks.onTextUpdated || (() => {});
+
+    // Mapping for getting option name for color given.
     this.colorToNameLookup = {};
     this.params.highlightOptions.forEach(option => {
       this.colorToNameLookup[option.backgroundColor] = option.name;
     });
 
-    this.textArea = params.textArea;
-    this.maskHTML = TextProcessing.createHTMLMask(params.text);
+    // Create decoded text and masks from encoded text
+    this.textCharacteristics = TextProcessing.computeTextCharacteristics(params.text);
 
-    this.callbacks = callbacks || {};
-    this.callbacks.onTextUpdated = callbacks.onTextUpdated || (() => {});
-
-    // TODO: Get rid of these two functions
-    const structureEncoded = TextProcessing.buildTextStructure(params.text);
-    const structureDecoded = TextProcessing.recodeTextStructure(structureEncoded, 'decode');
-
-    this.originalTextDecoded = structureDecoded.text;
-    this.maskHTMLDecoded = structureDecoded.mask;
-
+    // Current selections in text
     this.selections = params.selections || [];
 
-    this.selectionChangedListener = null;
-    this.lastSelectStart = null;
-
+    // Current selection to be checked
     this.pendingSelection = null;
 
+    // Listener for changes
+    this.selectionChangedListener = null;
+
+    // Timestamp to keep track of spam clicking
+    this.lastSelectStart = null;
+
+    // State for being disabled
     this.disabled = false;
 
     this.addSelectEventHandler();
@@ -69,89 +71,8 @@ class SelectionHandler {
   }
 
   /**
-   * Add handler for selecting text.
+   * Set currently active colors.
    */
-  addSelectEventHandler() {
-    document.addEventListener('mouseup', this.handleSelectionEnd.bind(this));
-    document.addEventListener('touchend', this.handleSelectionEnd.bind(this));
-
-    this.selectionChangedListener = this.handleSelectionChange.bind(this);
-    this.textArea.addEventListener('selectstart', (event) => {
-      if (this.disabled) {
-        return;
-      }
-
-      // Prevent accidentally selecting with multiple clicks, // TODO: Remove?
-      if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
-        return;
-      }
-      this.lastSelectStart = event.timeStamp;
-
-      document.addEventListener('selectionchange', this.selectionChangedListener);
-    });
-  }
-
-  /**
-   * Handle selection change event.
-   */
-  handleSelectionChange() {
-    if (this.disabled) {
-      return;
-    }
-
-    // Will always be from textContainer
-    this.pendingSelection = document.getSelection();
-  }
-
-  /**
-   * Handle selection end event.
-   */
-  handleSelectionEnd(event) {
-    if (this.disabled) {
-      return;
-    }
-
-    document.removeEventListener('selectionchange', this.selectionChangedListener);
-
-    if (
-      event.path.indexOf(this.textArea) === -1 || // Not in text area
-      !this.pendingSelection || // Can have been cleared
-      !Util.isChild(this.pendingSelection.anchorNode, this.textArea) ||
-      !Util.isChild(this.pendingSelection.focusNode, this.textArea)
-    ) {
-      this.pendingSelection = null;
-      return; // Part of selection outside of text container
-    }
-
-    let start = this.pendingSelection.anchorOffset;
-    start += this.computeSelectionOffset(this.pendingSelection.anchorNode);
-    start = Util.nthIndexOf(this.maskHTML, '1', start + 1);
-
-    let end = this.pendingSelection.focusOffset;
-    end += this.computeSelectionOffset(this.pendingSelection.focusNode);
-    end = Util.nthIndexOf(this.maskHTML, '1', end) + 1;
-
-    if (this.pendingSelection.isCollapsed) {
-      // TODO: Can be used to do more with this selection
-      // const existingSelection = this.findSelection(start);
-      return; // Select on double click
-    }
-
-    // New selection
-    this.addSelection({
-      name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
-      text: this.pendingSelection.toString(),
-      start: (start < end) ? start : end,
-      end: (end > start) ? end : start,
-      backgroundColor: this.currentSelectColors.backgroundColor,
-      color: this.currentSelectColors.color
-    });
-
-    this.updateTextContainer(); // TODO
-
-    this.pendingSelection = null;
-  }
-
   setColors(colors) {
     this.currentSelectColors = colors;
   }
@@ -165,33 +86,6 @@ class SelectionHandler {
     return this.selections
       .filter(selection => selection.start <= position && selection.end > position)
       .shift();
-  }
-
-  computeLocalOffset(node) {
-    const siblings = [...node.parentElement.childNodes];
-    return siblings
-      .slice(0, siblings.indexOf(node)) // left siblings
-      .reduce((length, sibling) => {
-        return length + sibling.textContent.length;
-      }, 0); // summed length of left siblings
-  }
-
-  /**
-   * Compute offset of selection in node.
-   * @param {Node} node Node that contains selection text.
-   * @return {number} Number of characters in nodes in front of node.
-   */
-  computeSelectionOffset(node) {
-    let offset = 0;
-    while (node !== this.textArea) {
-      const add = this.computeLocalOffset(node);
-
-      offset += add;
-
-      node = node.parentElement;
-    }
-
-    return offset;
   }
 
   /**
@@ -224,7 +118,12 @@ class SelectionHandler {
           selection.end = params.start;
         }
 
-        selection.text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, selection.start, selection.end);
+        selection.text = TextProcessing.getMaskedText(
+          this.textCharacteristics.decodedText,
+          this.textCharacteristics.decodedMask,
+          selection.start,
+          selection.end
+        );
 
         return selection;
       });
@@ -234,10 +133,19 @@ class SelectionHandler {
       if (this.selections[i].start < params.start && this.selections[i].end > params.end) {
         const selectionClone = {...this.selections[i]};
 
-        this.selections[i].text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, this.selections[i].start, params.start);
+        this.selections[i].text = TextProcessing.getMaskedText(
+          this.textCharacteristics.decodedText,
+          this.textCharacteristics.decodedMask,
+          this.selections[i].start,
+          params.start
+        );
         this.selections[i].end = params.start;
 
-        selectionClone.text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, params.end);
+        selectionClone.text = TextProcessing.getMaskedText(
+          this.textCharacteristics.decodedText,
+          this.textCharacteristics.decodedMask,
+          params.end
+        );
         selectionClone.start = params.end;
 
         this.selections.push(selectionClone);
@@ -262,7 +170,7 @@ class SelectionHandler {
           selection.end >= this.selections[index + 1].start
         ) {
           this.selections[index + 1].start = selection.start;
-          this.selections[index + 1].text = TextProcessing.getMaskedText(this.originalTextDecoded, this.maskHTMLDecoded, this.selections[index + 1].start, this.selections[index + 1].end);
+          this.selections[index + 1].text = TextProcessing.getMaskedText(this.textCharacteristics.decodedText, this.textCharacteristics.decodedMask, this.selections[index + 1].start, this.selections[index + 1].end);
           selection.backgroundColor = '';
         }
 
@@ -301,6 +209,102 @@ class SelectionHandler {
   }
 
   /**
+   * Get output suitable for different purposes, e.g. scores, solution, xAPI.
+   * @param {string} mode Mode.
+   * @return {string} Output text.
+   */
+  getOutput(mode) {
+    const selections = (mode === 'solution' || mode === 'xapi-solution') ?
+      this.params.solutions :
+      this.selections;
+
+    // Break up selections, assuming no overlaps and sorted
+    let selectionSplits = [];
+    let donePosition = 0;
+
+    selections.forEach(selection => {
+      if (selection.start > donePosition) {
+        selectionSplits.push({
+          start: donePosition,
+          end: selection.start
+        });
+      }
+      selectionSplits.push(selection);
+      donePosition = selection.end;
+    });
+    if (donePosition < this.textCharacteristics.decodedText.length) {
+      selectionSplits.push({
+        start: donePosition,
+        end: this.textCharacteristics.decodedText.length
+      });
+    }
+
+    const results = selectionSplits.map(selection => {
+      return this.getSelectionOutput(selection, mode);
+    });
+
+    const newText = results.reduce((text, segment) => `${text}${segment.text}`, '');
+    const newMask = results.reduce((mask, segment) => `${mask}${segment.mask}`, '');
+
+    return TextProcessing.htmlEncodeMasked(newText, newMask);
+  }
+
+  /**
+   * Add handler for selecting text due to lack of selectionend listener.
+   */
+  addSelectEventHandler() {
+    document.addEventListener('mouseup', this.handleSelectionEnd.bind(this));
+    document.addEventListener('touchend', this.handleSelectionEnd.bind(this));
+
+    this.selectionChangedListener = this.handleSelectionChange.bind(this);
+    this.params.textArea.addEventListener('selectstart', (event) => {
+      if (this.disabled) {
+        return;
+      }
+
+      // Prevent accidentally selecting with multiple clicks
+      if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
+        return;
+      }
+      this.lastSelectStart = event.timeStamp;
+
+      document.addEventListener('selectionchange', this.selectionChangedListener);
+    });
+  }
+
+  /**
+   * Get local node text offset.
+   * @param {Node} node Node to get local text offset.
+   * @return {number} Local text offset.
+   */
+  getLocalOffset(node) {
+    const siblings = [...node.parentElement.childNodes];
+    return siblings
+      .slice(0, siblings.indexOf(node)) // left siblings
+      .reduce((length, sibling) => {
+        return length + sibling.textContent.length;
+      }, 0); // summed length of left siblings
+  }
+
+  /**
+   * Get offset of selection in node.
+   * @param {Node} node Node that contains selection text.
+   * @return {number} Number of characters in nodes in front of node.
+   */
+  getSelectionOffset(node) {
+    let offset = 0;
+    while (node !== this.params.textArea) {
+      const add = this.getLocalOffset(node);
+
+      offset += add;
+
+      node = node.parentElement;
+    }
+
+    return offset;
+  }
+
+  /**
    * Get ouptut text and mask for a selection.
    * @param {object[]} selection Selections by user.
    * @param {string} [mode=null] Mode, scores|solution.
@@ -308,8 +312,8 @@ class SelectionHandler {
   getSelectionOutput(selection, mode) { ///
     if (!selection.backgroundColor) {
       return { // Not selected, use original text
-        text: this.originalTextDecoded.substring(selection.start, selection.end),
-        mask: this.maskHTMLDecoded.substring(selection.start, selection.end)
+        text: this.textCharacteristics.decodedText.substring(selection.start, selection.end),
+        mask: this.textCharacteristics.decodedMask.substring(selection.start, selection.end)
       };
     }
 
@@ -347,8 +351,8 @@ class SelectionHandler {
       spanPost = `</span><span class="${classNames.join(' ')}"></span>`;
     }
 
-    let text = this.originalTextDecoded.substring(selection.start, selection.end);
-    let mask = this.maskHTMLDecoded.substring(selection.start, selection.end);
+    let text = this.textCharacteristics.decodedText.substring(selection.start, selection.end);
+    let mask = this.textCharacteristics.decodedMask.substring(selection.start, selection.end);
 
     // TODO: Clean up. Adding divs necessary when selecting text over paragraphs
     // while keeping mask in sync
@@ -390,47 +394,6 @@ class SelectionHandler {
   }
 
   /**
-   * Get output suitable for different purposes, e.g. scores, solution, xAPI.
-   * @param {string} mode Mode.
-   * @return {string} Output text.
-   */
-  getOutput(mode) {
-    const selections = (mode === 'solution' || mode === 'xapi-solution') ?
-      this.params.solutions :
-      this.selections;
-
-    // Break up selections, assuming no overlaps and sorted
-    let selectionSplits = [];
-    let donePosition = 0;
-
-    selections.forEach(selection => {
-      if (selection.start > donePosition) {
-        selectionSplits.push({
-          start: donePosition,
-          end: selection.start
-        });
-      }
-      selectionSplits.push(selection);
-      donePosition = selection.end;
-    });
-    if (donePosition < this.originalTextDecoded.length) {
-      selectionSplits.push({
-        start: donePosition,
-        end: this.originalTextDecoded.length
-      });
-    }
-
-    const results = selectionSplits.map(selection => {
-      return this.getSelectionOutput(selection, mode);
-    });
-
-    const newText = results.reduce((text, segment) => `${text}${segment.text}`, '');
-    const newMask = results.reduce((mask, segment) => `${mask}${segment.mask}`, '');
-
-    return TextProcessing.htmlEncodeMasked(newText, newMask);
-  }
-
-  /**
    * Update text container.
    * Rebuilds the innerHTML from the original text, because modifying the
    * HTML strings would be hell
@@ -465,6 +428,67 @@ class SelectionHandler {
     }
 
     return solutionsCopy;
+  }
+
+  /**
+   * Handle selection change event.
+   */
+  handleSelectionChange() {
+    if (this.disabled) {
+      return;
+    }
+
+    // Will always be from textContainer
+    this.pendingSelection = document.getSelection();
+  }
+
+  /**
+   * Handle selection end event.
+   */
+  handleSelectionEnd(event) {
+    if (this.disabled) {
+      return;
+    }
+
+    document.removeEventListener('selectionchange', this.selectionChangedListener);
+
+    if (
+      event.path.indexOf(this.params.textArea) === -1 || // Not in text area
+      !this.pendingSelection || // Can have been cleared
+      !Util.isChild(this.pendingSelection.anchorNode, this.params.textArea) ||
+      !Util.isChild(this.pendingSelection.focusNode, this.params.textArea)
+    ) {
+      this.pendingSelection = null;
+      return; // Part of selection outside of text container
+    }
+
+    let start = this.pendingSelection.anchorOffset;
+    start += this.getSelectionOffset(this.pendingSelection.anchorNode);
+    start = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', start + 1);
+
+    let end = this.pendingSelection.focusOffset;
+    end += this.getSelectionOffset(this.pendingSelection.focusNode);
+    end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + 1;
+
+    if (this.pendingSelection.isCollapsed) {
+      // TODO: Can be used to do more with this selection
+      // const existingSelection = this.findSelection(start);
+      return; // Select on double click
+    }
+
+    // New selection
+    this.addSelection({
+      name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
+      text: this.pendingSelection.toString(),
+      start: (start < end) ? start : end,
+      end: (end > start) ? end : start,
+      backgroundColor: this.currentSelectColors.backgroundColor,
+      color: this.currentSelectColors.color
+    });
+
+    this.updateTextContainer(); // TODO
+
+    this.pendingSelection = null;
   }
 }
 export default SelectionHandler;

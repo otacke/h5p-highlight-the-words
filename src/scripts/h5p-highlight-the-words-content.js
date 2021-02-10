@@ -11,28 +11,31 @@ export default class HighlightTheWordsContent {
    * @constructor
    */
   constructor(params = {}, callbacks = {}) {
-    // TODO: Sanitize
     this.params = Util.extend({
       a11y: {},
-      l10n: {}
+      l10n: {},
+      highlightOptions: [],
+      previousState: {}
     }, params);
 
     this.callbacks = callbacks;
     this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
     this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
 
+    // State for question type contract
     this.answerGiven = false;
 
     this.params.text = this.params.text.replace(/(\r\n|\n|\r)/gm, '');
 
-    // TODO: This can be made nicer
-    const foo = TextProcessing.processText(
+    // Parse exercise text for sections to be highlighted
+    const parsedTextResults = TextProcessing.parseExerciseText(
       this.params.text,
       this.params.highlightOptions.map(option => option.name)
     );
-    this.params.text = foo.text.replace(/(\r\n|\n|\r)/gm, '');
+    this.params.text = parsedTextResults.text.replace(/(\r\n|\n|\r)/gm, '');
 
-    this.solutions = foo.highlights.map(solution => {
+    // Build solutions from parsed text results
+    this.solutions = parsedTextResults.highlights.map(solution => {
       const highlightOption = this.params.highlightOptions
         .filter(option => option.name === solution.name)
         .shift();
@@ -90,19 +93,23 @@ export default class HighlightTheWordsContent {
     if (this.params.taskDescription) {
       this.exercise.appendChild(this.buildTaskDescription(this.params.taskDescription));
 
+      // Visual separator
       const ruler = document.createElement('div');
       ruler.classList.add('h5p-highlight-the-words-ruler');
       this.exercise.appendChild(ruler);
     }
 
+    // Text areas for exercise and solution
     const textAreasContainer = document.createElement('div');
     textAreasContainer.classList.add('h5p-highlight-the-words-text-areas-container');
     this.exercise.appendChild(textAreasContainer);
 
+    // Exercise
     let [textContainer, textArea] = this.buildTextContainer(this.params.text);
     textAreasContainer.appendChild(textContainer);
     this.textArea = textArea;
 
+    // Solution
     [textContainer, textArea] = this.buildTextContainer('');
     textContainer.classList.add('h5p-highlight-the-words-disabled');
     textContainer.classList.add('h5p-highlight-the-words-solution');
@@ -112,6 +119,7 @@ export default class HighlightTheWordsContent {
     this.textContainerSolution = textContainer;
     this.textAreaSolution = textArea;
 
+    // Visual separator
     const ruler = document.createElement('div');
     ruler.classList.add('h5p-highlight-the-words-ruler');
     ruler.classList.add('h5p-highlight-the-words-margin-bottom');
@@ -288,73 +296,6 @@ export default class HighlightTheWordsContent {
   }
 
   /**
-   * Handle color changed.
-   * @param {object} colors Colors to be used.
-   * @param {object} colors.color Color to be used.
-   * @param {object} colors.backgroundColor Background color to be used.
-   */
-  handleColorChanged(colors) {
-    this.currentColors = colors;
-    this.selectionHandler.setColors(colors);
-  }
-
-  /**
-   * Handle menu button clicked.
-   */
-  handleMenuButtonClicked() {
-    if (this.menu.isOpen()) {
-      this.closeMenu();
-    }
-    else {
-      this.openMenu();
-    }
-  }
-
-  /**
-   * Handle menu item changed.
-   * @param {string} id Id of content.
-   */
-  handleMenuItemChanged(id) {
-    // Handle menu item changes here
-    let dummy = id;
-    id = dummy;
-  }
-
-  /**
-   * Handle text updated.
-   * @param {string} html HTML to display in text area.
-   * @param {string} [mode=null] Mode, scores|solution.
-   */
-  handleTextUpdated(html, mode) {
-    if (mode === 'reset') {
-      this.textArea.innerHTML = html;
-      this.textAreaSolution.innerHTML = '';
-    }
-    else if (mode === 'solution') {
-      this.textAreaSolution.innerHTML = html;
-    }
-    else {
-      this.textArea.innerHTML = html;
-      this.answerGiven = true;
-    }
-
-    if (mode === 'scores') {
-      // Display score points if available
-      const scorePoints = new H5P.Question.ScorePoints();
-
-      const corrects = this.textArea.querySelectorAll('.h5p-highlight-the-words-correct');
-      [...corrects].forEach(correct => {
-        correct.appendChild(scorePoints.getElement(true));
-      });
-
-      const wrongs = this.textArea.querySelectorAll('.h5p-highlight-the-words-wrong');
-      [...wrongs].forEach(correct => {
-        correct.appendChild(scorePoints.getElement(false));
-      });
-    }
-  }
-
-  /**
    * Open menu.
    */
   openMenu() {
@@ -423,5 +364,72 @@ export default class HighlightTheWordsContent {
    */
   updateTextContainer(mode) {
     this.selectionHandler.updateTextContainer(mode);
+  }
+
+  /**
+   * Handle color changed.
+   * @param {object} colors Colors to be used.
+   * @param {object} colors.color Color to be used.
+   * @param {object} colors.backgroundColor Background color to be used.
+   */
+  handleColorChanged(colors) {
+    this.currentColors = colors;
+    this.selectionHandler.setColors(colors);
+  }
+
+  /**
+   * Handle menu button clicked.
+   */
+  handleMenuButtonClicked() {
+    if (this.menu.isOpen()) {
+      this.closeMenu();
+    }
+    else {
+      this.openMenu();
+    }
+  }
+
+  /**
+   * Handle menu item changed.
+   * @param {string} id Id of content.
+   */
+  handleMenuItemChanged(id) {
+    // Handle menu item changes here (in the future)
+    let dummy = id;
+    id = dummy;
+  }
+
+  /**
+   * Handle text updated.
+   * @param {string} html HTML to display in text area.
+   * @param {string} [mode=null] Mode, scores|solution.
+   */
+  handleTextUpdated(html, mode) {
+    if (mode === 'reset') {
+      this.textArea.innerHTML = html;
+      this.textAreaSolution.innerHTML = '';
+    }
+    else if (mode === 'solution') {
+      this.textAreaSolution.innerHTML = html;
+    }
+    else {
+      this.textArea.innerHTML = html;
+      this.answerGiven = true;
+    }
+
+    if (mode === 'scores') {
+      // Display score points if available
+      const scorePoints = new H5P.Question.ScorePoints();
+
+      const corrects = this.textArea.querySelectorAll('.h5p-highlight-the-words-correct');
+      [...corrects].forEach(correct => {
+        correct.appendChild(scorePoints.getElement(true));
+      });
+
+      const wrongs = this.textArea.querySelectorAll('.h5p-highlight-the-words-wrong');
+      [...wrongs].forEach(correct => {
+        correct.appendChild(scorePoints.getElement(false));
+      });
+    }
   }
 }

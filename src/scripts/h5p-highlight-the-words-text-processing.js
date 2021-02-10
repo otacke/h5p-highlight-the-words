@@ -48,83 +48,82 @@ class TextProcessing {
   }
 
   /**
-   * TODO: Get rid of this one
+   * Compute characteristics of text.
+   * Assumes that text within in the argument text is HTML encoded, so it can be
+   * distinguished from HTML.
+   * Characteristics include text and mask of text (0 = HTML, 1 = text), same for
+   * decoded text.
+   * @param {string} text Mix of HTML and text where text is HTML encoded.
+   * @return {object} Text characteristics.
    */
-  static recodeTextStructure(structure, encode) {
-    if (encode !== 'encode' && encode !== 'decode') {
-      return structure;
-    }
+  static computeTextCharacteristics(text) {
+    const encodedText = text;
+    const encodedMask = this.createHTMLMask(text);
 
-    const segments = structure.segments.map(segment => {
-      if (segment.isHtml) {
-        return segment;
-      }
-      else {
-        const recodedText = (encode === 'encode') ?
-          this.htmlEncode(segment.text) :
-          this.htmlDecode(segment.text);
-
-        const newSegment = {
-          isHtml: false,
-          text: recodedText,
-          length: recodedText.length
-        };
-        return newSegment;
-      }
-    });
-
-    return {
-      text: segments.map(segment => segment.text).join(''),
-      mask: segments.map(segment => {
-        const glue = (segment.isHtml) ? '0' : '1';
-        return Array(segment.text.length + 1).join(glue);
-      }).join(''),
-      segments: segments
-    };
-  }
-
-  /**
-   * TODO: Get rid of this one
-   */
-  static buildTextStructure(html) {
-    let mask = this.createHTMLMask(html);
-
+    // Split input text into segments of HTML and text
+    let mask = encodedMask;
     while (mask.indexOf('01') !== -1) {
       const position = mask.indexOf('01');
       mask = `${mask.substring(0, position + 1)}${TextProcessing.DELIMITER}${mask.substring(position + 1)}`;
-      html = `${html.substring(0, position + 1)}${TextProcessing.DELIMITER}${html.substring(position + 1)}`;
+      text = `${text.substring(0, position + 1)}${TextProcessing.DELIMITER}${text.substring(position + 1)}`;
     }
     while (mask.indexOf('10') !== -1) {
       const position = mask.indexOf('10');
       mask = `${mask.substring(0, position + 1)}${TextProcessing.DELIMITER}${mask.substring(position + 1)}`;
-      html = `${html.substring(0, position + 1)}${TextProcessing.DELIMITER}${html.substring(position + 1)}`;
+      text = `${text.substring(0, position + 1)}${TextProcessing.DELIMITER}${text.substring(position + 1)}`;
     }
-
-    html = html.split(TextProcessing.DELIMITER);
+    text = text.split(TextProcessing.DELIMITER);
     mask = mask.split(TextProcessing.DELIMITER);
 
-    const segments = mask.map((maskItem, index) => {
-      return {
-        isHtml: maskItem.substr(0, 1) === '0',
-        text: html[index],
-        length: html[index].length
-      };
+    // Build decoded variant of text and mask
+    let decodedText = [];
+    let decodedMask = [];
+
+    mask.forEach((maskItem, index) => {
+      if (maskItem.substr(0, 1) === '0') {
+        decodedText.push(text[index]);
+        decodedMask.push(Array(text[index].length + 1).join('0'));
+      }
+      else {
+        const decoded = this.htmlDecode(text[index]);
+        decodedText.push(decoded);
+        decodedMask.push(Array(decoded.length + 1).join('1'));
+      }
     });
 
     return {
-      text: html.join(''),
-      mask: segments.map(segment => {
-        const glue = (segment.isHtml) ? '0' : '1';
-        return Array(segment.text.length + 1).join(glue);
-      }).join(''),
-      segments: segments
+      encodedText: encodedText,
+      encodedMask: encodedMask,
+      decodedText: decodedText.join(''),
+      decodedMask: decodedMask.join('')
     };
   }
 
   /**
-   * Get text content from masked HTML
+   * Get text content from masked HTML string.
+   * @param {string} html HTML and text.
+   * @param {string} mask Mask for html (0 = HTML, 1 = text).
+   * @param {number} [start = 0] Start position in html.
+   * @param {number} [end] End position in html.
+   * @return {string} Text content of html from start to end.
    */
-  static getMaskedText(html, mask, start, end) {
+  static getMaskedText(html, mask, start = 0, end) {
+    if (
+      typeof html !== 'string' ||
+      typeof mask !== 'string' ||
+      html.length !== mask.length
+    ) {
+      return null;
+    }
+
+    if (typeof start !== 'number' || start < 0) {
+      start = 0;
+    }
+
+    if (typeof end !== 'number' || end > html.length || end < start) {
+      end = html.length;
+    }
+
     let textContent = '';
 
     html = html.substring(start, end);
@@ -171,18 +170,17 @@ class TextProcessing {
   }
 
   /**
-   * Extract plain text and selections to highlight.
-   * TODO: Rename
-   * @param {string} text (HTML) text.
+   * Parse exercise text for selections to highlight.
+   * @param {string} text Text.
    * @param {string[]} highlightNames Names of selection types.
    * @return {object} Text and selections to highlight.
    */
-  static processText(text, highlightNames) {
+  static parseExerciseText(text, highlightNames) {
     let textOutput = '';
     const highlights = [];
     let position = 0;
 
-    // Don't need those from CKEditor
+    // Don't need &nbsp; from CKEditor
     text = text.replace(/&nbsp;/gm, ' ');
 
     while (text.length > 0) {
@@ -271,6 +269,7 @@ class TextProcessing {
   }
 }
 
+/** @constant {string} Delimiter for text */
 TextProcessing.DELIMITER = '__DeLiMiTeR__';
 
 export default TextProcessing;

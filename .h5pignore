@@ -2,6 +2,7 @@ build
 node_modules
 reports
 tests
+test
 dev
 src
 .idea
@@ -16,4 +17,5 @@ webpack.dev.config.js
 README.md
 CONTRIBUTING.md
 package.json
+package-lock.json
 worknotes

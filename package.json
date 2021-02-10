@@ -4,7 +4,7 @@
   "description": "Highlight words and sort them into the correct category",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent",
     "build": "cross-env NODE_ENV=production ./node_modules/.bin/webpack",
     "watch": "./node_modules/.bin/webpack --watch"
   },

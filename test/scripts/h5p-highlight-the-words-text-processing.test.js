@@ -66,6 +66,19 @@ const textCasesForParseExerciseText = [
       }]
     }
   },
+  { // \:: inside highlight text
+    text: 'In a hole in the ground, there lived a *hob\\::bit::yellow*',
+    highlightNames: ['yellow'],
+    result: {
+      text: 'In a hole in the ground, there lived a hob::bit',
+      highlights: [{
+        name: 'yellow',
+        text: 'hob::bit',
+        start: 39,
+        end: 47
+      }]
+    }
+  },
   { // Missing highlight name
     text: 'In a hole in the ground, there lived a *hobbit*',
     highlightNames: ['yellow'],

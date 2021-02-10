@@ -217,6 +217,12 @@ class TextProcessing {
       highlightText = highlightText.substr(0, namePosition);
 
       // Replace \* with * inside highlightText
+      while (this.indexOfUnescaped(highlightText, '\\::') !== -1) {
+        const innerDoubleColon = this.indexOfUnescaped(highlightText, '\\::');
+        highlightText = `${highlightText.substring(0, innerDoubleColon)}${highlightText.substring(innerDoubleColon + 1)}`;
+      }
+
+      // Replace \* with * inside highlightText
       while (this.indexOfUnescaped(highlightText, '\\*') !== -1) {
         const innerAsterisk = this.indexOfUnescaped(highlightText, '\\*');
         highlightText = `${highlightText.substring(0, innerAsterisk)}${highlightText.substring(innerAsterisk + 1)}`;

@@ -63,7 +63,7 @@ export default class HighlightTheWordsMenuPanel {
 
     const label = document.createElement('div');
     label.classList.add('h5p-highlight-the-words-panel-label');
-    label.innerText = this.params.label;
+    label.innerHTML = this.params.label;
     this.panelHead.appendChild(label);
 
     // Body

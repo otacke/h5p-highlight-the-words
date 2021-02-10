@@ -41,7 +41,6 @@ export default class HighlightTheWords extends H5P.Question {
         colorLegend: 'Color legend'
       },
       a11y: {
-        scoreBarLabel: 'You got :num out of :total points',
         buttonMenuOpen: 'Open menu',
         buttonMenuClose: 'Close menu',
         buttonFullscreenEnter: 'Enter fullscreen mode',
@@ -54,6 +53,14 @@ export default class HighlightTheWords extends H5P.Question {
         yourResult: 'You got @score out of @total points.'
       }
     }, this.params);
+
+    // Sanitize a11y and l10n
+    for (let phrase in this.params.a11y) {
+      this.params.a11y[phrase] = Util.stripHTML(Util.htmlDecode(this.params.a11y[phrase]));
+    }
+    for (let phrase in this.params.l10n) {
+      this.params.l10n[phrase] = Util.stripHTML(Util.htmlDecode(this.params.l10n[phrase]));
+    }
 
     // Sanitize highlight options
     this.params.highlightOptions = this.params.highlightOptions

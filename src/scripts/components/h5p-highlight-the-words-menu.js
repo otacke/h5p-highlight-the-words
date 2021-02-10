@@ -47,7 +47,7 @@ export default class HighlightTheWordsMenu {
     // Menu title
     const menuTitle = document.createElement('div');
     menuTitle.classList.add('h5p-highlight-the-words-menu-title-container');
-    menuTitle.innerText = this.params.title;
+    menuTitle.innerHTML = this.params.title;
     this.menu.appendChild(menuTitle);
 
     this.panelSet = new HighlightTheWordsPanelSet(

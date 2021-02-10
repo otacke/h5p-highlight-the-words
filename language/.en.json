@@ -1,0 +1,151 @@
+{
+  "semantics": [
+    {
+      "label": "Task description",
+      "description": "Describe your task here.",
+      "font": {}
+    },
+    {
+      "label": "Text",
+      "description": "Enter the text that contains words to be highlighted.",
+      "important": {
+        "description": "<ul><li>Mark parts of the text that students need to select with asterisks (*) before and after.</li><li>An asterisk can be added <em>within highlighted words</em> by adding a backward slash in front of it (\\*).</li><li>Inside the asterisks, use two colons (::) and a highlight option name to set the expected highlight.</li><li>If you require two consecutive colons <em>within highlighted words</em>, write one of them with a backward slash in front of it (\\::).</li></ul>"
+      }
+    },
+    {
+      "label": "Highlight options",
+      "widgets": [
+        {
+          "label": "Default"
+        }
+      ],
+      "entity": "Highlight option",
+      "field": {
+        "label": "Highlight option",
+        "fields": [
+          {
+            "label": "Name",
+            "description": "Name used in the editor to set the highlight style required for part of your text."
+          },
+          {
+            "label": "Color",
+            "description": "Color for this highlight option",
+            "default": "#fce900",
+            "spectrum": {}
+          },
+          {
+            "label": "Description",
+            "description": "Label of this highlight style in the color legend"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Overall Feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Default"
+            }
+          ],
+          "label": "Define custom feedback for any score range",
+          "description": "Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
+          "entity": "range",
+          "field": {
+            "fields": [
+              {
+                "label": "Score Range"
+              },
+              {},
+              {
+                "label": "Feedback for defined score range",
+                "placeholder": "Fill in the feedback"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Behavioural settings",
+      "description": "These options will let you control how the task behaves.",
+      "fields": [
+        {
+          "label": "Enable \"Retry\""
+        },
+        {
+          "label": "Enable \"Solution\""
+        }
+      ]
+    },
+    {
+      "label": "User interface",
+      "fields": [
+        {
+          "label": "Text for \"Check\" button",
+          "default": "Check"
+        },
+        {
+          "label": "Text for \"Show solution\" button",
+          "default": "Show solution"
+        },
+        {
+          "label": "Text for \"Reset\" button",
+          "default": "Reset"
+        },
+        {
+          "label": "Label for color legend",
+          "default": "Color legend"
+        }
+      ]
+    },
+    {
+      "label": "Readspeaker",
+      "fields": [
+        {
+          "label": "Textual representation of color pickers",
+          "description": "Announce color description. @description is a placeholder and will be replaced by the respective color's description.",
+          "default": "Color for @description"
+        },
+        {
+          "label": "Description for eraser color",
+          "default": "Erase selection"
+        },
+        {
+          "label": "Title for menu button (open)",
+          "default": "Open menu"
+        },
+        {
+          "label": "Title for menu button (close)",
+          "default": "Close menu"
+        },
+        {
+          "label": "Title for fullscreen button (enter)",
+          "default": "Enter fullscreen mode"
+        },
+        {
+          "label": "Title for fullscreen button (exit)",
+          "default": "Exit fullscreen mode"
+        },
+        {
+          "label": "Assistive technology description for \"Check\" button",
+          "default": "Check the selections. The selections will be marked as correct or incorrect."
+        },
+        {
+          "label": "Assistive technology description for \"Show Solution\" button",
+          "default": "Show the solution. The solution will be displayed in addition to the selections."
+        },
+        {
+          "label": "Assistive technology description for \"Retry\" button",
+          "default": "Retry the task. Reset all selections and start the task over again."
+        },
+        {
+          "label": "Your result",
+          "description": "@score and @total are variables and will be replaced by their respective values.",
+          "default": "You got @score out of @total points."
+        }
+      ]
+    }
+  ]
+}

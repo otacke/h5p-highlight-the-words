@@ -1,0 +1,152 @@
+{
+  "semantics": [
+    {
+      "label": "Aufgabenbeschreibung",
+      "description": "Beschreibe hier die Aufgabe.",
+      "font": {}
+    },
+    {
+      "label": "Text",
+      "description": "Gib hier den Text ein, der die zu markierenden Wörter enthält.",
+      "important": {
+        "description": "<ul><li>Markiere Teile des Textes, den die Lernenden auswählen müssen, mit Sternchen (*) davor und dahinter.</li><li>Ein Sternchen kann <em>innerhalb zu markierender Bereiche</em> hinzugefügt werden, indem ihm ein Gegenschrägstrich vorangestellt wird (\\*).</li><li>Benutze zwei Doppelpunkte (::) zwischen den Sternchen und den Namen einer Markierungsoption, um die erwartete Markierung zu beschreiben.</li><li>Falls du zwei aufeinanderfolgende Doppelpunkte <em>zwischen den Sternchen benötigst</em>, schreibe eines davon mit einem vorangestellten Gegenschrägstrich (\\::).</li></ul>"
+      },
+      "example": "In diesem Beispiel muss *das hier::gelb* markiert werden."
+    },
+    {
+      "label": "Markierungsoptionen",
+      "widgets": [
+        {
+          "label": "Vorgabe"
+        }
+      ],
+      "entity": "Markierungsoption",
+      "field": {
+        "label": "Markierungsoption",
+        "fields": [
+          {
+            "label": "Name",
+            "description": "Name, der im Editor genutzt wird um den Markierungsstil für Teile des Textes festzulegen."
+          },
+          {
+            "label": "Farbe",
+            "description": "Farbe für diese Markierungsoption",
+            "default": "#fce900",
+            "spectrum": {}
+          },
+          {
+            "label": "Beschreibung",
+            "description": "Beschriftung für diese Option innerhalb der Farblegende"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Gesamtrückmeldung",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Voreinstellung"
+            }
+          ],
+          "label": "Lege Rückmeldungen für einzelne Punktebereiche fest",
+          "description": "Klicke auf den \"Bereich hinzufügen\"-Button, um so viele Bereiche hinzuzufügen, wie du brauchst. Beispiel: 0-20% Schlechte Punktzahl, 21-91% Durchschnittliche Punktzahl, 91-100% Großartige Punktzahl!",
+          "entity": "Bereich",
+          "field": {
+            "fields": [
+              {
+                "label": "Punktebereich"
+              },
+              {},
+              {
+                "label": "Rückmeldung für jeweiligen Punktebereich",
+                "placeholder": "Trage die Rückmeldung ein"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Verhaltenseinstellungen",
+      "description": "Diese Optionen legen fest, wie die Aufgabe im Detail funktioniert.",
+      "fields": [
+        {
+          "label": "\"Wiederholen\" aktivieren"
+        },
+        {
+          "label": "\"Lösung anzeigen\" ermöglichen"
+        }
+      ]
+    },
+    {
+      "label": "Bedienoberfläche",
+      "fields": [
+        {
+          "label": "Beschriftung des \"Überprüfen\"-Buttons",
+          "default": "Überprüfen"
+        },
+        {
+          "label": "Beschriftung des \"Lösung anzeigen\"-Buttons",
+          "default": "Lösung anzeigen"
+        },
+        {
+          "label": "Beschriftung des \"Wiederholen\"-Buttons",
+          "default": "Wiederholen"
+        },
+        {
+          "label": "Beschriftung für die Farblegende",
+          "default": "Farblegende"
+        }
+      ]
+    },
+    {
+      "label": "Vorlesewerkzeug (Barrierefreiheit)",
+      "fields": [
+        {
+          "label": "Textliche Repräsentation einer Farbe",
+          "description": "Beschreibung für die Farbe. @description ist ein Platzhalter und wird durch die jeweilige Beschreibung der Farbe ersetzt.",
+          "default": "Farbe für @description"
+        },
+        {
+          "label": "Beschreibung für die Löschfarbe",
+          "default": "Auswahl löschen"
+        },
+        {
+          "label": "Titel des Menü-Buttons (öffnen)",
+          "default": "Menü öffnen"
+        },
+        {
+          "label": "Titel des Menü-Buttons (schließen)",
+          "default": "Menü schließen"
+        },
+        {
+          "label": "Titel des Vollbild-Buttons (aktivieren)",
+          "default": "Gehe in den Vollbildmodus"
+        },
+        {
+          "label": "Titel des Vollbild-Buttons (deaktivieren)",
+          "default": "EVerlasse den Vollbildmodus"
+        },
+        {
+          "label": "Beschreibung des \"Überprüfen\"-Buttons (für Hilfsmittel zur Barrierefreiheit)",
+          "default": "Die Antworten überprüfen. Die Eingaben werden als richtig oder falsch markiert."
+        },
+        {
+          "label": "Beschreibung des \"Lösung anzeigen\"-Buttons (für Hilfsmittel zur Barrierefreiheit)",
+          "default": "Die Lösung anzeigen. Die richtigen Lösungen werden in der Aufgabe angezeigt."
+        },
+        {
+          "label": "Beschreibung des \"Wiederholen\"-Buttons (für Hilfsmittel zur Barrierefreiheit)",
+          "default": "Die Aufgabe wiederholen. Alle Eingaben werden zurückgesetzt und die Aufgabe wird erneut gestartet."
+        },
+        {
+          "label": "Dein Ergebnis",
+          "description": "@score wird durch die erreichten Punkte ersetzt. @total wird durch die maximal mögliche Punktzahl ersetzt.",
+          "default": "Du hast @score von @total Punkten."
+        }
+      ]
+    }
+  ]
+}

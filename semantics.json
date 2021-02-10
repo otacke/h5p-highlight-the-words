@@ -94,7 +94,7 @@
           "name": "description",
           "type": "text",
           "label": "Description",
-          "description": "Label of this highlight style in the exercise",
+          "description": "Label of this highlight style in the color legend",
           "importance": "medium",
           "optional": true
         }

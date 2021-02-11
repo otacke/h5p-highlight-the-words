@@ -24,6 +24,8 @@ class SelectionHandler {
 
     // Create decoded text and masks from encoded text
     this.textCharacteristics = TextProcessing.computeTextCharacteristics(params.text);
+    this.selectMin = this.textCharacteristics.decodedMask.indexOf('1');
+    this.selectMax = this.textCharacteristics.decodedMask.lastIndexOf('1') + 1;
 
     // Current selections in text
     this.selections = params.selections || [];
@@ -454,20 +456,38 @@ class SelectionHandler {
 
     if (
       !this.pendingSelection || // Can have been cleared
-      !Util.isChild(this.pendingSelection.anchorNode, this.params.textArea) ||
-      !Util.isChild(this.pendingSelection.focusNode, this.params.textArea)
+      !Util.isChild(this.pendingSelection.anchorNode, this.params.textArea) // Start was not in textArea
     ) {
       this.pendingSelection = null;
       return; // Part of selection outside of text container
     }
 
-    let start = this.pendingSelection.anchorOffset;
+    let start = null;
+    let end = null;
+
+    // Selection ended outside of textArea
+    if (!Util.isChild(this.pendingSelection.focusNode, this.params.textArea)) {
+      let focusNode = this.pendingSelection.focusNode;
+      while (focusNode.nodeType !== 1) {
+        focusNode = focusNode.parentElement;
+      }
+
+      const allElements = [...document.getElementsByTagName('*')];
+      const textAreaIndex = allElements.indexOf(this.params.textArea);
+      const focusIndex = allElements.indexOf(focusNode);
+
+      end = (focusIndex < textAreaIndex) ? this.selectMin + 1 : this.selectMax;
+    }
+
+    start = this.pendingSelection.anchorOffset;
     start += this.getSelectionOffset(this.pendingSelection.anchorNode);
     start = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', start + 1);
 
-    let end = this.pendingSelection.focusOffset;
-    end += this.getSelectionOffset(this.pendingSelection.focusNode);
-    end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + 1;
+    if (end === null) {
+      end = this.pendingSelection.focusOffset;
+      end += this.getSelectionOffset(this.pendingSelection.focusNode);
+      end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + 1;
+    }
 
     if (this.pendingSelection.isCollapsed) {
       // TODO: Can be used to do more with this selection
@@ -475,17 +495,29 @@ class SelectionHandler {
       return; // Select on double click
     }
 
+    // Correct
+    if (start > end) {
+      const tmp = start;
+      start = end - 1;
+      end = tmp;
+    }
+
     // New selection
     this.addSelection({
       name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
-      text: this.pendingSelection.toString(),
-      start: (start < end) ? start : end,
-      end: (end > start) ? end : start,
+      text: TextProcessing.getMaskedText(
+        this.textCharacteristics.decodedText,
+        this.textCharacteristics.decodedMask,
+        start,
+        end
+      ),
+      start: start,
+      end: end,
       backgroundColor: this.currentSelectColors.backgroundColor,
       color: this.currentSelectColors.color
     });
 
-    this.updateTextContainer(); // TODO
+    this.updateTextContainer();
 
     this.pendingSelection = null;
   }

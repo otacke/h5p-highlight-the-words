@@ -48,6 +48,13 @@ class SelectionHandler {
     if (this.selections.length > 0) {
       this.updateTextContainer();
     }
+
+    // Prevent selecting paragraphs by triple clicks
+    this.params.textArea.addEventListener('click', event => {
+      if (event.detail === 3) {
+        this.clearSelections();
+      }
+    });
   }
 
   /**
@@ -211,6 +218,20 @@ class SelectionHandler {
   }
 
   /**
+   * Clear selections on screen.
+   */
+  clearSelections() {
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
+    else if (document.selection) {
+      document.selection.empty();
+    }
+
+    this.pendingSelection = null;
+  }
+
+  /**
    * Get output suitable for different purposes, e.g. scores, solution, xAPI.
    * @param {string} mode Mode.
    * @return {string} Output text.
@@ -264,7 +285,7 @@ class SelectionHandler {
         return;
       }
 
-      // Prevent accidentally selecting with multiple clicks
+      // Prevent accidentally selecting paragraph with multiple clicks
       if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
         return;
       }
@@ -519,6 +540,7 @@ class SelectionHandler {
 
     this.updateTextContainer();
 
+    this.clearSelections();
     this.pendingSelection = null;
   }
 }

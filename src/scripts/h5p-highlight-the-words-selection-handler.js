@@ -516,6 +516,12 @@ class SelectionHandler {
       return; // Select on double click
     }
 
+    // When selecting complete text backwards, something is odd
+    if (start === -1) {
+      start = this.selectMin;
+      end = this.selectMax;
+    }
+
     // Correct
     if (start > end) {
       const tmp = start;

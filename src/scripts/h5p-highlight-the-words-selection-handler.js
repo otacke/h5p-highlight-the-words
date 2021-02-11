@@ -445,7 +445,7 @@ class SelectionHandler {
   /**
    * Handle selection end event.
    */
-  handleSelectionEnd(event) {
+  handleSelectionEnd() {
     if (this.disabled) {
       return;
     }
@@ -453,7 +453,6 @@ class SelectionHandler {
     document.removeEventListener('selectionchange', this.selectionChangedListener);
 
     if (
-      event.path.indexOf(this.params.textArea) === -1 || // Not in text area
       !this.pendingSelection || // Can have been cleared
       !Util.isChild(this.pendingSelection.anchorNode, this.params.textArea) ||
       !Util.isChild(this.pendingSelection.focusNode, this.params.textArea)

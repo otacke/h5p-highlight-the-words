@@ -201,7 +201,7 @@ class TextProcessing {
 
       // Check highlight text for name
       let highlightText = text.substring(matchPositionStart + 1, matchPositionEnd);
-      const namePosition = this.indexOfUnescaped(highlightText, '::');
+      const namePosition = this.lastIndexOfUnescaped(highlightText, '::');
 
       if (namePosition === -1) {
         console.warn(`It seems that you forgot to add a name to the highlight text "${highlightText}"`);
@@ -254,6 +254,23 @@ class TextProcessing {
       text: `${textOutput}`,
       highlights: highlights
     };
+  }
+
+  /**
+   * Find last index of unescaped char.
+   * @param {string} text Text to look in.
+   * @param {string} char Char to look for.
+   * @param {number} [start=0] Start position.
+   * @return {number} Index of next unescaped char or -1.
+   */
+  static lastIndexOfUnescaped(text, char, start = 0) {
+    let position = -1;
+    while (this.indexOfUnescaped(text, char, start) !== -1) {
+      position = this.indexOfUnescaped(text, char, start);
+      start = position + char.length + 1;
+    }
+
+    return position;
   }
 
   /**

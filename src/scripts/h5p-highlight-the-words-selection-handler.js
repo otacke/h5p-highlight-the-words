@@ -507,7 +507,8 @@ class SelectionHandler {
     if (end === null) {
       end = this.pendingSelection.focusOffset;
       end += this.getSelectionOffset(this.pendingSelection.focusNode);
-      end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + 1;
+      // If selecting backwards to very first char, end needs to be 0
+      end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + ((end === 0) ? 0 : 1);
     }
 
     if (this.pendingSelection.isCollapsed) {
@@ -522,22 +523,36 @@ class SelectionHandler {
       end = this.selectMax;
     }
 
-    // Correct
+    // Reverse order of selection
     if (start > end) {
       const tmp = start;
-      start = end - 1;
+      start = end;
       end = tmp;
-    }
 
-    // New selection
-    this.addSelection({
-      name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
-      text: TextProcessing.getMaskedText(
+      // Will make sure to ignore leading/trailing HTML on backwards selection
+      let text, lead;
+      [text, lead] = TextProcessing.trimMaskedText(
         this.textCharacteristics.decodedText,
         this.textCharacteristics.decodedMask,
         start,
         end
-      ),
+      );
+
+      start = start + lead;
+      end = start + text.length;
+    }
+
+    const text = TextProcessing.getMaskedText(
+      this.textCharacteristics.decodedText,
+      this.textCharacteristics.decodedMask,
+      start,
+      end
+    );
+
+    // New selection
+    this.addSelection({
+      name: this.colorToNameLookup[this.currentSelectColors.backgroundColor],
+      text: text,
       start: start,
       end: end,
       backgroundColor: this.currentSelectColors.backgroundColor,

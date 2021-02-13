@@ -100,6 +100,48 @@ class TextProcessing {
   }
 
   /**
+   * Trim masked html.
+   * @param {string} html HTML and text.
+   * @param {string} mask Mask for html (0 = HTML, 1 = text).
+   * @param {number} [start = 0] Start position in html.
+   * @param {number} [end] End position in html.
+   * @return {string} Trimmed masked html.
+   */
+  static trimMaskedText(html, mask, start, end) {
+    html = html.substring(start, end);
+    mask = mask.substring(start, end);
+
+    while (mask.indexOf('01') !== -1) {
+      const position = mask.indexOf('01');
+      mask = `${mask.substring(0, position + 1)}${TextProcessing.DELIMITER}${mask.substring(position + 1)}`;
+      html = `${html.substring(0, position + 1)}${TextProcessing.DELIMITER}${html.substring(position + 1)}`;
+    }
+    while (mask.indexOf('10') !== -1) {
+      const position = mask.indexOf('10');
+      mask = `${mask.substring(0, position + 1)}${TextProcessing.DELIMITER}${mask.substring(position + 1)}`;
+      html = `${html.substring(0, position + 1)}${TextProcessing.DELIMITER}${html.substring(position + 1)}`;
+    }
+
+    html = html.split(TextProcessing.DELIMITER);
+    mask = mask.split(TextProcessing.DELIMITER);
+
+    let lead = 0;
+    let trail = 0;
+
+    // remove trailing HTML
+    if (mask.length > 0 && mask[mask.length - 1].substr(0, 1) === '0') {
+      trail = html.pop().length;
+    }
+
+    // remove leading HTML
+    if (mask.length > 0 && mask[0].substr(0, 1) === '0') {
+      lead = html.shift().length;
+    }
+
+    return [html.join(''), lead, trail];
+  }
+
+  /**
    * Get text content from masked HTML string.
    * @param {string} html HTML and text.
    * @param {string} mask Mask for html (0 = HTML, 1 = text).

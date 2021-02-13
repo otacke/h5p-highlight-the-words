@@ -301,7 +301,7 @@ class SelectionHandler {
    * @return {number} Local text offset.
    */
   getLocalOffset(node) {
-    const siblings = [...node.parentElement.childNodes];
+    const siblings = Array.prototype.slice.call(node.parentNode.childNodes); // Damn you, IE11!
     return siblings
       .slice(0, siblings.indexOf(node)) // left siblings
       .reduce((length, sibling) => {
@@ -321,7 +321,7 @@ class SelectionHandler {
 
       offset += add;
 
-      node = node.parentElement;
+      node = node.parentNode;
     }
 
     return offset;
@@ -490,7 +490,7 @@ class SelectionHandler {
     if (!Util.isChild(this.pendingSelection.focusNode, this.params.textArea)) {
       let focusNode = this.pendingSelection.focusNode;
       while (focusNode.nodeType !== 1) {
-        focusNode = focusNode.parentElement;
+        focusNode = focusNode.parentNode;
       }
 
       const allElements = [...document.getElementsByTagName('*')];

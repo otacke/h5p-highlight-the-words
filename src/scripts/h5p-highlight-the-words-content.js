@@ -422,12 +422,12 @@ export default class HighlightTheWordsContent {
       const scorePoints = new H5P.Question.ScorePoints();
 
       const corrects = this.textArea.querySelectorAll('.h5p-highlight-the-words-correct');
-      [...corrects].forEach(correct => {
+      Array.prototype.slice.call(corrects).forEach(correct => {
         correct.appendChild(scorePoints.getElement(true));
       });
 
       const wrongs = this.textArea.querySelectorAll('.h5p-highlight-the-words-wrong');
-      [...wrongs].forEach(correct => {
+      Array.prototype.slice.call(wrongs).forEach(correct => {
         correct.appendChild(scorePoints.getElement(false));
       });
     }

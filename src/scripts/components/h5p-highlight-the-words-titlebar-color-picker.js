@@ -80,7 +80,7 @@ export default class HighlightTheWordsTitlebarColorPicker {
   }
 
   handleColorChanged(target, color) {
-    [...this.colorPickerContainer.childNodes].forEach(node => {
+    Array.prototype.slice.call(this.colorPickerContainer.childNodes).forEach(node => {
       node.classList.remove('h5p-highlight-the-words-selected');
     });
     target.classList.add('h5p-highlight-the-words-selected');

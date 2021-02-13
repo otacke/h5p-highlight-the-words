@@ -108,8 +108,28 @@ class TextProcessing {
    * @return {string} Trimmed masked html.
    */
   static trimMaskedText(html, mask, start, end) {
+    if (
+      typeof html !== 'string' ||
+      typeof mask !== 'string' ||
+      html.length !== mask.length
+    ) {
+      return null;
+    }
+
+    if (typeof start !== 'number' || start < 0) {
+      start = 0;
+    }
+
+    if (typeof end !== 'number' || end > html.length || end < start) {
+      end = html.length;
+    }
+
     html = html.substring(start, end);
     mask = mask.substring(start, end);
+
+    if (html.length === 0) {
+      return ['', 0, 0];
+    }
 
     while (mask.indexOf('01') !== -1) {
       const position = mask.indexOf('01');

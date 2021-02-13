@@ -1,4 +1,4 @@
-import HTMLDecoderEncoder from 'html-encoder-decoder';
+import he from 'he';
 
 /** Class for utility functions */
 class TextProcessing {
@@ -9,7 +9,7 @@ class TextProcessing {
    * @return {string} Decoded HTML string.
    */
   static htmlDecode(htmlEncoded) {
-    return HTMLDecoderEncoder.decode(htmlEncoded);
+    return he.decode(htmlEncoded);
   }
 
   /**
@@ -18,7 +18,7 @@ class TextProcessing {
    * @return {string} Encoded HTML string.
    */
   static htmlEncode(html) {
-    return HTMLDecoderEncoder.encode(html);
+    return he.encode(html);
   }
 
   /**

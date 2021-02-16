@@ -473,6 +473,14 @@ class SelectionHandler {
       return;
     }
 
+    // Workaround for iOS that doesn not support the selectstart event for some reason
+    if (!this.pendingSelection) {
+      this.pendingSelection = document.getSelection();
+      if (!this.pendingSelection.anchorNode || !this.pendingSelection.focusNode) {
+        this.pendingSelection = null;
+      }
+    }
+
     document.removeEventListener('selectionchange', this.selectionChangedListener);
 
     if (

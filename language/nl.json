@@ -1,0 +1,151 @@
+{
+  "semantics": [
+    {
+      "label": "Taakomschrijving",
+      "description": "Beschrijf hier je taak.",
+      "font": {}
+    },
+    {
+      "label": "Tekst",
+      "description": "Voer de tekst in die de woorden bevat die geaccentueerd moeten worden.",
+      "important": {
+        "description": "<ul><li>Markeer de delen van de tekst die de gebruikers moeten selecteren met een asterisk (*). Zowel ervoor als erna.</li><li>Een asterisk kan worden toegevoegd <em>in de geaccentueerde woorden</em> door er een achterwaartse schuine streep voor te zetten (\\*).</li><li>Gebruik binnen de asteriksen twee dubbele punten (::) en de naam van een accentueer optie om de verwachte accentuering in te stellen.</li><li>Als je twee opeenvolgende dubbele punten <em>binnen geaccentueerde woorden gebruikt</em>, schrijf dan één van hen met een achterwaartse schuine streep ervoor (\\::).</li></ul>"
+      }
+    },
+    {
+      "label": "Accentueer opties",
+      "widgets": [
+        {
+          "label": "Standaard"
+        }
+      ],
+      "entity": "Accentueer optie",
+      "field": {
+        "label": "Accentueer optie",
+        "fields": [
+          {
+            "label": "Naam",
+            "description": "De naam die in de editor wordt gebruikt om de vereiste accentueerstijl voor een deel van je tekst in te stellen."
+          },
+          {
+            "label": "Kleur",
+            "description": "De kleur van de accentueer optie",
+            "default": "#fce900",
+            "spectrum": {}
+          },
+          {
+            "label": "Beschrijving",
+            "description": "Label van deze accentstijl in de kleurenlegenda"
+          }
+        ]
+      }
+    },
+    {
+      "label": "Algemene feedback",
+      "fields": [
+        {
+          "widgets": [
+            {
+              "label": "Standaard"
+            }
+          ],
+          "label": "Definieer aangepaste feedback voor elke scorereeks",
+          "description": "Druk op de knop \"Voeg scorereeks toe\" om zoveel reeksen toe te voegen als nodig is. Voorbeeld: 0-20% Onvoldoende score, 21-91% Gemiddelde score, 91-100% Uitstekende score!",
+          "entity": "reeks",
+          "field": {
+            "fields": [
+              {
+                "label": "Scorereeks"
+              },
+              {},
+              {
+                "label": "Feedback voor de gedefinieerde scorereeks",
+                "placeholder": "Vul de aangepaste feedback in"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Gedragsinstellingen",
+      "description": "Met deze opties kun je bepalen hoe de taak zich gedraagt.",
+      "fields": [
+        {
+          "label": "Schakel \"Opnieuw\" in"
+        },
+        {
+          "label": "Schakel \"Oplossing\" in"
+        }
+      ]
+    },
+    {
+      "label": "Gebruikersinterface",
+      "fields": [
+        {
+          "label": "Tekst voor \"Controleer\" knop",
+          "default": "Controleer"
+        },
+        {
+          "label": "Tekst voor \"Toon oplossing\" knop",
+          "default": "Toon oplossing"
+        },
+        {
+          "label": "Tekst voor \"Opnieuw\" knop",
+          "default": "Opnieuw"
+        },
+        {
+          "label": "Label voor de kleurenlegenda",
+          "default": "Kleurenlegenda"
+        }
+      ]
+    },
+    {
+      "label": "Readspeaker",
+      "fields": [
+        {
+          "label": "Tekstuele weergave van de kleurkiezers",
+          "description": "Maak de kleurbeschrijving bekend. @description is een plaatshouder die zal worden vervangen door de beschrijving van de kleur in kwestie.",
+          "default": "Kleur voor de @description"
+        },
+        {
+          "label": "Beschrijving voor gumkleur",
+          "default": "Verwijder selectie"
+        },
+        {
+          "label": "Titel voor menuknop (openen)",
+          "default": "Open menu"
+        },
+        {
+          "label": "Titel voor menuknop (sluiten)",
+          "default": "Sluit menu"
+        },
+        {
+          "label": "Titel voor volledig scherm knop (enter)",
+          "default": "Open volledig scherm"
+        },
+        {
+          "label": "Titel voor knop volledig scherm (exit)",
+          "default": "Sluit volledig scherm"
+        },
+        {
+          "label": "Beschrijving van de ondersteunende technologie voor de \"Controleer\" knop",
+          "default": "Controleer de selecties. De selecties worden als juist of onjuist gemarkeerd."
+        },
+        {
+          "label": "Beschrijving van de ondersteunende technologie voor de \"Toon oplossing\" knop",
+          "default": "Toon de oplossing. De oplossing wordt getoond naast de selecties."
+        },
+        {
+          "label": "Beschrijving van de ondersteunende technologie voor de \"Opnieuw\" knop",
+          "default": "Begin opnieuw. Alle selecties zullen worden gereset en start the taak opnieuw."
+        },
+        {
+          "label": "Jouw resultaat",
+          "description": "@score en @total zijn variabelen en zullen worden vervangen door hun respectievelijke waarden.",
+          "default": "Je hebt @score van de @total punten."
+        }
+      ]
+    }
+  ]
+}

@@ -127,7 +127,7 @@
         },
         {
           "label": "Titel des Vollbild-Buttons (deaktivieren)",
-          "default": "EVerlasse den Vollbildmodus"
+          "default": "Verlasse den Vollbildmodus"
         },
         {
           "label": "Beschreibung des \"Überprüfen\"-Buttons (für Hilfsmittel zur Barrierefreiheit)",

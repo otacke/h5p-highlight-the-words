@@ -550,12 +550,17 @@ class SelectionHandler {
       end = start + text.length;
     }
 
-    const text = TextProcessing.getMaskedText(
+    let text = TextProcessing.getMaskedText(
       this.textCharacteristics.decodedText,
       this.textCharacteristics.decodedMask,
       start,
       end
     );
+
+    // Remove spaces around text, but allow selecting spaces only
+    if (text.trim() !== text && text.trim() !== '') {
+      [text, start, end] = TextProcessing.trimSpaces(text, start, end);
+    }
 
     // New selection
     this.addSelection({

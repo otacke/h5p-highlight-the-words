@@ -105,7 +105,7 @@ class TextProcessing {
    * @param {string} mask Mask for html (0 = HTML, 1 = text).
    * @param {number} [start = 0] Start position in html.
    * @param {number} [end] End position in html.
-   * @return {string} Trimmed masked html.
+   * @return {[string, number, number]} Trimmed masked html.
    */
   static trimMaskedText(html, mask, start, end) {
     if (
@@ -159,6 +159,29 @@ class TextProcessing {
     }
 
     return [html.join(''), lead, trail];
+  }
+
+  /**
+   * Trim spaces from text.
+   * @param {string} text Text to be trimmed.
+   * @param {number} start Start position.
+   * @param {number} end End position.
+   * @return {[string, number, number]} Trimmed text, new start, new end.
+   */
+  static trimSpaces(text, start, end) {
+    // Remove leading spaces
+    while (text.substr(0, 1) === ' ') {
+      text = text.substr(1);
+      start++;
+    }
+
+    // Remove trailing spaces
+    while (text.substr(-1) === ' ') {
+      text = text.substr(0, text.length - 1);
+      end--;
+    }
+
+    return [text, start, end];
   }
 
   /**

@@ -18,9 +18,11 @@ export default class HighlightTheWordsContent {
       previousState: {}
     }, params);
 
-    this.callbacks = callbacks;
-    this.callbacks.onButtonFullscreenClicked = callbacks.onButtonFullscreenClicked || (() => {});
-    this.callbacks.onResizeRequired = callbacks.onResizeRequired || (() => {});
+    this.callbacks = Util.extend({
+      onButtonFullscreenClicked: () => {},
+      onResizeRequired: () => {},
+      onInteracted: () => {}
+    }, callbacks);
 
     // State for question type contract
     this.answerGiven = false;
@@ -137,7 +139,8 @@ export default class HighlightTheWordsContent {
       {
         onTextUpdated: (html, mode) => {
           this.handleTextUpdated(html, mode);
-        }
+        },
+        onInteracted: this.callbacks.onInteracted
       }
     );
 

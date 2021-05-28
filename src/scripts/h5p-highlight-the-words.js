@@ -126,6 +126,9 @@ export default class HighlightTheWords extends H5P.Question {
         },
         onResizeRequired: () => {
           this.handleResizeRequired();
+        },
+        onInteracted: () => {
+          this.handleInteracted();
         }
       }
     );
@@ -504,6 +507,13 @@ export default class HighlightTheWords extends H5P.Question {
    */
   handleResizeRequired() {
     this.trigger('resize');
+  }
+
+  /**
+   * Handle user interacted.
+   */
+  handleInteracted() {
+    this.triggerXAPI('interacted');
   }
 }
 

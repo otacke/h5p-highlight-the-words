@@ -13,8 +13,10 @@ class SelectionHandler {
       solutions: []
     }, params);
 
-    this.callbacks = callbacks || {};
-    this.callbacks.onTextUpdated = callbacks.onTextUpdated || (() => {});
+    this.callbacks = Util.extend({
+      onTextUpdated: () => {},
+      onInteracted: () => {}
+    }, callbacks);
 
     // Mapping for getting option name for color given.
     this.colorToNameLookup = {};
@@ -576,6 +578,9 @@ class SelectionHandler {
 
     this.clearSelections();
     this.pendingSelection = null;
+
+    // Handle interacted
+    this.callbacks.onInteracted();
   }
 }
 export default SelectionHandler;

@@ -1,15 +1,16 @@
 @import './../../styles/h5p-highlight-the-words-main.scss';
 
 .h5p-highlight-the-words-capitalization-container {
+  font-size: $font-size-menu;
   width: 100%;
 
   .h5p-highlight-the-words-capitalization-wrapper {
     display: flex;
     flex-direction: column;
-    margin: 0.5em;
+    margin: .5em;
 
     .h5p-highlight-the-words-capitalization-introduction {
-      margin-bottom: 0.5em;
+      margin-bottom: .5em;
 
       p:first-child {
         margin-top: 0;

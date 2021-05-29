@@ -4,7 +4,7 @@
   width: 100%;
 
   .h5p-highlight-the-words-color-legend-wrapper {
-    margin: 0.5em;
+    margin: .5em;
 
     .h5p-highlight-the-words-color-description {
       align-items: center;
@@ -15,13 +15,13 @@
         border-radius: $border-radius-small;
         flex-shrink: 0;
         height: 1em;
-        width: 0.5em;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+        width: .5em;
+        margin-left: .5em;
+        margin-right: .5em;
       }
 
       .h5p-highlight-the-words-color-label {
-        font-size: .85em;
+        font-size: $font-size-menu;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

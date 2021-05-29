@@ -68,6 +68,10 @@
 
             .h5p-highlight-the-words-selection {
               position: relative;
+
+              &.h5p-highlight-the-words-selection-active {
+                outline: 2px solid $color-grey-3-50;
+              }
             }
 
             .h5p-highlight-the-words-score-point {

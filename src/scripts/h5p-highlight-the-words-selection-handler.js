@@ -15,7 +15,8 @@ class SelectionHandler {
 
     this.callbacks = Util.extend({
       onTextUpdated: () => {},
-      onInteracted: () => {}
+      onInteracted: () => {},
+      onSelectionChanged: () => {}
     }, callbacks);
 
     // Mapping for getting option name for color given.
@@ -43,8 +44,6 @@ class SelectionHandler {
 
     // State for being disabled
     this.disabled = false;
-
-    this.addSelectEventHandler();
 
     // Restore previous state
     if (this.selections.length > 0) {
@@ -97,6 +96,51 @@ class SelectionHandler {
     return this.selections
       .filter(selection => selection.start <= position && selection.end > position)
       .shift();
+  }
+
+  /**
+   * Set custom selection attribute.
+   * @param {number} position Position of selection. // TODO: Create separate class for selection!!!
+   * @param {string} id Id of attribute.
+   * @param {object} params Parameters.
+   * @param {string} params.mergeMode Mode for merging selections.
+   */
+  setSelectionAttribute(position, id, params) {
+    const targetSelection = this.findSelection(position);
+    if (!targetSelection) {
+      return;
+    }
+
+    targetSelection.attributes = targetSelection.attributes || {};
+    targetSelection.attributes[id] = params;
+  }
+
+  /**
+   * Activate selection.
+   * @param {number} position Position to check for selection.
+   */
+  activateSelection(position) {
+    const targetSelection = this.findSelection(position);
+    if (!targetSelection) {
+      return;
+    }
+
+    this.selections.forEach(selection => {
+      selection.active = (selection === targetSelection);
+    });
+
+    this.updateTextContainer();
+  }
+
+  /**
+   * Deactivate all selections.
+   */
+  deactivateAllSelections() {
+    this.selections.forEach(selection => {
+      selection.active = false;
+    });
+
+    this.updateTextContainer();
   }
 
   /**
@@ -180,6 +224,10 @@ class SelectionHandler {
           selection.backgroundColor === this.selections[index + 1].backgroundColor &&
           selection.end >= this.selections[index + 1].start
         ) {
+          if (selection?.attributes?.capitalization) {
+            this.selections[index + 1].attributes = this.selections[index + 1].attributes || {};
+            this.selections[index + 1].attributes.capitalization = selection.attributes.capitalization;
+          }
           this.selections[index + 1].start = selection.start;
           this.selections[index + 1].text = TextProcessing.getMaskedText(this.textCharacteristics.decodedText, this.textCharacteristics.decodedMask, this.selections[index + 1].start, this.selections[index + 1].end);
           selection.backgroundColor = '';
@@ -278,8 +326,12 @@ class SelectionHandler {
    * Add handler for selecting text due to lack of selectionend listener.
    */
   addSelectEventHandler() {
-    document.addEventListener('mouseup', this.handleSelectionEnd.bind(this));
-    document.addEventListener('touchend', this.handleSelectionEnd.bind(this));
+    document.addEventListener('mouseup', (event) => {
+      this.handleSelectionEnd(event);
+    });
+    document.addEventListener('touchend', (event) => {
+      this.handleSelectionEnd(event);
+    });
 
     this.selectionChangedListener = this.handleSelectionChange.bind(this);
     this.params.textArea.addEventListener('selectstart', (event) => {
@@ -334,7 +386,7 @@ class SelectionHandler {
    * @param {object[]} selection Selections by user.
    * @param {string} [mode=null] Mode, scores|solution.
    */
-  getSelectionOutput(selection, mode) { ///
+  getSelectionOutput(selection, mode) {
     if (!selection.backgroundColor) {
       return { // Not selected, use original text
         text: this.textCharacteristics.decodedText.substring(selection.start, selection.end),
@@ -363,7 +415,12 @@ class SelectionHandler {
       spanPost = '</span>';
     }
     else {
-      spanPre = `<span class="h5p-highlight-the-words-selection" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+      const classes = ['h5p-highlight-the-words-selection'];
+      if (selection.active) {
+        classes.push('h5p-highlight-the-words-selection-active');
+      }
+
+      spanPre = `<span class="${classes.join(' ')}" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
 
       const classNames = ['h5p-highlight-the-words-score-point'];
       if (mode === 'scores') {
@@ -472,7 +529,11 @@ class SelectionHandler {
    */
   handleSelectionEnd() {
     if (this.disabled) {
-      return;
+      return; // Disabled
+    }
+
+    if (event.target !== this.params.exerciseArea && !Util.isChild(event.target, this.params.exerciseArea)) {
+      return; // Outside of exercise area
     }
 
     // Workaround for iOS that doesn not support the selectstart event for some reason
@@ -490,6 +551,7 @@ class SelectionHandler {
       !Util.isChild(this.pendingSelection.anchorNode, this.params.textArea) // Start was not in textArea
     ) {
       this.pendingSelection = null;
+      this.callbacks.onSelectionChanged();
       return; // Part of selection outside of text container
     }
 
@@ -521,12 +583,6 @@ class SelectionHandler {
       end = Util.nthIndexOf(this.textCharacteristics.encodedMask, '1', end) + ((end === 0) ? 0 : 1);
     }
 
-    if (this.pendingSelection.isCollapsed) {
-      // TODO: Can be used to do more with this selection
-      // const existingSelection = this.findSelection(start);
-      return; // Select on double click
-    }
-
     // When selecting complete text backwards, something is odd
     if (start === -1) {
       start = this.selectMin;
@@ -552,6 +608,17 @@ class SelectionHandler {
       end = start + text.length;
     }
 
+    // Interpret as click on selection
+    if (this.pendingSelection.isCollapsed) {
+      if (start !== end || start <= this.selectMin) {
+        return; // Not a click on an existing selection
+      }
+
+      const existingSelection = this.findSelection(start);
+      this.callbacks.onSelectionChanged(existingSelection);
+      return;
+    }
+
     let text = TextProcessing.getMaskedText(
       this.textCharacteristics.decodedText,
       this.textCharacteristics.decodedMask,
@@ -574,13 +641,15 @@ class SelectionHandler {
       color: this.currentSelectColors.color
     });
 
+    // Handle interacted
+    this.callbacks.onInteracted();
+    this.callbacks.onSelectionChanged(this.findSelection(start));
+
     this.updateTextContainer();
 
     this.clearSelections();
     this.pendingSelection = null;
 
-    // Handle interacted
-    this.callbacks.onInteracted();
   }
 }
 export default SelectionHandler;

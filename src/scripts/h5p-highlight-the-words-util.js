@@ -68,7 +68,7 @@ class Util {
   }
 
   /**
-   * Check whether an HTML element is a child of the overlay.
+   * Check whether an HTML element is a child of some other element.
    * @param {HTMLElement} node Node to check.
    * @param {HTMLElement} potentialParent Potential parent.
    * @return {boolean} True, if element is a child.

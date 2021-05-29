@@ -28,6 +28,9 @@ export default class HighlightTheWordsContent {
     // State for question type contract
     this.answerGiven = false;
 
+    // Keep track of current selection
+    this.currentSelection = null;
+
     this.params.text = this.params.text.replace(/(\r\n|\n|\r)/gm, '');
 
     // Parse exercise text for sections to be highlighted
@@ -78,29 +81,33 @@ export default class HighlightTheWordsContent {
 
     // Add capitalization panel
     if (this.params.useCapitalization) {
+      this.menuCapitalization = new HighlightTheWordsCapitalization(
+        {
+          introduction: this.params.l10n.capitalization.introduction,
+          l10n: {
+            uppercase: this.params.l10n.capitalization.labelUppercase,
+            lowercase: this.params.l10n.capitalization.labelLowercase
+          }
+        },
+        {
+          onChosen: (charCase) => {
+            this.handleCapitalizationChosen(charCase);
+          }
+        }
+      );
+
       menuPanels.push({
-        id: 'capizalization',
+        id: 'capitalization',
         options: {
           expanded: true,
           collapsible: false,
           label: this.params.l10n.capitalization.menuTitle,
-          content: new HighlightTheWordsCapitalization(
-            {
-              introduction: this.params.l10n.capitalization.introduction,
-              l10n: {
-                uppercase: this.params.l10n.capitalization.labelUppercase,
-                lowercase: this.params.l10n.capitalization.labelLowercase
-              }
-            },
-            {
-              onChosen: () => {
-                this.callbacks.onInteracted();
-              }
-            }
-          ),
+          content: this.menuCapitalization,
           passive: true
         }
       });
+
+      this.menuCapitalization.disable();
     }
 
     // Menu
@@ -161,6 +168,7 @@ export default class HighlightTheWordsContent {
       {
         text: this.params.text,
         textArea: this.textArea,
+        exerciseArea: this.exercise,
         solutions: this.solutions,
         highlightOptions: this.params.highlightOptions,
         selections: this.params.previousState?.selections
@@ -169,7 +177,10 @@ export default class HighlightTheWordsContent {
         onTextUpdated: (html, mode) => {
           this.handleTextUpdated(html, mode);
         },
-        onInteracted: this.callbacks.onInteracted
+        onSelectionChanged: (selection) => {
+          this.handleSelectionChanged(selection);
+        },
+        onInteracted: () => this.callbacks.onInteracted
       }
     );
 
@@ -463,5 +474,51 @@ export default class HighlightTheWordsContent {
         correct.appendChild(scorePoints.getElement(false));
       });
     }
+  }
+
+  /**
+   * Handle text selected.
+   */
+  handleSelectionChanged(selection) {
+    this.currentSelection = selection || null;
+
+    if (!this.currentSelection) {
+      this.menuCapitalization.uncheckAllButtons();
+      this.menuCapitalization.disable();
+      this.selectionHandler.deactivateAllSelections();
+      return;
+    }
+
+    // TODO: Create separate class for Selection!!!
+    if (selection?.attributes?.capitalization) {
+      this.menuCapitalization.checkButton(selection.attributes.capitalization?.case);
+    }
+    else {
+      this.menuCapitalization.uncheckAllButtons();
+    }
+
+    this.selectionHandler.activateSelection(selection.start);
+    this.menuCapitalization.enable();
+
+    this.callbacks.onInteracted();
+  }
+
+  /**
+   * Handle capitalization for selection chosen.
+   * @param {string} charCase Chosen case.
+   */
+  handleCapitalizationChosen(charCase) {
+    if (this.currentSelection) {
+      this.selectionHandler.setSelectionAttribute(
+        this.currentSelection.start,
+        'capitalization',
+        {
+          case: charCase
+        }
+      );
+    }
+
+    this.answerGiven = true;
+    this.callbacks.onInteracted();
   }
 }

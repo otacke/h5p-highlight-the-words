@@ -25,6 +25,8 @@ export default class HighlightTheWordsCapitalization {
       onChosen: () => {}
     }, callbacks);
 
+    this.buttons = {};
+
     // Required in case of multiple instances used as subcontent
     this.uuid = H5P.createUUID();
 
@@ -42,8 +44,13 @@ export default class HighlightTheWordsCapitalization {
     if (introduction !== '') {
       capitalizationWrapper.appendChild(introduction);
     }
-    capitalizationWrapper.appendChild(this.createOptionElement({case: 'uppercase'}));
-    capitalizationWrapper.appendChild(this.createOptionElement({case: 'lowercase'}));
+
+    // Add buttons
+    ['uppercase', 'lowercase'].forEach(charCase => {
+      let wrapper;
+      [wrapper, this.buttons[charCase]] = this.createOptionElement({case: charCase});
+      capitalizationWrapper.appendChild(wrapper);
+    });
   }
 
   /**
@@ -62,7 +69,9 @@ export default class HighlightTheWordsCapitalization {
     button.setAttribute('id', `h5p-highlight-the-words-capitalization-radio-button-${params.case}-${this.uuid}`);
     button.setAttribute('name', `h5p-highlight-the-words-capitalization-radio-button-group-${this.uuid}`);
     button.setAttribute('value', params.case);
-    button.addEventListener('click', this.callbacks.onChosen);
+    button.addEventListener('click', () => {
+      this.handleChosen(params.case);
+    });
 
     const label = document.createElement('label');
     label.classList.add('h5p-highlight-the-words-capitalization-label');
@@ -76,16 +85,62 @@ export default class HighlightTheWordsCapitalization {
     wrapper.appendChild(button);
     wrapper.appendChild(label);
 
-    return wrapper;
+    return [wrapper, button, label];
   }
 
   /**
-   * Return current state.
-   * @return {object} Current state.
+   * Check a button.
+   * @param {string} charCase Id of button to set checked.
    */
-  getCurrentState() {
-    return {
-      checked: this.checked
-    };
+  checkButton(charCase) {
+    if (this.buttons[charCase]) {
+      this.buttons[charCase].checked = true;
+    }
+  }
+
+  /**
+   * Uncheck a button.
+   * @param {string} charCase Id of button to set unchecked.
+   */
+  uncheckButton(charCase) {
+    if (this.buttons[charCase]) {
+      this.buttons[charCase].checked = false;
+    }
+  }
+
+  /**
+   * Uncheck all buttons.
+   */
+  uncheckAllButtons() {
+    for (let id in this.buttons) {
+      this.uncheckButton(id);
+    }
+  }
+
+  /**
+   * Enable.
+   */
+  enable() {
+    for (let id in this.buttons) {
+      this.buttons[id].disabled = false;
+    }
+  }
+
+  /**
+   * Disable.
+   */
+  disable() {
+    for (let id in this.buttons) {
+      this.buttons[id].disabled = true;
+    }
+  }
+
+  /**
+   * Handle click on radio buttons.
+   * @param {string} charCase 'uppercase' or 'lowercase'.
+   */
+  handleChosen(charCase) {
+    this.checked = charCase;
+    this.callbacks.onChosen(charCase);
   }
 }

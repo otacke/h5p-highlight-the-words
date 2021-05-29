@@ -40,7 +40,7 @@ class SelectionHandler {
     this.selectionChangedListener = null;
 
     // Timestamp to keep track of spam clicking
-    this.lastSelectStart = null;
+    this.lastSelectStarts = [];
 
     // State for being disabled
     this.disabled = false;
@@ -333,20 +333,24 @@ class SelectionHandler {
       this.handleSelectionEnd(event);
     });
 
-    this.selectionChangedListener = this.handleSelectionChange.bind(this);
-    this.params.textArea.addEventListener('selectstart', (event) => {
-      if (this.disabled) {
-        return;
-      }
-
-      // Prevent accidentally selecting paragraph with multiple clicks
-      if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
-        return;
-      }
-      this.lastSelectStart = event.timeStamp;
-
-      document.addEventListener('selectionchange', this.selectionChangedListener);
-    });
+    // this.selectionChangedListener = this.handleSelectionChange.bind(this);
+    // this.params.textArea.addEventListener('selectstart', (event) => {
+    //   if (this.disabled) {
+    //     return;
+    //   }
+    //
+    //   // Prevent accidentally selecting paragraph with multiple clicks
+    //   console.log(this.lastSelectStarts.length);
+    //   if (this.lastSelectStarts.length > 0) {
+    //     console.log('BLOCK');
+    //     return;
+    //   }
+    //   this.lastSelectStarts.push(event.timeStamp);
+    //   console.log(this.lastSelectStarts);
+    //   this.lastSelectStarts = this.lastSelectStarts.filter(timeStamp => timeStamp > event.timeStamp - 500);
+    //
+    //   document.addEventListener('selectionchange', this.selectionChangedListener);
+    // });
   }
 
   /**
@@ -515,14 +519,14 @@ class SelectionHandler {
   /**
    * Handle selection change event.
    */
-  handleSelectionChange() {
-    if (this.disabled) {
-      return;
-    }
-
-    // Will always be from textContainer
-    this.pendingSelection = document.getSelection();
-  }
+  // handleSelectionChange() {
+  //   if (this.disabled) {
+  //     return;
+  //   }
+  //
+  //   // Will always be from textContainer
+  //   this.pendingSelection = document.getSelection();
+  // }
 
   /**
    * Handle selection end event.
@@ -530,6 +534,14 @@ class SelectionHandler {
   handleSelectionEnd() {
     if (this.disabled) {
       return; // Disabled
+    }
+
+    this.lastSelectStarts.push(event.timeStamp);
+    this.lastSelectStarts = this.lastSelectStarts
+      .filter(start => start > event.timeStamp - 1000);
+
+    if (this.lastSelectStarts.length > 2) {
+      return; // Prevent selecting whole paragraph by triple clicking
     }
 
     if (event.target !== this.params.exerciseArea && !Util.isChild(event.target, this.params.exerciseArea)) {

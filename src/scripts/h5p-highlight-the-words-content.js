@@ -1,6 +1,7 @@
 import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
 import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
 import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend';
+import HighlightTheWordsCapitalization from './components/h5p-highlight-the-words-capitalization';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 import SelectionHandler from './h5p-highlight-the-words-selection-handler';
 import Util from './h5p-highlight-the-words-util';
@@ -61,24 +62,52 @@ export default class HighlightTheWordsContent {
     this.page = document.createElement('div');
     this.page.classList.add('h5p-highlight-the-words-page');
 
+    // Menu panels
+    const menuPanels = [{
+      id: 'colorLegend',
+      options: {
+        expanded: true,
+        collapsible: false,
+        label: this.params.l10n.colorLegend,
+        content: new HighlightTheWordsColorLegend({
+          options: this.params.highlightOptions
+        }),
+        passive: true
+      },
+    }];
+
+    // Add capitalization panel
+    if (this.params.useCapitalization) {
+      menuPanels.push({
+        id: 'capizalization',
+        options: {
+          expanded: true,
+          collapsible: false,
+          label: this.params.l10n.capitalization.menuTitle,
+          content: new HighlightTheWordsCapitalization(
+            {
+              introduction: this.params.l10n.capitalization.introduction,
+              l10n: {
+                uppercase: this.params.l10n.capitalization.labelUppercase,
+                lowercase: this.params.l10n.capitalization.labelLowercase
+              }
+            },
+            {
+              onChosen: () => {
+                this.callbacks.onInteracted();
+              }
+            }
+          ),
+          passive: true
+        }
+      });
+    }
+
     // Menu
     this.menu = new HighlightTheWordsMenu({
       title: this.params.menuTitle,
       panelSet: {
-        panels: [
-          {
-            id: 'colorLegend',
-            options: {
-              expanded: true,
-              collapsible: false,
-              label: this.params.l10n.colorLegend,
-              content: new HighlightTheWordsColorLegend({
-                options: this.params.highlightOptions
-              }),
-              passive: true
-            },
-          }
-        ]
+        panels: menuPanels
       }
     }, {
       onMenuToggled: this.callbacks.onResizeRequired,

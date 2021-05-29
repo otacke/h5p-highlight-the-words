@@ -167,6 +167,72 @@
     "description": "These options will let you control how the task behaves.",
     "fields": [
       {
+        "name": "useCapitalization",
+        "state": "new",
+        "label": "Use capitalization menu",
+        "description": "Check this option if the students need to answer whether the highlighted text should be written in uppercase or in lowercase.",
+        "type": "boolean",
+        "importance": "low",
+        "default": false,
+        "optional": true
+      },
+      {
+        "name": "capitalization",
+        "state": "new",
+        "type": "group",
+        "label": "Capitalization",
+        "importance": "low",
+        "expanded": true,
+        "fields": [
+          {
+            "name": "menuTitle",
+            "label": "Title for menu",
+            "type": "text",
+            "default": "Capitalization"
+          },
+          {
+            "name": "introduction",
+            "label": "Introduction",
+            "type": "text",
+            "widget": "html",
+            "importance": "low",
+            "optional": true,
+            "default": "",
+            "description": "Set an optional introduction",
+            "enterMode": "div",
+            "tags": [
+              "strong",
+              "em",
+              "u",
+              "a",
+              "pre",
+              "code"
+            ]
+          },
+          {
+            "name": "labelUppercase",
+            "label": "Label for uppercase button",
+            "type": "text",
+            "default": "Uppercase"
+          },
+          {
+            "name": "labelLowercase",
+            "label": "Label for lowercase button",
+            "type": "text",
+            "default": "Lowercase"
+          }
+        ],
+        "widget": "showWhen",
+        "showWhen": {
+          "rules": [
+            {
+              "field": "useCapitalization",
+              "equals": true
+            }
+          ]
+        }
+      },
+      {
         "name": "enableRetry",
         "label": "Enable \"Retry\"",
         "type": "boolean",

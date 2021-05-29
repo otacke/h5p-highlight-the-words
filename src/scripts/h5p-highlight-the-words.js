@@ -31,6 +31,13 @@ export default class HighlightTheWords extends H5P.Question {
       text: '<p>There is nothing to do here :-/</p>',
       highlightOptions: [],
       behaviour: {
+        useCapitalization: false,
+        capitalization: {
+          menuTitle: 'Capitalization',
+          introduction: '',
+          labelUppercase: 'Uppercase',
+          labelLowercase: 'Lowercase'
+        },
         enableSolutionsButton: true,
         enableRetry: true
       },
@@ -108,6 +115,7 @@ export default class HighlightTheWords extends H5P.Question {
         menuTitle: this.getTitle(),
         highlightOptions: this.params.highlightOptions,
         previousState: this.previousState,
+        useCapitalization: this.params.behaviour.useCapitalization,
         a11y: {
           buttonMenuOpen: this.params.a11y.buttonMenuOpen,
           buttonMenuClose: this.params.a11y.buttonMenuClose,
@@ -117,7 +125,13 @@ export default class HighlightTheWords extends H5P.Question {
           eraser: this.params.a11y.eraser
         },
         l10n: {
-          colorLegend: this.params.l10n.colorLegend
+          colorLegend: this.params.l10n.colorLegend,
+          capitalization: {
+            menuTitle: this.params.behaviour.capitalization.menuTitle,
+            introduction: this.params.behaviour.capitalization.introduction,
+            labelUppercase: this.params.behaviour.capitalization.labelUppercase,
+            labelLowercase: this.params.behaviour.capitalization.labelLowercase
+          }
         }
       },
       {

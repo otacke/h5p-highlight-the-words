@@ -4,6 +4,14 @@ import Util from './h5p-highlight-the-words-util';
 
 /**
  * Main class.
+ *
+ * TODO: Fix capitalization attributes when splitting
+ * TODO: Create parent class to extend for menu panels
+ * TODO: Decide about collapsing of menu panels
+ * TODO: Add option to start with menu open
+ * TODO: Add parsing text params for capitalization
+ * TODO: Add scoring for capitalization
+ * TODO: Add reporting for capitalization
  */
 export default class HighlightTheWords extends H5P.Question {
   /**

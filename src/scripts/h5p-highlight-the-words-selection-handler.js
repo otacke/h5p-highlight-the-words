@@ -1,4 +1,5 @@
 import Util from './h5p-highlight-the-words-util';
+import Selection from './h5p-highlight-the-words-selection';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 
 /** Class for selections functions */
@@ -18,6 +19,10 @@ class SelectionHandler {
       onInteracted: () => {},
       onSelectionChanged: () => {}
     }, callbacks);
+
+    this.solutions = this.params.solutions.map(solution => {
+      return new Selection(solution);
+    });
 
     // Mapping for getting option name for color given.
     this.colorToNameLookup = {};
@@ -94,13 +99,13 @@ class SelectionHandler {
    */
   findSelection(position) {
     return this.selections
-      .filter(selection => selection.start <= position && selection.end > position)
+      .filter(selection => selection.getStart() <= position && selection.getEnd() > position)
       .shift();
   }
 
   /**
    * Set custom selection attribute.
-   * @param {number} position Position of selection. // TODO: Create separate class for selection!!!
+   * @param {number} position Position of selection.
    * @param {string} id Id of attribute.
    * @param {object} params Parameters.
    * @param {string} params.mergeMode Mode for merging selections.
@@ -111,8 +116,7 @@ class SelectionHandler {
       return;
     }
 
-    targetSelection.attributes = targetSelection.attributes || {};
-    targetSelection.attributes[id] = params;
+    targetSelection.setAttribute(id, params);
   }
 
   /**
@@ -126,7 +130,12 @@ class SelectionHandler {
     }
 
     this.selections.forEach(selection => {
-      selection.active = (selection === targetSelection);
+      if (selection === targetSelection) {
+        selection.activate();
+      }
+      else {
+        selection.deactivate();
+      }
     });
 
     this.updateTextContainer();
@@ -137,7 +146,7 @@ class SelectionHandler {
    */
   deactivateAllSelections() {
     this.selections.forEach(selection => {
-      selection.active = false;
+      selection.deactivate();
     });
 
     this.updateTextContainer();
@@ -163,21 +172,25 @@ class SelectionHandler {
     }
 
     this.selections = this.selections
-      .filter(selection => selection.start < params.start || selection.end > params.end) // remove consumed selections
+      .filter(selection => selection.getStart() < params.start || selection.getEnd() > params.end) // remove consumed selections
       .map(selection => {
-        // Shrink existing selection if overlapping with new selection
-        if (selection.start >= params.start && selection.start < params.end && selection.end >= params.end) {
-          selection.start = params.end;
+        // Shrink existing selection if overlapping with new selection and reset attributes
+        if (selection.getStart() >= params.start && selection.getStart() < params.end && selection.getEnd() >= params.end) {
+          selection.setStart(params.end);
+          selection.setAttributes({});
         }
-        if (selection.end > params.start && selection.end <= params.end) {
-          selection.end = params.start;
+        if (selection.getEnd() > params.start && selection.getEnd() <= params.end) {
+          selection.setEnd(params.start);
+          selection.setAttributes({});
         }
 
-        selection.text = TextProcessing.getMaskedText(
-          this.textCharacteristics.decodedText,
-          this.textCharacteristics.decodedMask,
-          selection.start,
-          selection.end
+        selection.setText(
+          TextProcessing.getMaskedText(
+            this.textCharacteristics.decodedText,
+            this.textCharacteristics.decodedMask,
+            selection.getStart(),
+            selection.getEnd()
+          )
         );
 
         return selection;
@@ -185,32 +198,37 @@ class SelectionHandler {
 
     // Split existing selection if new selection wants in between
     for (let i = this.selections.length - 1; i >= 0; i--) {
-      if (this.selections[i].start < params.start && this.selections[i].end > params.end) {
-        const selectionClone = {...this.selections[i]};
+      if (this.selections[i].getStart() < params.start && this.selections[i].getEnd() > params.end) {
+        const selectionClone = this.selections[i].getClone();
 
-        this.selections[i].text = TextProcessing.getMaskedText(
-          this.textCharacteristics.decodedText,
-          this.textCharacteristics.decodedMask,
-          this.selections[i].start,
-          params.start
+        this.selections[i].setText(
+          TextProcessing.getMaskedText(
+            this.textCharacteristics.decodedText,
+            this.textCharacteristics.decodedMask,
+            this.selections[i].getStart(),
+            params.start
+          )
         );
-        this.selections[i].end = params.start;
 
-        selectionClone.text = TextProcessing.getMaskedText(
-          this.textCharacteristics.decodedText,
-          this.textCharacteristics.decodedMask,
-          params.end
+        this.selections[i].setEnd(params.start);
+
+        selectionClone.setText(
+          TextProcessing.getMaskedText(
+            this.textCharacteristics.decodedText,
+            this.textCharacteristics.decodedMask,
+            params.end
+          )
         );
-        selectionClone.start = params.end;
+        selectionClone.setStart(params.end);
 
         this.selections.push(selectionClone);
       }
     }
 
-    this.selections.push(params);
+    this.selections.push(new Selection(params));
 
     this.selections = this.selections
-      .sort((a, b) => a.start - b.start) // Sort ascending
+      .sort((a, b) => a.getStart() - b.getStart()) // Sort ascending
       .reduce((newSelections, selection, index) => {
         if (this.selections.length === 1) {
           return [selection];
@@ -221,33 +239,45 @@ class SelectionHandler {
 
         // Merge all adjacent selections with same color
         if (
-          selection.backgroundColor === this.selections[index + 1].backgroundColor &&
-          selection.end >= this.selections[index + 1].start
+          selection.getBackgroundColor() === this.selections[index + 1].getBackgroundColor() &&
+          selection.getEnd() >= this.selections[index + 1].getStart()
         ) {
-          if (selection?.attributes?.capitalization) {
-            this.selections[index + 1].attributes = this.selections[index + 1].attributes || {};
-            this.selections[index + 1].attributes.capitalization = selection.attributes.capitalization;
+          // Copy attributes of first selection to adjacent ones
+          if (selection.containsAttribute('capitalization')) {
+            this.selections[index + 1].setAttribute(
+              'capitalization',
+              selection.getAttribute('capitalization')
+            );
           }
-          this.selections[index + 1].start = selection.start;
-          this.selections[index + 1].text = TextProcessing.getMaskedText(this.textCharacteristics.decodedText, this.textCharacteristics.decodedMask, this.selections[index + 1].start, this.selections[index + 1].end);
-          selection.backgroundColor = '';
+
+          this.selections[index + 1].setStart(selection.getStart());
+          this.selections[index + 1].setText(
+            TextProcessing.getMaskedText(
+              this.textCharacteristics.decodedText,
+              this.textCharacteristics.decodedMask,
+              this.selections[index + 1].getStart(),
+              this.selections[index + 1].getEnd()
+            )
+          );
+
+          selection.setBackgroundColor('');
         }
 
         return [...newSelections, selection];
       }, [])
       .filter(selection => {
         // Remove deleted selections
-        return selection.backgroundColor !== '';
+        return selection.getBackgroundColor() !== '';
       })
       .map(selection => {
         // Evaluate
         const found = this.params.solutions.filter(solution =>
-          solution.name === this.colorToNameLookup[selection.backgroundColor] &&
-          solution.start === selection.start &&
-          solution.end === selection.end
+          solution.name === this.colorToNameLookup[selection.getBackgroundColor()] &&
+          solution.start === selection.getStart() &&
+          solution.end === selection.getEnd()
         );
 
-        selection.score = (found.length === 1) ? 1 : -1;
+        selection.setScore((found.length === 1) ? 1 : -1);
         return selection;
       });
   }
@@ -257,7 +287,8 @@ class SelectionHandler {
    * @param {number} position Position that is in selection.
    */
   removeSelection(position) {
-    this.selections = this.selections.filter(selection => selection.start > position && selection.end <= position);
+    this.selections = this.selections
+      .filter(selection => selection.getStart() > position && selection.getEnd() <= position);
   }
 
   /**
@@ -288,7 +319,7 @@ class SelectionHandler {
    */
   getOutput(mode) {
     const selections = (mode === 'solution' || mode === 'xapi-solution') ?
-      this.params.solutions :
+      this.solutions :
       this.selections;
 
     // Break up selections, assuming no overlaps and sorted
@@ -296,20 +327,20 @@ class SelectionHandler {
     let donePosition = 0;
 
     selections.forEach(selection => {
-      if (selection.start > donePosition) {
-        selectionSplits.push({
+      if (selection.getStart() > donePosition) {
+        selectionSplits.push(new Selection({
           start: donePosition,
-          end: selection.start
-        });
+          end: selection.getStart()
+        }));
       }
       selectionSplits.push(selection);
-      donePosition = selection.end;
+      donePosition = selection.getEnd();
     });
     if (donePosition < this.textCharacteristics.decodedText.length) {
-      selectionSplits.push({
+      selectionSplits.push(new Selection ({
         start: donePosition,
         end: this.textCharacteristics.decodedText.length
-      });
+      }));
     }
 
     const results = selectionSplits.map(selection => {
@@ -391,10 +422,10 @@ class SelectionHandler {
    * @param {string} [mode=null] Mode, scores|solution.
    */
   getSelectionOutput(selection, mode) {
-    if (!selection.backgroundColor) {
+    if (!selection.getBackgroundColor()) {
       return { // Not selected, use original text
-        text: this.textCharacteristics.decodedText.substring(selection.start, selection.end),
-        mask: this.textCharacteristics.decodedMask.substring(selection.start, selection.end)
+        text: this.textCharacteristics.decodedText.substring(selection.getStart(), selection.getEnd()),
+        mask: this.textCharacteristics.decodedMask.substring(selection.getStart(), selection.getEnd())
       };
     }
 
@@ -404,31 +435,31 @@ class SelectionHandler {
     // Output per mode required
     if (mode === 'xapi-result') {
       let scoreClass = '';
-      if (selection.score === 1) {
+      if (selection.getScore() === 1) {
         scoreClass = 'h5p-highlight-the-words-user-response-correct';
       }
-      else if (selection.score === -1) {
+      else if (selection.getScore() === -1) {
         scoreClass = 'h5p-highlight-the-words-user-response-wrong';
       }
 
-      spanPre = `<span class="${scoreClass}"><span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      spanPre = `<span class="${scoreClass}"><span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.getBackgroundColor().substr(1)} h5p-highlight-the-words-selection-color-${selection.getColor().substr(1)}">`;
       spanPost = '</span></span>';
     }
     else if (mode === 'xapi-solution') {
-      spanPre = `<span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      spanPre = `<span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.getBackgroundColor().substr(1)} h5p-highlight-the-words-selection-color-${selection.getColor().substr(1)}">`;
       spanPost = '</span>';
     }
     else {
       const classes = ['h5p-highlight-the-words-selection'];
-      if (selection.active) {
+      if (selection.isActive()) {
         classes.push('h5p-highlight-the-words-selection-active');
       }
 
-      spanPre = `<span class="${classes.join(' ')}" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
+      spanPre = `<span class="${classes.join(' ')}" style="background-color: ${selection.getBackgroundColor()}; color: ${selection.getColor()};">`;
 
       const classNames = ['h5p-highlight-the-words-score-point'];
       if (mode === 'scores') {
-        const className = (selection.score === 1) ?
+        const className = (selection.getScore() === 1) ?
           'h5p-highlight-the-words-correct' :
           'h5p-highlight-the-words-wrong';
         classNames.push(className);
@@ -437,8 +468,8 @@ class SelectionHandler {
       spanPost = `</span><span class="${classNames.join(' ')}"></span>`;
     }
 
-    let text = this.textCharacteristics.decodedText.substring(selection.start, selection.end);
-    let mask = this.textCharacteristics.decodedMask.substring(selection.start, selection.end);
+    let text = this.textCharacteristics.decodedText.substring(selection.getStart(), selection.getEnd());
+    let mask = this.textCharacteristics.decodedMask.substring(selection.getStart(), selection.getEnd());
 
     // TODO: Clean up. Adding divs necessary when selecting text over paragraphs
     // while keeping mask in sync
@@ -504,10 +535,10 @@ class SelectionHandler {
     let occurrences;
     while ((occurrences = regexpEntities.exec(textEncoded)) !== null) {
       solutionsCopy = solutionsCopy.map(solution => {
-        if (solution.start > occurrences.index) {
+        if (solution.getStart() > occurrences.index) {
 
-          solution.start = solution.start - occurrences[0].length + 1;
-          solution.end = solution.end - occurrences[0].length + 1;
+          solution.setStart(solution.getStart() - occurrences[0].length + 1);
+          solution.setEnd(solution.getEnd() - occurrences[0].length + 1);
         }
         return solution;
       });

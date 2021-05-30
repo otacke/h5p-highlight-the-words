@@ -1,0 +1,24 @@
+@import './../../../styles/h5p-highlight-the-words-main.scss';
+
+.h5p-highlight-the-words-menu-content-container {
+  font-size: $font-size-menu;
+  width: 100%;
+
+  .h5p-highlight-the-words-menu-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: .5em;
+
+    .h5p-highlight-the-words-menu-content-introduction {
+      margin-bottom: .5em;
+
+      p:first-child {
+        margin-top: 0;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

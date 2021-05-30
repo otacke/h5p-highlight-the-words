@@ -1,4 +1,4 @@
-@import './../../styles/h5p-highlight-the-words-main.scss';
+@import './../../../styles/h5p-highlight-the-words-main.scss';
 
 .h5p-highlight-the-words-panel {
   align-items: center;
@@ -32,13 +32,13 @@
 
   &.h5p-highlight-the-words-panel-expanded.h5p-highlight-the-words-panel-collapsible {
     .h5p-highlight-the-words-panel-state-indicator {
-      background-image: url("../../images/symbol-expanded-grey-4.svg");
+      background-image: url("../../../images/symbol-expanded-grey-4.svg");
     }
   }
 
   &.h5p-highlight-the-words-panel-collapsible {
     .h5p-highlight-the-words-panel-state-indicator {
-      background-image: url("../../images/symbol-collapsed-grey-4.svg");
+      background-image: url("../../../images/symbol-collapsed-grey-4.svg");
     }
   }
 

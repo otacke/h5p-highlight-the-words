@@ -1,7 +1,7 @@
-import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
+import HighlightTheWordsMenu from './components/menu/h5p-highlight-the-words-menu';
 import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
-import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend';
-import HighlightTheWordsCapitalization from './components/h5p-highlight-the-words-capitalization';
+import HighlightTheWordsColorLegend from './components/menu/h5p-highlight-the-words-color-legend';
+import HighlightTheWordsCapitalization from './components/menu/h5p-highlight-the-words-capitalization';
 import TextProcessing from './h5p-highlight-the-words-text-processing';
 import SelectionHandler from './h5p-highlight-the-words-selection-handler';
 import Util from './h5p-highlight-the-words-util';
@@ -90,8 +90,8 @@ export default class HighlightTheWordsContent {
           }
         },
         {
-          onChosen: (charCase) => {
-            this.handleCapitalizationChosen(charCase);
+          onChanged: (state) => {
+            this.handleCapitalizationChanged(state);
           }
         }
       );
@@ -369,7 +369,7 @@ export default class HighlightTheWordsContent {
   getScore() {
     const score = this.selectionHandler
       .getSelections()
-      .reduce((sum, selection) => sum + selection.score, 0);
+      .reduce((sum, selection) => sum + selection.getScore(), 0);
 
     return Math.max(0, score);
   }
@@ -483,21 +483,20 @@ export default class HighlightTheWordsContent {
     this.currentSelection = selection || null;
 
     if (!this.currentSelection) {
-      this.menuCapitalization.uncheckAllButtons();
+      this.menuCapitalization.reset();
       this.menuCapitalization.disable();
       this.selectionHandler.deactivateAllSelections();
       return;
     }
 
-    // TODO: Create separate class for Selection!!!
-    if (selection?.attributes?.capitalization) {
-      this.menuCapitalization.checkButton(selection.attributes.capitalization?.case);
+    if (selection.containsAttribute('capitalization')) {
+      this.menuCapitalization.setPreviousState(selection.getAttribute('capitalization'));
     }
     else {
-      this.menuCapitalization.uncheckAllButtons();
+      this.menuCapitalization.reset();
     }
 
-    this.selectionHandler.activateSelection(selection.start);
+    this.selectionHandler.activateSelection(selection.getStart());
     this.menuCapitalization.enable();
 
     this.callbacks.onInteracted();
@@ -505,16 +504,14 @@ export default class HighlightTheWordsContent {
 
   /**
    * Handle capitalization for selection chosen.
-   * @param {string} charCase Chosen case.
+   * @param {object|string|number|boolean|null} state Chosen case.
    */
-  handleCapitalizationChosen(charCase) {
+  handleCapitalizationChanged(state) {
     if (this.currentSelection) {
       this.selectionHandler.setSelectionAttribute(
-        this.currentSelection.start,
+        this.currentSelection.getStart(),
         'capitalization',
-        {
-          case: charCase
-        }
+        state
       );
     }
 

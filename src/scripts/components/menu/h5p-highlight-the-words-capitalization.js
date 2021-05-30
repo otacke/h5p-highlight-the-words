@@ -1,9 +1,9 @@
 // Import required classes
-import Util from './../h5p-highlight-the-words-util';
+import HighlightTheWordsMenuContent from './h5p-highlight-the-words-menu-content';
 import './h5p-highlight-the-words-capitalization.scss';
 
 /** Class representing the content */
-export default class HighlightTheWordsCapitalization {
+export default class HighlightTheWordsCapitalization extends HighlightTheWordsMenuContent {
   /**
    * @constructor
    *
@@ -11,56 +11,59 @@ export default class HighlightTheWordsCapitalization {
    * @param {object} [callbacks={}] Callbacks.
    */
   constructor(params = {}, callbacks = {}) {
-    // Set missing params
-    this.params = Util.extend({
-      introduction: '',
-      l10n: {
-        uppercase: 'TODO: Uppercase',
-        lowercase: 'TODO: Lowercase'
-      },
-      previousState: {}
-    }, params);
+    super(params, callbacks);
 
-    this.callbacks = Util.extend({
-      onChosen: () => {}
-    }, callbacks);
-
+    // Buttons
     this.buttons = {};
 
     // Required in case of multiple instances used as subcontent
     this.uuid = H5P.createUUID();
 
-    this.capitalizationContainer = document.createElement('div');
-    this.capitalizationContainer.classList.add('h5p-highlight-the-words-capitalization-container');
-
-    const capitalizationWrapper = document.createElement('div');
-    capitalizationWrapper.classList.add('h5p-highlight-the-words-capitalization-wrapper');
-    this.capitalizationContainer.appendChild(capitalizationWrapper);
-
-    const introduction = document.createElement('div');
-    introduction.classList.add('h5p-highlight-the-words-capitalization-introduction');
-    introduction.innerHTML = this.params.introduction;
-
-    if (introduction !== '') {
-      capitalizationWrapper.appendChild(introduction);
-    }
-
     // Add buttons
     ['uppercase', 'lowercase'].forEach(charCase => {
       let wrapper;
       [wrapper, this.buttons[charCase]] = this.createOptionElement({case: charCase});
-      capitalizationWrapper.appendChild(wrapper);
+      this.contentWrapper.appendChild(wrapper);
     });
   }
 
   /**
-   * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * Set previous state.
+   * @param {object} previousState Previous state.
    */
-  getDOM() {
-    return this.capitalizationContainer;
+  setPreviousState(previousState) {
+    this.checkButton(previousState);
   }
 
+  /**
+   * Reset.
+   */
+  reset() {
+    this.uncheckAllButtons();
+  }
+
+  /**
+   * Enable.
+   */
+  enable() {
+    for (let id in this.buttons) {
+      this.buttons[id].disabled = false;
+    }
+  }
+
+  /**
+   * Disable.
+   */
+  disable() {
+    for (let id in this.buttons) {
+      this.buttons[id].disabled = true;
+    }
+  }
+
+  /**
+   * Create option element.
+   * @param {object} params Parameters.
+   */
   createOptionElement(params) {
     const button = document.createElement('input');
     button.classList.add(`h5p-highlight-the-words-capitalization-radio-button`);
@@ -70,7 +73,7 @@ export default class HighlightTheWordsCapitalization {
     button.setAttribute('name', `h5p-highlight-the-words-capitalization-radio-button-group-${this.uuid}`);
     button.setAttribute('value', params.case);
     button.addEventListener('click', () => {
-      this.handleChosen(params.case);
+      this.handleChanged(params.case);
     });
 
     const label = document.createElement('label');
@@ -115,32 +118,5 @@ export default class HighlightTheWordsCapitalization {
     for (let id in this.buttons) {
       this.uncheckButton(id);
     }
-  }
-
-  /**
-   * Enable.
-   */
-  enable() {
-    for (let id in this.buttons) {
-      this.buttons[id].disabled = false;
-    }
-  }
-
-  /**
-   * Disable.
-   */
-  disable() {
-    for (let id in this.buttons) {
-      this.buttons[id].disabled = true;
-    }
-  }
-
-  /**
-   * Handle click on radio buttons.
-   * @param {string} charCase 'uppercase' or 'lowercase'.
-   */
-  handleChosen(charCase) {
-    this.checked = charCase;
-    this.callbacks.onChosen(charCase);
   }
 }

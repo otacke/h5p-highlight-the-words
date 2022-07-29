@@ -468,11 +468,11 @@ export default class HighlightTheWords extends H5P.Question {
               this.content.toggleFullscreen(true);
             }, 100);
           });
+
+          this.on('exitFullScreen', () => {
+            this.content.toggleFullscreen(false);
+          });
         }
-        
-        this.on('exitFullScreen', () => {
-          this.content.toggleFullscreen(false);
-        });
 
         // Reattach H5P.Question containers to exercise
         const exercise = this.content.getExerciseDOM();

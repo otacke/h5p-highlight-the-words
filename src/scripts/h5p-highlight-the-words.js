@@ -459,14 +459,18 @@ export default class HighlightTheWords extends H5P.Question {
       // Add fullscreen button on first call after H5P.Question has created the DOM
       this.container = document.querySelector('.h5p-container');
       if (this.container) {
-        this.content.enableFullscreenButton();
+        
+        if (this.isRoot()) {
+          this.content.enableFullscreenButton();
+          this.content.enableFullscreenButton();
 
-        this.on('enterFullScreen', () => {
-          setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
-            this.content.toggleFullscreen(true);
-          }, 100);
-        });
-
+          this.on('enterFullScreen', () => {
+            setTimeout(() => { // Needs time to get into fullscreen for window.innerHeight
+              this.content.toggleFullscreen(true);
+            }, 100);
+          });
+        }
+        
         this.on('exitFullScreen', () => {
           this.content.toggleFullscreen(false);
         });

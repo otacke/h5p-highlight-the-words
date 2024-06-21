@@ -9,7 +9,8 @@
       "label": "Tekst",
       "description": "Voer de tekst in die de woorden bevat die geaccentueerd moeten worden.",
       "important": {
-        "description": "<ul><li>Markeer de delen van de tekst die de gebruikers moeten selecteren met een asterisk (*). Zowel ervoor als erna.</li><li>Een asterisk kan worden toegevoegd <em>in de geaccentueerde woorden</em> door er een achterwaartse schuine streep voor te zetten (\\*).</li><li>Gebruik binnen de asteriksen twee dubbele punten (::) en de naam van een accentueer optie om de verwachte accentuering in te stellen.</li><li>Als je twee opeenvolgende dubbele punten <em>binnen geaccentueerde woorden gebruikt</em>, schrijf dan één van hen met een achterwaartse schuine streep ervoor (\\::).</li></ul>"
+        "description": "<ul><li>Markeer de delen van de tekst die de gebruikers moeten selecteren met een asterisk (*). Zowel ervoor als erna.</li><li>Een asterisk kan worden toegevoegd <em>in de geaccentueerde woorden</em> door er een achterwaartse schuine streep voor te zetten (\\*).</li><li>Gebruik binnen de asteriksen twee dubbele punten (::) en de naam van een accentueer optie om de verwachte accentuering in te stellen.</li><li>Als je twee opeenvolgende dubbele punten <em>binnen geaccentueerde woorden gebruikt</em>, schrijf dan één van hen met een achterwaartse schuine streep ervoor (\\::).</li></ul>",
+        "example": "In this example, *this needs to be highlighted::yellow* by the student."
       }
     },
     {

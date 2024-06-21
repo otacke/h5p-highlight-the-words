@@ -9,7 +9,8 @@
       "label": "Text",
       "description": "Enter the text that contains words to be highlighted.",
       "important": {
-        "description": "<ul><li>Mark parts of the text that students need to select with asterisks (*) before and after.</li><li>An asterisk can be added <em>within highlighted words</em> by adding a backward slash in front of it (\\*).</li><li>Inside the asterisks, use two colons (::) and a highlight option name to set the expected highlight.</li><li>If you require two consecutive colons <em>within highlighted words</em>, write one of them with a backward slash in front of it (\\::).</li></ul>"
+        "description": "<ul><li>Mark parts of the text that students need to select with asterisks (*) before and after.</li><li>An asterisk can be added <em>within highlighted words</em> by adding a backward slash in front of it (\\*).</li><li>Inside the asterisks, use two colons (::) and a highlight option name to set the expected highlight.</li><li>If you require two consecutive colons <em>within highlighted words</em>, write one of them with a backward slash in front of it (\\::).</li></ul>",
+        "example": "In this example, *this needs to be highlighted::yellow* by the student."
       }
     },
     {

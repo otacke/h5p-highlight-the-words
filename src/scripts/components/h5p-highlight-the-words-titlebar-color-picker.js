@@ -1,12 +1,12 @@
 // Import required classes
-import Util from './../h5p-highlight-the-words-util';
+import Util from './../h5p-highlight-the-words-util.js';
 
 import './h5p-highlight-the-words-titlebar-color-picker.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsTitlebarColorPicker {
   /**
-   * @constructor
+   * @class
    * @param {object} params Parameters.
    * @param {object} [callbacks] Callbacks.
    */
@@ -73,14 +73,14 @@ export default class HighlightTheWordsTitlebarColorPicker {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.colorPickerContainer;
   }
 
   handleColorChanged(target, color) {
-    Array.prototype.slice.call(this.colorPickerContainer.childNodes).forEach(node => {
+    Array.prototype.slice.call(this.colorPickerContainer.childNodes).forEach((node) => {
       node.classList.remove('h5p-highlight-the-words-selected');
     });
     target.classList.add('h5p-highlight-the-words-selected');

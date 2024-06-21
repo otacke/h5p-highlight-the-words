@@ -2,12 +2,6 @@
 
 .h5p-highlight-the-words {
 
-  &.h5p-fullscreen {
-    .h5p-question-buttons {
-      margin-bottom: 1em;
-    }
-  }
-
   .h5p-question-feedback {
     &:not(.h5p-highlight-the-words-initialized) {
       display: none;
@@ -111,6 +105,12 @@
 
   ::-webkit-scrollbar-thumb:hover {
     background: $color-scrollbar;
+  }
+
+  &.h5p-fullscreen {
+    .h5p-question-buttons {
+      margin-bottom: 1em;
+    }
   }
 }
 

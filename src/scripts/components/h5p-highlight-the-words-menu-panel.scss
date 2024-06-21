@@ -1,4 +1,4 @@
-@import './../../styles/h5p-highlight-the-words-main.scss';
+@import "@styles/h5p-highlight-the-words-main";
 
 .h5p-highlight-the-words-panel {
   align-items: center;
@@ -6,56 +6,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  &.h5p-highlight-the-words-panel-active {
-    .h5p-highlight-the-words-panel-head {
-      background-color: $color-base-10;
-      color: $color-base;
-    }
-  }
-
-  &.h5p-highlight-the-words-panel-expanded {
-    .h5p-highlight-the-words-panel-head {
-      border-bottom: 0;
-    }
-
-    .h5p-highlight-the-words-panel-body {
-      display: block;
-    }
-  }
-
-  &.h5p-highlight-the-words-panel-expanded:not(.h5p-highlight-the-words-panel-collapsible) {
-    .h5p-highlight-the-words-panel-head {
-      background-color: $color-base-10;
-    }
-  }
-
-  &.h5p-highlight-the-words-panel-expanded.h5p-highlight-the-words-panel-collapsible {
-    .h5p-highlight-the-words-panel-state-indicator {
-      background-image: url("../../images/symbol-expanded-grey-4.svg");
-    }
-  }
-
-  &.h5p-highlight-the-words-panel-collapsible {
-    .h5p-highlight-the-words-panel-state-indicator {
-      background-image: url("../../images/symbol-collapsed-grey-4.svg");
-    }
-  }
-
-  &:not(.h5p-highlight-the-words-panel-disabled):hover {
-    .h5p-highlight-the-words-panel-head {
-      background-color: $color-base-05;
-      cursor: pointer;
-    }
-  }
-
-  &:not(.h5p-highlight-the-words-panel-disabled) {
-    .h5p-highlight-the-words-panel-head {
-      &:active {
-        background-color: $color-base-10;
-      }
-    }
-  }
 
   .h5p-highlight-the-words-panel-head {
     align-items: center;
@@ -91,5 +41,55 @@
     border-bottom: solid 1px $color-grey-14;
     display: none;
     width: 100%;
+  }
+
+  &.h5p-highlight-the-words-panel-active {
+    .h5p-highlight-the-words-panel-head {
+      background-color: $color-base-10;
+      color: $color-base;
+    }
+  }
+
+  &.h5p-highlight-the-words-panel-expanded {
+    .h5p-highlight-the-words-panel-head {
+      border-bottom: 0;
+    }
+
+    .h5p-highlight-the-words-panel-body {
+      display: block;
+    }
+  }
+
+  &:not(.h5p-highlight-the-words-panel-disabled) {
+    .h5p-highlight-the-words-panel-head {
+      &:active {
+        background-color: $color-base-10;
+      }
+    }
+  }
+
+  &.h5p-highlight-the-words-panel-expanded:not(.h5p-highlight-the-words-panel-collapsible) {
+    .h5p-highlight-the-words-panel-head {
+      background-color: $color-base-10;
+    }
+  }
+
+  &.h5p-highlight-the-words-panel-collapsible {
+    .h5p-highlight-the-words-panel-state-indicator {
+      background-image: url("../../images/symbol-collapsed-grey-4.svg");
+    }
+  }
+
+  &.h5p-highlight-the-words-panel-expanded.h5p-highlight-the-words-panel-collapsible {
+    .h5p-highlight-the-words-panel-state-indicator {
+      background-image: url("../../images/symbol-expanded-grey-4.svg");
+    }
+  }
+
+  &:not(.h5p-highlight-the-words-panel-disabled):hover {
+    .h5p-highlight-the-words-panel-head {
+      background-color: $color-base-05;
+      cursor: pointer;
+    }
   }
 }

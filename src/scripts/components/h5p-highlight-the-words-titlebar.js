@@ -1,15 +1,14 @@
 // Import required classes
-import HighlightTheWordsButton from './h5p-highlight-the-words-button';
-import HighlightTheWordsTitlebarColorPicker from './h5p-highlight-the-words-titlebar-color-picker';
-import Util from './../h5p-highlight-the-words-util';
+import HighlightTheWordsButton from './h5p-highlight-the-words-button.js';
+import HighlightTheWordsTitlebarColorPicker from './h5p-highlight-the-words-titlebar-color-picker.js';
+import Util from './../h5p-highlight-the-words-util.js';
 
 import './h5p-highlight-the-words-titlebar.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsTitlebar {
   /**
-   * @constructor
-   *
+   * @class
    * @param {object} params Parameter from editor.
    * @param {string} params.title Title.
    * @param {string} params.dateString Date.
@@ -102,7 +101,7 @@ export default class HighlightTheWordsTitlebar {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.titleBar;

@@ -1,11 +1,11 @@
 // Import required classes
-import Util from './../h5p-highlight-the-words-util';
+import Util from './../h5p-highlight-the-words-util.js';
 import './h5p-highlight-the-words-menu-panel.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsMenuPanel {
   /**
-   * @constructor
+   * @class
    * @param {object} params Parameters.
    * @param {object} [callbacks] Callbacks.
    */
@@ -95,7 +95,7 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.panel;
@@ -103,7 +103,7 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Open.
-   * @param {boolean} [force=false] Force expansion.
+   * @param {boolean} [force] Force expansion.
    */
   expand(force = false) {
     if (!force && !this.params.collapsible) {
@@ -116,7 +116,7 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Close.
-   * @param {boolean} [force=false] Force collapse.
+   * @param {boolean} [force] Force collapse.
    */
   collapse(force = false) {
     if (!force && !this.params.collapsible) {
@@ -142,7 +142,7 @@ export default class HighlightTheWordsMenuPanel {
   }
 
   /**
-   * @param {boolean} [force=false] Force enable.
+   * @param {boolean} [force] Force enable.
    */
   enable(force = false) {
     if (!force && this.params.passive) {
@@ -158,7 +158,7 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Disable panel.
-   * @param {boolean} [force=false] Force disable.
+   * @param {boolean} [force] Force disable.
    */
   disable(force) {
     if (!force && this.params.passive) {
@@ -186,7 +186,7 @@ export default class HighlightTheWordsMenuPanel {
 
   /**
    * Determine whether panel is expanded.
-   * @return {boolean} True, if panel is expanded, else false.
+   * @returns {boolean} True, if panel is expanded, else false.
    */
   isExpanded() {
     return this.stateExpanded;

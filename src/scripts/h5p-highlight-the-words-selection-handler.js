@@ -1,10 +1,12 @@
-import Util from './h5p-highlight-the-words-util';
-import TextProcessing from './h5p-highlight-the-words-text-processing';
+import Util from './h5p-highlight-the-words-util.js';
+import TextProcessing from './h5p-highlight-the-words-text-processing.js';
 
 /** Class for selections functions */
 class SelectionHandler {
   /**
-   * @constructor
+   * @param {object} [params] Parameters.
+   * @param {object} [callbacks] Callbacks.
+   * @class
    */
   constructor(params = {}, callbacks = {}) {
     this.params = Util.extend({
@@ -20,7 +22,7 @@ class SelectionHandler {
 
     // Mapping for getting option name for color given.
     this.colorToNameLookup = {};
-    this.params.highlightOptions.forEach(option => {
+    this.params.highlightOptions.forEach((option) => {
       this.colorToNameLookup[option.backgroundColor] = option.name;
     });
 
@@ -52,7 +54,7 @@ class SelectionHandler {
     }
 
     // Prevent selecting paragraphs by triple clicks
-    this.params.textArea.addEventListener('click', event => {
+    this.params.textArea.addEventListener('click', (event) => {
       if (event.detail === 3) {
         this.clearSelections();
       }
@@ -75,7 +77,7 @@ class SelectionHandler {
 
   /**
    * Get selections.
-   * @return {object} Selections.
+   * @returns {object} Selections.
    */
   getSelections() {
     return this.selections || [];
@@ -83,6 +85,7 @@ class SelectionHandler {
 
   /**
    * Set currently active colors.
+   * @param {object} colors Colors.
    */
   setColors(colors) {
     this.currentSelectColors = colors;
@@ -91,11 +94,11 @@ class SelectionHandler {
   /**
    * Find selection.
    * @param {number} position Position in text.
-   * @return {object} Selection. Can only be one since no overlaps are allowed.
+   * @returns {object} Selection. Can only be one since no overlaps are allowed.
    */
   findSelection(position) {
     return this.selections
-      .filter(selection => selection.start <= position && selection.end > position)
+      .filter((selection) => selection.start <= position && selection.end > position)
       .shift();
   }
 
@@ -119,8 +122,8 @@ class SelectionHandler {
     }
 
     this.selections = this.selections
-      .filter(selection => selection.start < params.start || selection.end > params.end) // remove consumed selections
-      .map(selection => {
+      .filter((selection) => selection.start < params.start || selection.end > params.end) // remove consumed selections
+      .map((selection) => {
         // Shrink existing selection if overlapping with new selection
         if (selection.start >= params.start && selection.start < params.end && selection.end >= params.end) {
           selection.start = params.end;
@@ -142,7 +145,7 @@ class SelectionHandler {
     // Split existing selection if new selection wants in between
     for (let i = this.selections.length - 1; i >= 0; i--) {
       if (this.selections[i].start < params.start && this.selections[i].end > params.end) {
-        const selectionClone = {...this.selections[i]};
+        const selectionClone = { ...this.selections[i] };
 
         this.selections[i].text = TextProcessing.getMaskedText(
           this.textCharacteristics.decodedText,
@@ -187,13 +190,13 @@ class SelectionHandler {
 
         return [...newSelections, selection];
       }, [])
-      .filter(selection => {
+      .filter((selection) => {
         // Remove deleted selections
         return selection.backgroundColor !== '';
       })
-      .map(selection => {
+      .map((selection) => {
         // Evaluate
-        const found = this.params.solutions.filter(solution =>
+        const found = this.params.solutions.filter((solution) =>
           solution.name === this.colorToNameLookup[selection.backgroundColor] &&
           solution.start === selection.start &&
           solution.end === selection.end
@@ -209,7 +212,7 @@ class SelectionHandler {
    * @param {number} position Position that is in selection.
    */
   removeSelection(position) {
-    this.selections = this.selections.filter(selection => selection.start > position && selection.end <= position);
+    this.selections = this.selections.filter((selection) => selection.start > position && selection.end <= position);
   }
 
   /**
@@ -236,7 +239,7 @@ class SelectionHandler {
   /**
    * Get output suitable for different purposes, e.g. scores, solution, xAPI.
    * @param {string} mode Mode.
-   * @return {string} Output text.
+   * @returns {string} Output text.
    */
   getOutput(mode) {
     const selections = (mode === 'solution' || mode === 'xapi-solution') ?
@@ -247,7 +250,7 @@ class SelectionHandler {
     let selectionSplits = [];
     let donePosition = 0;
 
-    selections.forEach(selection => {
+    selections.forEach((selection) => {
       if (selection.start > donePosition) {
         selectionSplits.push({
           start: donePosition,
@@ -264,7 +267,7 @@ class SelectionHandler {
       });
     }
 
-    const results = selectionSplits.map(selection => {
+    const results = selectionSplits.map((selection) => {
       return this.getSelectionOutput(selection, mode);
     });
 
@@ -300,7 +303,7 @@ class SelectionHandler {
   /**
    * Get local node text offset.
    * @param {Node} node Node to get local text offset.
-   * @return {number} Local text offset.
+   * @returns {number} Local text offset.
    */
   getLocalOffset(node) {
     const siblings = Array.prototype.slice.call(node.parentNode.childNodes); // Damn you, IE11!
@@ -314,7 +317,7 @@ class SelectionHandler {
   /**
    * Get offset of selection in node.
    * @param {Node} node Node that contains selection text.
-   * @return {number} Number of characters in nodes in front of node.
+   * @returns {number} Number of characters in nodes in front of node.
    */
   getSelectionOffset(node) {
     let offset = 0;
@@ -332,7 +335,8 @@ class SelectionHandler {
   /**
    * Get ouptut text and mask for a selection.
    * @param {object[]} selection Selections by user.
-   * @param {string} [mode=null] Mode, scores|solution.
+   * @param {string} [mode] Mode, scores|solution.
+   * @returns {object} Output text and mask.
    */
   getSelectionOutput(selection, mode) { ///
     if (!selection.backgroundColor) {
@@ -393,7 +397,7 @@ class SelectionHandler {
     const maskArray = [];
 
     let position = 0;
-    indices.forEach(index => {
+    indices.forEach((index) => {
       textArray.push(text.substring(position, index));
       maskArray.push(mask.substring(position, index));
       position = index + '</div><div>'.length;
@@ -422,8 +426,7 @@ class SelectionHandler {
    * Update text container.
    * Rebuilds the innerHTML from the original text, because modifying the
    * HTML strings would be hell
-   *
-   * @param {string} [mode=null] Mode, scores|solution.
+   * @param {string} [mode] Mode, scores|solution.
    */
   updateTextContainer(mode = null) {
     this.callbacks.onTextUpdated(this.getOutput(mode), mode);
@@ -432,8 +435,8 @@ class SelectionHandler {
   /**
    * Recompute positions for solution after decoding.
    * @param {object} solutions Solutions.
-   * @param {string} Encoded text.
-   * @return {object} Solutions with new start/end positions.
+   * @param {string} textEncoded Encoded text.
+   * @returns {object} Solutions with new start/end positions.
    */
   static recomputeSolutionPositions(solutions, textEncoded) {
     const regexpEntities = /&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});/ig;
@@ -442,7 +445,7 @@ class SelectionHandler {
 
     let occurrences;
     while ((occurrences = regexpEntities.exec(textEncoded)) !== null) {
-      solutionsCopy = solutionsCopy.map(solution => {
+      solutionsCopy = solutionsCopy.map((solution) => {
         if (solution.start > occurrences.index) {
 
           solution.start = solution.start - occurrences[0].length + 1;

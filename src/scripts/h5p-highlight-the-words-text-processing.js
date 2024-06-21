@@ -6,7 +6,7 @@ class TextProcessing {
   /**
    * Decode HTML from entities. Danger, Will Robinson!
    * @param {string} htmlEncoded HTML encoded string.
-   * @return {string} Decoded HTML string.
+   * @returns {string} Decoded HTML string.
    */
   static htmlDecode(htmlEncoded) {
     return he.decode(htmlEncoded);
@@ -15,7 +15,7 @@ class TextProcessing {
   /**
    * Encode text into entities.
    * @param {string} html Text to be encoded.
-   * @return {string} Encoded HTML string.
+   * @returns {string} Encoded HTML string.
    */
   static htmlEncode(html) {
     return he.encode(html);
@@ -25,7 +25,7 @@ class TextProcessing {
    * Encode html using mask telling what's not to be encoded.
    * @param {string} html HTML string to be encoded.
    * @param {string} mask Mask for html of 0 (don't encode) and 1 (encode).
-   * @return {string} Encoded HTML according to mask.
+   * @returns {string} Encoded HTML according to mask.
    */
   static htmlEncodeMasked(html, mask) {
     while (mask.indexOf('01') !== -1) {
@@ -54,7 +54,7 @@ class TextProcessing {
    * Characteristics include text and mask of text (0 = HTML, 1 = text), same for
    * decoded text.
    * @param {string} text Mix of HTML and text where text is HTML encoded.
-   * @return {object} Text characteristics.
+   * @returns {object} Text characteristics.
    */
   static computeTextCharacteristics(text) {
     const encodedText = text;
@@ -103,9 +103,9 @@ class TextProcessing {
    * Trim masked html.
    * @param {string} html HTML and text.
    * @param {string} mask Mask for html (0 = HTML, 1 = text).
-   * @param {number} [start = 0] Start position in html.
+   * @param {number} [start] Start position in html.
    * @param {number} [end] End position in html.
-   * @return {[string, number, number]} Trimmed masked html.
+   * @returns {[string, number, number]} Trimmed masked html.
    */
   static trimMaskedText(html, mask, start, end) {
     if (
@@ -166,7 +166,7 @@ class TextProcessing {
    * @param {string} text Text to be trimmed.
    * @param {number} start Start position.
    * @param {number} end End position.
-   * @return {[string, number, number]} Trimmed text, new start, new end.
+   * @returns {[string, number, number]} Trimmed text, new start, new end.
    */
   static trimSpaces(text, start, end) {
     // Remove leading spaces
@@ -188,9 +188,9 @@ class TextProcessing {
    * Get text content from masked HTML string.
    * @param {string} html HTML and text.
    * @param {string} mask Mask for html (0 = HTML, 1 = text).
-   * @param {number} [start = 0] Start position in html.
+   * @param {number} [start] Start position in html.
    * @param {number} [end] End position in html.
-   * @return {string} Text content of html from start to end.
+   * @returns {string} Text content of html from start to end.
    */
   static getMaskedText(html, mask, start = 0, end) {
     if (
@@ -226,7 +226,7 @@ class TextProcessing {
   /**
    * Create mask for HTML to distinguish HTML tags from text.
    * @param {string} html HTML to get mask for.
-   * @return {string} Mask consisting of 0 for HTML char and 1 for text content.
+   * @returns {string} Mask consisting of 0 for HTML char and 1 for text content.
    */
   static createHTMLMask(html) {
     let maskHTML = '';
@@ -258,7 +258,7 @@ class TextProcessing {
    * Parse exercise text for selections to highlight.
    * @param {string} text Text.
    * @param {string[]} highlightNames Names of selection types.
-   * @return {object} Text and selections to highlight.
+   * @returns {object} Text and selections to highlight.
    */
   static parseExerciseText(text, highlightNames) {
     let textOutput = '';
@@ -345,8 +345,8 @@ class TextProcessing {
    * Find last index of unescaped char.
    * @param {string} text Text to look in.
    * @param {string} char Char to look for.
-   * @param {number} [start=0] Start position.
-   * @return {number} Index of next unescaped char or -1.
+   * @param {number} [start] Start position.
+   * @returns {number} Index of next unescaped char or -1.
    */
   static lastIndexOfUnescaped(text, char, start = 0) {
     let position = -1;
@@ -362,8 +362,8 @@ class TextProcessing {
    * Find index of next unescaped char.
    * @param {string} text Text to look in.
    * @param {string} char Char to look for.
-   * @param {number} [start=0] Start position.
-   * @return {number} Index of next unescaped char or -1.
+   * @param {number} [start] Start position.
+   * @returns {number} Index of next unescaped char or -1.
    */
   static indexOfUnescaped(text, char, start = 0) {
     const position = text.indexOf(char, start);

@@ -2,8 +2,7 @@
 class Util {
   /**
    * Extend an array just like JQuery's extend.
-   * @param {object} arguments Objects to be merged.
-   * @return {object} Merged objects.
+   * @returns {object} Merged objects.
    */
   static extend() {
     for (let i = 1; i < arguments.length; i++) {
@@ -24,7 +23,7 @@ class Util {
   /**
    * Retrieve true string from HTML encoded string.
    * @param {string} input Input string.
-   * @return {string} Output string.
+   * @returns {string} Output string.
    */
   static htmlDecode(input) {
     var dparser = new DOMParser().parseFromString(input, 'text/html');
@@ -33,8 +32,8 @@ class Util {
 
   /**
    * Retrieve string without HTML tags.
-   * @param {string} input Input string.
-   * @return {string} Output string.
+   * @param {string} html Input string.
+   * @returns {string} Output string.
    */
   static stripHTML(html) {
     const div = document.createElement('div');
@@ -45,8 +44,8 @@ class Util {
   /**
    * Format language tag (RFC 5646). Assuming "language-coutry". No validation.
    * Cmp. https://tools.ietf.org/html/rfc5646
-   * @param {string} languageTag Language tag.
-   * @return {string} Formatted language tag.
+   * @param {string} languageCode Language tag.
+   * @returns {string} Formatted language tag.
    */
   static formatLanguageCode(languageCode) {
     if (typeof languageCode !== 'string') {
@@ -71,7 +70,7 @@ class Util {
    * Check whether an HTML element is a child of the overlay.
    * @param {HTMLElement} node Node to check.
    * @param {HTMLElement} potentialParent Potential parent.
-   * @return {boolean} True, if element is a child.
+   * @returns {boolean} True, if element is a child.
    */
   static isChild(node, potentialParent) {
     const parent = node.parentNode;
@@ -92,7 +91,7 @@ class Util {
    * @param {string} text Text to look in.
    * @param {string} pattern Pattern to look for.
    * @param {number} n N-th occurrence.
-   * @return {number} Index or -1 if not found.
+   * @returns {number} Index or -1 if not found.
    */
   static nthIndexOf(text, pattern, n) {
     if (typeof text !== 'string' || typeof pattern !== 'string') {
@@ -118,8 +117,8 @@ class Util {
   /**
    * Compute text color (black/white) to given color as contrast.
    * @param {string} colorCode RGB color code in 6 char hex: #rrggbb.
-   * @param {number} [threshold=0.6] Threshold in [0; 1] for black.
-   * @return {string} RGB contrast color code in 6 char hex: #rrggbb.
+   * @param {number} [threshold] Threshold in [0; 1] for black.
+   * @returns {string} RGB contrast color code in 6 char hex: #rrggbb.
    */
   static computeTextColor(colorCode, threshold = 0.6) {
     if (typeof colorCode !== 'string' || !/#[0-9a-f]{6}/.test(colorCode)) {

@@ -1,13 +1,13 @@
 // Import required classes
-import HighlightTheWordsContent from './h5p-highlight-the-words-content';
-import Util from './h5p-highlight-the-words-util';
+import HighlightTheWordsContent from './h5p-highlight-the-words-content.js';
+import Util from './h5p-highlight-the-words-util.js';
 
 /**
  * Main class.
  */
 export default class HighlightTheWords extends H5P.Question {
   /**
-   * @constructor
+   * @class
    * @param {object} params Parameters passed by the editor.
    * @param {number} contentId Content's id.
    * @param {object} [extras] Saved state, metadata, etc.
@@ -64,7 +64,7 @@ export default class HighlightTheWords extends H5P.Question {
 
     // Sanitize highlight options
     this.params.highlightOptions = this.params.highlightOptions
-      .filter(option => {
+      .filter((option) => {
         // Drop incomplete options
         const valid = (option.name && option.backgroundColor);
         if (!valid) {
@@ -72,7 +72,7 @@ export default class HighlightTheWords extends H5P.Question {
         }
         return valid;
       })
-      .map(option => {
+      .map((option) => {
         // Prepare for display
         option.description = Util.stripHTML(Util.htmlDecode(option.description || '&nbsp;'));
         option.color = Util.computeTextColor(option.backgroundColor);
@@ -80,7 +80,7 @@ export default class HighlightTheWords extends H5P.Question {
       })
       .reduce((result, option) => {
         // Only allow same color once
-        const colors = result.map(result => result.backgroundColor);
+        const colors = result.map((result) => result.backgroundColor);
         if (colors.indexOf(option.backgroundColor) !== -1) {
           console.warn(`${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`);
           return result;
@@ -192,7 +192,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Check if result has been submitted or input has been given.
-   * @return {boolean} True, if answer was given.
+   * @returns {boolean} True, if answer was given.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-1}
    */
   getAnswerGiven() {
@@ -201,7 +201,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get latest score.
-   * @return {number} Latest score.
+   * @returns {number} Latest score.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-2}
    */
   getScore() {
@@ -210,7 +210,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get maximum possible score.
-   * @return {number} Score necessary for mastering.
+   * @returns {number} Score necessary for mastering.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-3}
    */
   getMaxScore() {
@@ -241,7 +241,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get xAPI data.
-   * @return {object} XAPI statement.
+   * @returns {object} XAPI statement.
    * @see contract at {@link https://h5p.org/documentation/developers/contracts#guides-header-6}
    */
   getXAPIData() {
@@ -252,7 +252,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Build xAPI answer event.
-   * @return {H5P.XAPIEvent} XAPI answer event.
+   * @returns {H5P.XAPIEvent} XAPI answer event.
    */
   getXAPIAnswerEvent() {
     const xAPIEvent = this.createXAPIEvent('answered');
@@ -266,7 +266,7 @@ export default class HighlightTheWords extends H5P.Question {
   /**
    * Create an xAPI event.
    * @param {string} verb Short id of the verb we want to trigger.
-   * @return {H5P.XAPIEvent} Event template.
+   * @returns {H5P.XAPIEvent} Event template.
    */
   createXAPIEvent(verb) {
     const xAPIEvent = this.createXAPIEventTemplate(verb);
@@ -285,7 +285,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get the xAPI definition for the xAPI object.
-   * @return {object} XAPI definition.
+   * @returns {object} XAPI definition.
    */
   getxAPIDefinition() {
     const definition = {};
@@ -312,7 +312,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get the xAPI context extensions.
-   * @return {object} XAPI contextExtensions.
+   * @returns {object} XAPI contextExtensions.
    */
   getxAPIContextExtensions() {
     return {
@@ -323,7 +323,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Determine whether the task has been passed by the user.
-   * @return {boolean} True if user passed or task is not scored.
+   * @returns {boolean} True if user passed or task is not scored.
    */
   isPassed() {
     return this.getScore() >= this.getMaxScore();
@@ -331,7 +331,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get tasks title.
-   * @return {string} Title.
+   * @returns {string} Title.
    */
   getTitle() {
     let raw;
@@ -346,7 +346,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Get tasks description.
-   * @return {string} Description.
+   * @returns {string} Description.
    */
   getDescription() {
     return this.params.taskDescription || HighlightTheWords.DEFAULT_DESCRIPTION;
@@ -354,8 +354,7 @@ export default class HighlightTheWords extends H5P.Question {
 
   /**
    * Answer call to return the current state.
-   *
-   * @return {object} Current state.
+   * @returns {object} Current state.
    */
   getCurrentState() {
     return this.content.getCurrentState();
@@ -459,7 +458,7 @@ export default class HighlightTheWords extends H5P.Question {
       // Add fullscreen button on first call after H5P.Question has created the DOM
       this.container = document.querySelector('.h5p-container');
       if (this.container) {
-        
+
         if (this.isRoot()) {
           this.content.enableFullscreenButton();
 

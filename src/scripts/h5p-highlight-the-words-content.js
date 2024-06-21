@@ -1,14 +1,16 @@
-import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu';
-import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar';
-import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend';
-import TextProcessing from './h5p-highlight-the-words-text-processing';
-import SelectionHandler from './h5p-highlight-the-words-selection-handler';
-import Util from './h5p-highlight-the-words-util';
+import HighlightTheWordsMenu from './components/h5p-highlight-the-words-menu.js';
+import HighlightTheWordsTitlebar from './components/h5p-highlight-the-words-titlebar.js';
+import HighlightTheWordsColorLegend from './components/h5p-highlight-the-words-color-legend.js';
+import TextProcessing from './h5p-highlight-the-words-text-processing.js';
+import SelectionHandler from './h5p-highlight-the-words-selection-handler.js';
+import Util from './h5p-highlight-the-words-util.js';
 
 /** Class representing the content */
 export default class HighlightTheWordsContent {
   /**
-   * @constructor
+   * @param {object} [params] Parameters.
+   * @param {object} [callbacks] Callbacks.
+   * @class
    */
   constructor(params = {}, callbacks = {}) {
     this.params = Util.extend({
@@ -32,14 +34,14 @@ export default class HighlightTheWordsContent {
     // Parse exercise text for sections to be highlighted
     const parsedTextResults = TextProcessing.parseExerciseText(
       this.params.text,
-      this.params.highlightOptions.map(option => option.name)
+      this.params.highlightOptions.map((option) => option.name)
     );
     this.params.text = parsedTextResults.text.replace(/(\r\n|\n|\r)/gm, '');
 
     // Build solutions from parsed text results
-    this.solutions = parsedTextResults.highlights.map(solution => {
+    this.solutions = parsedTextResults.highlights.map((solution) => {
       const highlightOption = this.params.highlightOptions
-        .filter(option => option.name === solution.name)
+        .filter((option) => option.name === solution.name)
         .shift();
 
       // Decode HTML entities to get real text + length
@@ -178,7 +180,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.content;
@@ -186,7 +188,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Return DOM for exercise element.
-   * @return {HTMLElement} DOM for exercise element.
+   * @returns {HTMLElement} DOM for exercise element.
    */
   getExerciseDOM() {
     return this.exercise;
@@ -195,7 +197,7 @@ export default class HighlightTheWordsContent {
   /**
    * Build task description.
    * @param {string} text Text.
-   * @return {HTMLElement} Task description element.
+   * @returns {HTMLElement} Task description element.
    */
   buildTaskDescription(text) {
     const taskDescription = document.createElement('div');
@@ -208,7 +210,7 @@ export default class HighlightTheWordsContent {
   /**
    * Build text container.
    * @param {string} text Text.
-   * @return {HTMLElement} Text container element.
+   * @returns {HTMLElement} Text container element.
    */
   buildTextContainer(text) {
     const textContainer = document.createElement('div');
@@ -316,7 +318,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Check if result has been submitted or input has been given.
-   * @return {boolean} True, if answer was given.
+   * @returns {boolean} True, if answer was given.
    */
   getAnswerGiven() {
     return this.answerGiven;
@@ -324,7 +326,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Get latest score.
-   * @return {number} Latest score.
+   * @returns {number} Latest score.
    */
   getScore() {
     const score = this.selectionHandler
@@ -336,7 +338,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Get maximum possible score.
-   * @return {number} Maximum score possible.
+   * @returns {number} Maximum score possible.
    */
   getMaxScore() {
     return this.solutions.length;
@@ -344,7 +346,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Retrieve current state.
-   * @return {object} Current state.
+   * @returns {object} Current state.
    */
   getCurrentState() {
     return {
@@ -356,6 +358,7 @@ export default class HighlightTheWordsContent {
   /**
    * Get output text.
    * @param {string} mode Mode for output.
+   * @returns {string} Output text.
    */
   getOutput(mode) {
     return this.selectionHandler.getOutput(mode);
@@ -363,7 +366,7 @@ export default class HighlightTheWordsContent {
 
   /**
    * Update text container
-   * @param {string} [mode=null] Mode, scores|solution.
+   * @param {string} [mode] Mode, scores|solution.
    */
   updateTextContainer(mode) {
     this.selectionHandler.updateTextContainer(mode);
@@ -405,7 +408,7 @@ export default class HighlightTheWordsContent {
   /**
    * Handle text updated.
    * @param {string} html HTML to display in text area.
-   * @param {string} [mode=null] Mode, scores|solution.
+   * @param {string} [mode] Mode, scores|solution.
    */
   handleTextUpdated(html, mode) {
     if (mode === 'reset') {
@@ -425,12 +428,12 @@ export default class HighlightTheWordsContent {
       const scorePoints = new H5P.Question.ScorePoints();
 
       const corrects = this.textArea.querySelectorAll('.h5p-highlight-the-words-correct');
-      Array.prototype.slice.call(corrects).forEach(correct => {
+      Array.prototype.slice.call(corrects).forEach((correct) => {
         correct.appendChild(scorePoints.getElement(true));
       });
 
       const wrongs = this.textArea.querySelectorAll('.h5p-highlight-the-words-wrong');
-      Array.prototype.slice.call(wrongs).forEach(correct => {
+      Array.prototype.slice.call(wrongs).forEach((correct) => {
         correct.appendChild(scorePoints.getElement(false));
       });
     }

@@ -1,12 +1,12 @@
 // Import required classes
-import HighlightTheWordsPanelSet from './h5p-highlight-the-words-menu-panel-set';
-import Util from './../h5p-highlight-the-words-util';
+import HighlightTheWordsPanelSet from './h5p-highlight-the-words-menu-panel-set.js';
+import Util from './../h5p-highlight-the-words-util.js';
 import './h5p-highlight-the-words-menu.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsMenu {
   /**
-   * @constructor
+   * @class
    * @param {object} params Parameters.
    * @param {object} [callbacks] Callbacks.
    */
@@ -70,7 +70,7 @@ export default class HighlightTheWordsMenu {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.menu;
@@ -94,7 +94,7 @@ export default class HighlightTheWordsMenu {
 
   /**
    * Determine whether menu is open.
-   * @return {boolean} True, if menu is open, else false.
+   * @returns {boolean} True, if menu is open, else false.
    */
   isOpen() {
     return this.stateOpen;

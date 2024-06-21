@@ -1,12 +1,12 @@
 // Import required classes
-import HighlightTheWordsPanel from './h5p-highlight-the-words-menu-panel';
-import Util from './../h5p-highlight-the-words-util';
+import HighlightTheWordsPanel from './h5p-highlight-the-words-menu-panel.js';
+import Util from './../h5p-highlight-the-words-util.js';
 import './h5p-highlight-the-words-menu-panel-set.scss';
 
 /** Class representing the content */
 export default class HighlightTheWordsMenuPanelSet {
   /**
-   * @constructor
+   * @class
    * @param {object} params Parameters.
    * @param {object} [callbacks] Callbacks.
    */
@@ -47,7 +47,7 @@ export default class HighlightTheWordsMenuPanelSet {
 
   /**
    * Return the DOM for this class.
-   * @return {HTMLElement} DOM for this class.
+   * @returns {HTMLElement} DOM for this class.
    */
   getDOM() {
     return this.panelset;

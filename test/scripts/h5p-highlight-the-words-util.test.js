@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import Util from '../../src/scripts/h5p-highlight-the-words-util';
 
 const testCasesExtend = [

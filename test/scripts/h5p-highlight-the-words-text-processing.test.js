@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import TextProcessing from '../../src/scripts/h5p-highlight-the-words-text-processing';
 
 const testCasesIndexOfUnescaped = [

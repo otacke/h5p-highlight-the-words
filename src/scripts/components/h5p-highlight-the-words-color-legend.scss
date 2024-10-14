@@ -1,4 +1,4 @@
-@import "@styles/h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words-color-legend-container {
   width: 100%;
@@ -12,7 +12,7 @@
       flex-direction: row;
 
       .h5p-highlight-the-words-color-field {
-        border-radius: $border-radius-small;
+        border-radius: main.$border-radius-small;
         flex-shrink: 0;
         height: 1em;
         width: 0.5em;

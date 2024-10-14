@@ -1,13 +1,13 @@
-@import "@styles/h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words-title-bar {
   align-items: center;
   background-color: white;
   background-size: cover;
-  box-shadow: 10px 10px 30px $color-shadow;
+  box-shadow: 10px 10px 30px main.$color-shadow;
   display: flex;
   overflow: hidden;
-  padding: $margin-50;
+  padding: main.$margin-50;
 
   .h5p-highlight-the-words-button-fullscreen {
     flex-grow: 0

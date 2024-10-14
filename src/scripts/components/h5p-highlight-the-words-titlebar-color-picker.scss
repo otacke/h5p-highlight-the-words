@@ -1,4 +1,4 @@
-@import "@styles/h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words-color-picker-container {
   align-items: center;
@@ -10,13 +10,13 @@
 
   .h5p-highlight-the-words-color-picker-button {
     border: solid 2px white;
-    border-radius: $border-radius-small;
+    border-radius: main.$border-radius-small;
     flex-grow: 1;
     flex-shrink: 0;
-    height: $color-picker-size;
-    margin: $margin-50;
+    height: main.$color-picker-size;
+    margin: main.$margin-50;
     padding: 0;
-    max-width: $color-picker-size;
+    max-width: main.$color-picker-size;
 
     &:hover {
       cursor: pointer;
@@ -30,7 +30,7 @@
     }
 
     &.h5p-highlight-the-words-selected {
-      border-color: $color-grey-3-50;
+      border-color: main.$color-grey-3-50;
     }
   }
 }

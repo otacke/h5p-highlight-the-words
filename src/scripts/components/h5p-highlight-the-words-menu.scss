@@ -1,9 +1,9 @@
-@import "@styles/h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words-menu-container {
   background-color: white;
   background-size: cover;
-  box-shadow: 10px 10px 30px $color-shadow;
+  box-shadow: 10px 10px 30px main.$color-shadow;
   display: flex;
   flex-direction: column;
   min-height: 10em;
@@ -17,7 +17,7 @@
   }
 
   .h5p-highlight-the-words-menu-title-container {
-    background-color: $color-base;
+    background-color: main.$color-base;
     color: white;
     overflow: hidden;
     padding: 0.75em 1em;

@@ -1,4 +1,4 @@
-@import "@styles/h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words-button {
   align-items: center;
@@ -7,7 +7,7 @@
   background-repeat: no-repeat;
   background-size: 1.2em 1.2em;
   border: 2px solid #fff;
-  border-radius: $border-radius-small;
+  border-radius: main.$border-radius-small;
   display: flex;
   flex-shrink: 0;
   height: 3.6em;
@@ -16,30 +16,30 @@
 
   &:not(.h5p-highlight-the-words-button-disabled) {
     &:hover {
-      background-color: $color-base-05;
+      background-color: main.$color-base-05;
       cursor: pointer;
     }
 
     &:active {
-      background-color: $color-base-10;
+      background-color: main.$color-base-10;
     }
 
     &.h5p-highlight-the-words-button-active {
-      background-color: $color-base;
+      background-color: main.$color-base;
       opacity: 20;
 
       &:hover {
-        background-color: $color-base-90;
+        background-color: main.$color-base-90;
       }
 
       &:active {
-        background-color: $color-base-95;
+        background-color: main.$color-base-95;
       }
     }
   }
 
   &.h5p-highlight-the-words-button-fullscreen {
-    background-color: $color-base-05;
+    background-color: main.$color-base-05;
     background-image: url("./../../images/button-enter-fullscreen-icon-blue.svg");
 
     &.h5p-highlight-the-words-button-disabled {
@@ -47,23 +47,23 @@
     }
 
     &:not(.h5p-highlight-the-words-disabled):hover {
-      background-color: $color-base-10;
+      background-color: main.$color-base-10;
     }
 
     &:not(.h5p-highlight-the-words-button-disabled):active {
-      background-color: $color-base-20;
+      background-color: main.$color-base-20;
     }
 
     &.h5p-highlight-the-words-button-active {
-      background-color: $color-base-05;
+      background-color: main.$color-base-05;
       background-image: url("./../../images/button-exit-fullscreen-icon-blue.svg");
 
       &:not(.h5p-highlight-the-words-button-disabled):hover {
-        background-color: $color-base-10;
+        background-color: main.$color-base-10;
       }
 
       &:not(.h5p-highlight-the-words-button-disabled):active {
-        background-color: $color-base-20;
+        background-color: main.$color-base-20;
       }
     }
   }

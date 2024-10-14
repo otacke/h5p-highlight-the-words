@@ -1,4 +1,4 @@
-@import "./h5p-highlight-the-words-main";
+@use "@styles/main";
 
 .h5p-highlight-the-words {
 
@@ -33,7 +33,7 @@
     flex-direction: row;
 
     .h5p-highlight-the-words-exercise {
-      margin: $margin-base;
+      margin: main.$margin-base;
       width: 100%;
 
       .h5p-highlight-the-words-task-description {
@@ -49,7 +49,7 @@
           width: 100%;
 
           &.h5p-highlight-the-words-solution {
-            border-left: 2px dashed $color-grey-14;
+            border-left: 2px dashed main.$color-grey-14;
           }
 
           &.h5p-highlight-the-words-disabled {
@@ -58,7 +58,7 @@
 
           .h5p-highlight-the-words-text {
             line-height: 1.75;
-            padding: $margin-50;
+            padding: main.$margin-50;
 
             .h5p-highlight-the-words-selection {
               position: relative;
@@ -86,7 +86,7 @@
   }
 
   .h5p-highlight-the-words-ruler {
-    border-bottom: 2px solid $color-grey-14;
+    border-bottom: 2px solid main.$color-grey-14;
 
     &.h5p-highlight-the-words-margin-bottom {
       margin-bottom: 1em;
@@ -94,17 +94,17 @@
   }
 
   ::-webkit-scrollbar {
-    background: $color-scrollbar-35;
+    background: main.$color-scrollbar-35;
     width: 6px;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: $color-scrollbar-75;
+    background: main.$color-scrollbar-75;
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: $color-scrollbar;
+    background: main.$color-scrollbar;
   }
 
   &.h5p-fullscreen {
@@ -134,7 +134,7 @@
 
       .h5p-highlight-the-words-text-container.h5p-highlight-the-words-solution {
         border-left: 0;
-        border-top: 2px dashed $color-grey-14;
+        border-top: 2px dashed main.$color-grey-14;
       }
     }
   }

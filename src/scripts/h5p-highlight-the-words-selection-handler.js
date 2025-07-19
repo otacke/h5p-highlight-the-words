@@ -1,6 +1,12 @@
 import Util from './h5p-highlight-the-words-util.js';
 import TextProcessing from './h5p-highlight-the-words-text-processing.js';
 
+/** @constant {number} TRIPLE_CLICK Number of clicks to consider a triple click. */
+const TRIPLE_CLICK = 3;
+
+/** @constant {number} CLICK_TIMEOUT_MS Time in milliseconds to consider a click as a double click. */
+const CLICK_TIMEOUT_MS = 1000;
+
 /** Class for selections functions */
 class SelectionHandler {
   /**
@@ -55,7 +61,7 @@ class SelectionHandler {
 
     // Prevent selecting paragraphs by triple clicks
     this.params.textArea.addEventListener('click', (event) => {
-      if (event.detail === 3) {
+      if (event.detail === TRIPLE_CLICK) {
         this.clearSelections();
       }
     });
@@ -125,7 +131,11 @@ class SelectionHandler {
       .filter((selection) => selection.start < params.start || selection.end > params.end) // remove consumed selections
       .map((selection) => {
         // Shrink existing selection if overlapping with new selection
-        if (selection.start >= params.start && selection.start < params.end && selection.end >= params.end) {
+        if (
+          selection.start >= params.start &&
+          selection.start < params.end &&
+          selection.end >= params.end
+        ) {
           selection.start = params.end;
         }
         if (selection.end > params.start && selection.end <= params.end) {
@@ -184,7 +194,13 @@ class SelectionHandler {
           selection.end >= this.selections[index + 1].start
         ) {
           this.selections[index + 1].start = selection.start;
-          this.selections[index + 1].text = TextProcessing.getMaskedText(this.textCharacteristics.decodedText, this.textCharacteristics.decodedMask, this.selections[index + 1].start, this.selections[index + 1].end);
+          this.selections[index + 1].text =
+            TextProcessing.getMaskedText(
+              this.textCharacteristics.decodedText,
+              this.textCharacteristics.decodedMask,
+              this.selections[index + 1].start,
+              this.selections[index + 1].end
+            );
           selection.backgroundColor = '';
         }
 
@@ -212,7 +228,8 @@ class SelectionHandler {
    * @param {number} position Position that is in selection.
    */
   removeSelection(position) {
-    this.selections = this.selections.filter((selection) => selection.start > position && selection.end <= position);
+    this.selections = this.selections
+      .filter((selection) => selection.start > position && selection.end <= position);
   }
 
   /**
@@ -291,7 +308,7 @@ class SelectionHandler {
       }
 
       // Prevent accidentally selecting paragraph with multiple clicks
-      if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < 1000) {
+      if (this.lastSelectStart && event.timeStamp - this.lastSelectStart < CLICK_TIMEOUT_MS) {
         return;
       }
       this.lastSelectStart = event.timeStamp;
@@ -359,14 +376,17 @@ class SelectionHandler {
         scoreClass = 'h5p-highlight-the-words-user-response-wrong';
       }
 
-      spanPre = `<span class="${scoreClass}"><span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      // eslint-disable-next-line @stylistic/js/max-len
+      spanPre = `<span class="${scoreClass}"><span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substring(1)} h5p-highlight-the-words-selection-color-${selection.color.substring(1)}">`;
       spanPost = '</span></span>';
     }
     else if (mode === 'xapi-solution') {
-      spanPre = `<span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substr(1)} h5p-highlight-the-words-selection-color-${selection.color.substr(1)}">`;
+      // eslint-disable-next-line @stylistic/js/max-len
+      spanPre = `<span class="h5p-highlight-the-words-selection h5p-highlight-the-words-selection-background-color-${selection.backgroundColor.substring(1)} h5p-highlight-the-words-selection-color-${selection.color.substring(1)}">`;
       spanPost = '</span>';
     }
     else {
+      // eslint-disable-next-line @stylistic/js/max-len
       spanPre = `<span class="h5p-highlight-the-words-selection" style="background-color: ${selection.backgroundColor}; color: ${selection.color};">`;
 
       const classNames = ['h5p-highlight-the-words-score-point'];

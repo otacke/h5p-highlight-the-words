@@ -1,5 +1,8 @@
 import he from 'he';
 
+/** @constant {number} Offset for name in highlight text */
+const NAME_OFFSET = 2; // Offset for name in highlight text
+
 /** Class for utility functions */
 class TextProcessing {
 
@@ -43,7 +46,7 @@ class TextProcessing {
     mask = mask.split(TextProcessing.DELIMITER);
 
     return html
-      .map((segment, index) => (mask[index].substr(0, 1) === '0') ? segment : this.htmlEncode(segment))
+      .map((segment, index) => (mask[index].substring(0, 1) === '0') ? segment : this.htmlEncode(segment))
       .join('');
   }
 
@@ -80,7 +83,7 @@ class TextProcessing {
     let decodedMask = [];
 
     mask.forEach((maskItem, index) => {
-      if (maskItem.substr(0, 1) === '0') {
+      if (maskItem.substring(0, 1) === '0') {
         decodedText.push(text[index]);
         decodedMask.push(Array(text[index].length + 1).join('0'));
       }
@@ -149,12 +152,12 @@ class TextProcessing {
     let trail = 0;
 
     // remove trailing HTML
-    if (mask.length > 0 && mask[mask.length - 1].substr(0, 1) === '0') {
+    if (mask.length > 0 && mask[mask.length - 1].substring(0, 1) === '0') {
       trail = html.pop().length;
     }
 
     // remove leading HTML
-    if (mask.length > 0 && mask[0].substr(0, 1) === '0') {
+    if (mask.length > 0 && mask[0].substring(0, 1) === '0') {
       lead = html.shift().length;
     }
 
@@ -170,14 +173,14 @@ class TextProcessing {
    */
   static trimSpaces(text, start, end) {
     // Remove leading spaces
-    while (text.substr(0, 1) === ' ') {
-      text = text.substr(1);
+    while (text.substring(0, 1) === ' ') {
+      text = text.substring(1);
       start++;
     }
 
     // Remove trailing spaces
-    while (text.substr(-1) === ' ') {
-      text = text.substr(0, text.length - 1);
+    while (text.substring(text.length - 1) === ' ') {
+      text = text.substring(0, text.length - 1);
       end--;
     }
 
@@ -234,20 +237,20 @@ class TextProcessing {
 
     while (html.length > 0) {
       if (mode === 'text') {
-        if (html.substr(0, 1) !== '<') {
+        if (html.substring(0, 1) !== '<') {
           maskHTML = `${maskHTML}1`;
-          html = html.substr(1);
+          html = html.substring(1);
         }
         else {
           mode = 'html';
         }
       }
       else {
-        if (html.substr(0, 1) === '>') {
+        if (html.substring(0, 1) === '>') {
           mode = 'text';
         }
         maskHTML = `${maskHTML}0`;
-        html = html.substr(1);
+        html = html.substring(1);
       }
     }
 
@@ -290,21 +293,21 @@ class TextProcessing {
 
       if (namePosition === -1) {
         console.warn(`It seems that you forgot to add a name to the highlight text "${highlightText}"`);
-        textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
-        text = text.substr(matchPositionEnd + 1);
+        textOutput = `${textOutput}${text.substring(0, matchPositionStart)}${highlightText}`;
+        text = text.substring(matchPositionEnd + 1);
         position = textOutput.length; // Don't forget previous runs
         continue;
       }
 
       // All clear, extract information and adjust text
-      const name = highlightText.substr(namePosition + 2);
-
-      highlightText = highlightText.substr(0, namePosition);
+      const name = highlightText.substring(namePosition + NAME_OFFSET);
+      highlightText = highlightText.substring(0, namePosition);
 
       // Replace \* with * inside highlightText
       while (this.indexOfUnescaped(highlightText, '\\::') !== -1) {
         const innerDoubleColon = this.indexOfUnescaped(highlightText, '\\::');
-        highlightText = `${highlightText.substring(0, innerDoubleColon)}${highlightText.substring(innerDoubleColon + 1)}`;
+        highlightText =
+          `${highlightText.substring(0, innerDoubleColon)}${highlightText.substring(innerDoubleColon + 1)}`;
       }
 
       // Replace \* with * inside highlightText
@@ -315,8 +318,8 @@ class TextProcessing {
 
       if (highlightNames.indexOf(name) === -1) {
         console.warn(`It seems that there is no specification for ${name}.`);
-        textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
-        text = text.substr(matchPositionEnd + 1);
+        textOutput = `${textOutput}${text.substring(0, matchPositionStart)}${highlightText}`;
+        text = text.substring(matchPositionEnd + 1);
         position = textOutput.length; // Don't forget previous runs
         continue;
       }
@@ -328,9 +331,9 @@ class TextProcessing {
         end: position + matchPositionStart + highlightText.length // Accounting for removing the name and the trailing *
       });
 
-      textOutput = `${textOutput}${text.substr(0, matchPositionStart)}${highlightText}`;
+      textOutput = `${textOutput}${text.substring(0, matchPositionStart)}${highlightText}`;
 
-      text = text.substr(matchPositionEnd + 1);
+      text = text.substring(matchPositionEnd + 1);
 
       position = textOutput.length; // Don't forget previous runs
     }

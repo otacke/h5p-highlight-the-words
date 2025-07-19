@@ -2,6 +2,9 @@
 import HighlightTheWordsContent from './h5p-highlight-the-words-content.js';
 import Util from './h5p-highlight-the-words-util.js';
 
+/** @constant {number} FULLSCREEN_DELAY_MS Timeout delay for fullscreen mode. */
+const FULLSCREEN_DELAY_MS = 150;
+
 /**
  * Main class.
  */
@@ -82,7 +85,9 @@ export default class HighlightTheWords extends H5P.Question {
         // Only allow same color once
         const colors = result.map((result) => result.backgroundColor);
         if (colors.indexOf(option.backgroundColor) !== -1) {
-          console.warn(`${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`);
+          console.warn(
+            `${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`
+          );
           return result;
         }
 
@@ -494,7 +499,7 @@ export default class HighlightTheWords extends H5P.Question {
           this.trigger('resize');
         });
       }
-    }, 150); // Required for feedback and scorbar to be gone again
+    }, FULLSCREEN_DELAY_MS); // Required for feedback and scorbar to be gone again
   }
 
   /**

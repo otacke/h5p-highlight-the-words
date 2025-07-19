@@ -1,3 +1,12 @@
+/** @constant {number} LUMA_RED Luminance factor for red channel */
+const LUMA_RED = 0.2126;
+
+/** @constant {number} LUMA_GREEN Luminance factor for green channel */
+const LUMA_GREEN = 0.7152;
+
+/** @constant {number} LUMA_BLUE Luminance factor for blue channel */
+const LUMA_BLUE = 0.0722;
+
 /** Class for utility functions */
 class Util {
   /**
@@ -125,17 +134,20 @@ class Util {
       return null;
     }
 
-    colorCode = colorCode.substr(1);
+    colorCode = colorCode.substring(1);
 
     // RGB as percentage
     const rgb = [
-      parseInt(colorCode.substr(0, 2), 16) / 255,
-      parseInt(colorCode.substr(2, 2), 16) / 255,
-      parseInt(colorCode.substr(4, 2), 16) / 255
+      // eslint-disable-next-line no-magic-numbers
+      parseInt(colorCode.substring(0, 2), 16) / 255,
+      // eslint-disable-next-line no-magic-numbers
+      parseInt(colorCode.substring(2, 4), 16) / 255,
+      // eslint-disable-next-line no-magic-numbers
+      parseInt(colorCode.substring(4, 6), 16) / 255
     ];
 
     // luma (Rec. 709, HDTV standard)
-    const luma = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    const luma = LUMA_RED * rgb[0] + LUMA_GREEN * rgb[1] + LUMA_BLUE * rgb[2];
 
     return (luma > threshold) ? '#000000' : '#ffffff';
   }

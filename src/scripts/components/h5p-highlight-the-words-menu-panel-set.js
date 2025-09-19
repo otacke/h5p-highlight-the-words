@@ -12,7 +12,7 @@ export default class HighlightTheWordsMenuPanelSet {
   constructor(params = {}, callbacks = {}) {
     // Set missing params
     this.params = Util.extend({
-      panels: []
+      panels: [],
     }, params);
 
     // Sanitize callbacks
@@ -32,8 +32,8 @@ export default class HighlightTheWordsMenuPanelSet {
         {
           onClick: () => {
             this.handleClick(panel.id);
-          }
-        }
+          },
+        },
       );
 
       if (index === 0) {

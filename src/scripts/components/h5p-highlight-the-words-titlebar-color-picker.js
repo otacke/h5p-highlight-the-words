@@ -16,14 +16,14 @@ export default class HighlightTheWordsTitlebarColorPicker {
       highlightOptions: [],
       a11y: {
         colorFor: 'Color for @description',
-        eraser: 'Erase selection'
-      }
+        eraser: 'Erase selection',
+      },
     }, params || {});
 
     this.params.highlightOptions.push({
       color: '',
       backgroundColor: '',
-      description: this.params.a11y.eraser
+      description: this.params.a11y.eraser,
     });
 
     // Sanitize callbacks
@@ -43,7 +43,7 @@ export default class HighlightTheWordsTitlebarColorPicker {
         picker.classList.add('h5p-highlight-the-words-selected');
         this.callbacks.onColorChanged({
           backgroundColor: option.backgroundColor,
-          color: option.color
+          color: option.color,
         });
       }
 
@@ -59,7 +59,7 @@ export default class HighlightTheWordsTitlebarColorPicker {
       picker.addEventListener('click', (event) => {
         this.handleColorChanged(event.currentTarget, {
           backgroundColor: option.backgroundColor,
-          color: option.color
+          color: option.color,
         });
       });
 

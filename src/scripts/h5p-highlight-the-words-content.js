@@ -17,13 +17,13 @@ export default class HighlightTheWordsContent {
       a11y: {},
       l10n: {},
       highlightOptions: [],
-      previousState: {}
+      previousState: {},
     }, params);
 
     this.callbacks = Util.extend({
       onButtonFullscreenClicked: () => {},
       onResizeRequired: () => {},
-      onInteracted: () => {}
+      onInteracted: () => {},
     }, callbacks);
 
     // State for question type contract
@@ -34,7 +34,7 @@ export default class HighlightTheWordsContent {
     // Parse exercise text for sections to be highlighted
     const parsedTextResults = TextProcessing.parseExerciseText(
       this.params.text,
-      this.params.highlightOptions.map((option) => option.name)
+      this.params.highlightOptions.map((option) => option.name),
     );
     this.params.text = parsedTextResults.text.replace(/(\r\n|\n|\r)/gm, '');
 
@@ -75,18 +75,18 @@ export default class HighlightTheWordsContent {
               collapsible: false,
               label: this.params.l10n.colorLegend,
               content: new HighlightTheWordsColorLegend({
-                options: this.params.highlightOptions
+                options: this.params.highlightOptions,
               }),
-              passive: true
+              passive: true,
             },
-          }
-        ]
-      }
+          },
+        ],
+      },
     }, {
       onMenuToggled: this.callbacks.onResizeRequired,
       onItemChanged: (id) => {
         this.handleMenuItemChanged(id);
-      }
+      },
     });
 
     // Excercise
@@ -136,14 +136,14 @@ export default class HighlightTheWordsContent {
         textArea: this.textArea,
         solutions: this.solutions,
         highlightOptions: this.params.highlightOptions,
-        selections: this.params.previousState?.selections
+        selections: this.params.previousState?.selections,
       },
       {
         onTextUpdated: (html, mode) => {
           this.handleTextUpdated(html, mode);
         },
-        onInteracted: this.callbacks.onInteracted
-      }
+        onInteracted: this.callbacks.onInteracted,
+      },
     );
 
     this.selectionHandler.addSelectEventHandler(this.textArea);
@@ -157,10 +157,10 @@ export default class HighlightTheWordsContent {
           buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
           buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
           colorFor: this.params.a11y.colorFor,
-          eraser: this.params.a11y.eraser
+          eraser: this.params.a11y.eraser,
         },
         highlightOptions: this.params.highlightOptions,
-        colors: this.params.previousState?.colors
+        colors: this.params.previousState?.colors,
       },
       {
         onColorChanged: (colors) => {
@@ -169,8 +169,8 @@ export default class HighlightTheWordsContent {
         onButtonMenuClicked: () => {
           this.handleMenuButtonClicked();
         },
-        onButtonFullscreenClicked: this.callbacks.onButtonFullscreenClicked
-      }
+        onButtonFullscreenClicked: this.callbacks.onButtonFullscreenClicked,
+      },
     );
     this.content.appendChild(this.titlebar.getDOM());
     this.content.appendChild(this.page);
@@ -351,7 +351,7 @@ export default class HighlightTheWordsContent {
   getCurrentState() {
     return {
       colors: this.currentColors,
-      selections: this.selectionHandler.getSelections()
+      selections: this.selectionHandler.getSelections(),
     };
   }
 

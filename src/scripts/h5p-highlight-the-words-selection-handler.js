@@ -18,12 +18,12 @@ class SelectionHandler {
     this.params = Util.extend({
       text: '',
       highlightOptions: [],
-      solutions: []
+      solutions: [],
     }, params);
 
     this.callbacks = Util.extend({
       onTextUpdated: () => {},
-      onInteracted: () => {}
+      onInteracted: () => {},
     }, callbacks);
 
     // Mapping for getting option name for color given.
@@ -146,7 +146,7 @@ class SelectionHandler {
           this.textCharacteristics.decodedText,
           this.textCharacteristics.decodedMask,
           selection.start,
-          selection.end
+          selection.end,
         );
 
         return selection;
@@ -161,14 +161,14 @@ class SelectionHandler {
           this.textCharacteristics.decodedText,
           this.textCharacteristics.decodedMask,
           this.selections[i].start,
-          params.start
+          params.start,
         );
         this.selections[i].end = params.start;
 
         selectionClone.text = TextProcessing.getMaskedText(
           this.textCharacteristics.decodedText,
           this.textCharacteristics.decodedMask,
-          params.end
+          params.end,
         );
         selectionClone.start = params.end;
 
@@ -199,7 +199,7 @@ class SelectionHandler {
               this.textCharacteristics.decodedText,
               this.textCharacteristics.decodedMask,
               this.selections[index + 1].start,
-              this.selections[index + 1].end
+              this.selections[index + 1].end,
             );
           selection.backgroundColor = '';
         }
@@ -215,7 +215,7 @@ class SelectionHandler {
         const found = this.params.solutions.filter((solution) =>
           solution.name === this.colorToNameLookup[selection.backgroundColor] &&
           solution.start === selection.start &&
-          solution.end === selection.end
+          solution.end === selection.end,
         );
 
         selection.score = (found.length === 1) ? 1 : -1;
@@ -271,7 +271,7 @@ class SelectionHandler {
       if (selection.start > donePosition) {
         selectionSplits.push({
           start: donePosition,
-          end: selection.start
+          end: selection.start,
         });
       }
       selectionSplits.push(selection);
@@ -280,7 +280,7 @@ class SelectionHandler {
     if (donePosition < this.textCharacteristics.decodedText.length) {
       selectionSplits.push({
         start: donePosition,
-        end: this.textCharacteristics.decodedText.length
+        end: this.textCharacteristics.decodedText.length,
       });
     }
 
@@ -359,7 +359,7 @@ class SelectionHandler {
     if (!selection.backgroundColor) {
       return { // Not selected, use original text
         text: this.textCharacteristics.decodedText.substring(selection.start, selection.end),
-        mask: this.textCharacteristics.decodedMask.substring(selection.start, selection.end)
+        mask: this.textCharacteristics.decodedMask.substring(selection.start, selection.end),
       };
     }
 
@@ -438,7 +438,7 @@ class SelectionHandler {
 
     return {
       text: text,
-      mask: mask
+      mask: mask,
     };
   }
 
@@ -568,7 +568,7 @@ class SelectionHandler {
         this.textCharacteristics.decodedText,
         this.textCharacteristics.decodedMask,
         start,
-        end
+        end,
       );
 
       start = start + lead;
@@ -579,7 +579,7 @@ class SelectionHandler {
       this.textCharacteristics.decodedText,
       this.textCharacteristics.decodedMask,
       start,
-      end
+      end,
     );
 
     // Remove spaces around text, but allow selecting spaces only
@@ -594,7 +594,7 @@ class SelectionHandler {
       start: start,
       end: end,
       backgroundColor: this.currentSelectColors.backgroundColor,
-      color: this.currentSelectColors.color
+      color: this.currentSelectColors.color,
     });
 
     this.updateTextContainer();

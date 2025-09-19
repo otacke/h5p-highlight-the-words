@@ -98,7 +98,7 @@ class TextProcessing {
       encodedText: encodedText,
       encodedMask: encodedMask,
       decodedText: decodedText.join(''),
-      decodedMask: decodedMask.join('')
+      decodedMask: decodedMask.join(''),
     };
   }
 
@@ -328,7 +328,7 @@ class TextProcessing {
         name: name,
         text: highlightText,
         start: position + matchPositionStart, // Accounting for removing the starting *
-        end: position + matchPositionStart + highlightText.length // Accounting for removing the name and the trailing *
+        end: position + matchPositionStart + highlightText.length, // Accounting for removing name and trailing *
       });
 
       textOutput = `${textOutput}${text.substring(0, matchPositionStart)}${highlightText}`;
@@ -340,7 +340,7 @@ class TextProcessing {
 
     return {
       text: `${textOutput}`,
-      highlights: highlights
+      highlights: highlights,
     };
   }
 

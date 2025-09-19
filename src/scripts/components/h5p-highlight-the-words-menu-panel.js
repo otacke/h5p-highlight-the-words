@@ -17,7 +17,7 @@ export default class HighlightTheWordsMenuPanel {
       collapsible: true,
       expanded: false,
       label: '',
-      passive: false
+      passive: false,
     }, params);
 
     if (this.params.passive) {

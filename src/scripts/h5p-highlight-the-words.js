@@ -35,13 +35,13 @@ export default class HighlightTheWords extends H5P.Question {
       highlightOptions: [],
       behaviour: {
         enableSolutionsButton: true,
-        enableRetry: true
+        enableRetry: true,
       },
       l10n: {
         checkAnswer: 'Check answer',
         showSolution: 'Show solution',
         tryAgain: 'Retry',
-        colorLegend: 'Color legend'
+        colorLegend: 'Color legend',
       },
       a11y: {
         buttonMenuOpen: 'Open menu',
@@ -53,8 +53,8 @@ export default class HighlightTheWords extends H5P.Question {
         checkAnswer: 'Check the selections. The selections will be marked as correct or incorrect.',
         showSolution: 'Show the solution. The solution will be displayed in addition to the selections.',
         retry: 'Retry the task. Reset all selections and start the task over again.',
-        yourResult: 'You got @score out of @total points.'
-      }
+        yourResult: 'You got @score out of @total points.',
+      },
     }, this.params);
 
     // Sanitize a11y and l10n
@@ -86,7 +86,7 @@ export default class HighlightTheWords extends H5P.Question {
         const colors = result.map((result) => result.backgroundColor);
         if (colors.indexOf(option.backgroundColor) !== -1) {
           console.warn(
-            `${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`
+            `${this.getTitle()}: Please check your highlight options. They contain the same color multiple times.`,
           );
           return result;
         }
@@ -119,11 +119,11 @@ export default class HighlightTheWords extends H5P.Question {
           buttonFullscreenEnter: this.params.a11y.buttonFullscreenEnter,
           buttonFullscreenExit: this.params.a11y.buttonFullscreenExit,
           colorFor: this.params.a11y.colorFor,
-          eraser: this.params.a11y.eraser
+          eraser: this.params.a11y.eraser,
         },
         l10n: {
-          colorLegend: this.params.l10n.colorLegend
-        }
+          colorLegend: this.params.l10n.colorLegend,
+        },
       },
       {
         onButtonFullscreenClicked: () => {
@@ -134,8 +134,8 @@ export default class HighlightTheWords extends H5P.Question {
         },
         onInteracted: () => {
           this.handleInteracted();
-        }
-      }
+        },
+      },
     );
 
     // Register content with H5P.Question
@@ -177,21 +177,21 @@ export default class HighlightTheWords extends H5P.Question {
     this.addButton('check-answer', this.params.l10n.checkAnswer, () => {
       this.handleCheckAnswer();
     }, true, {
-      'aria-label': this.params.a11y.checkAnswer
+      'aria-label': this.params.a11y.checkAnswer,
     }, {});
 
     // Show solution button
     this.addButton('show-solution', this.params.l10n.showSolution, () => {
       this.handleShowSolution();
     }, false, {
-      'aria-label': this.params.a11y.showSolution
+      'aria-label': this.params.a11y.showSolution,
     }, {});
 
     // Retry button
     this.addButton('try-again', this.params.l10n.tryAgain, () => {
       this.handleRetry();
     }, false, {
-      'aria-label': this.params.a11y.retry
+      'aria-label': this.params.a11y.retry,
     }, {});
   }
 
@@ -251,7 +251,7 @@ export default class HighlightTheWords extends H5P.Question {
    */
   getXAPIData() {
     return {
-      statement: this.getXAPIAnswerEvent().data.statement
+      statement: this.getXAPIAnswerEvent().data.statement,
     };
   }
 
@@ -309,7 +309,7 @@ export default class HighlightTheWords extends H5P.Question {
     definition.type = 'http://adlnet.gov/expapi/activities/cmi.interaction';
     definition.interactionType = 'other';
     definition.extensions = {
-      'https://h5p.org/x-api/h5p-machine-name': 'H5P.HighlightTheWords'
+      'https://h5p.org/x-api/h5p-machine-name': 'H5P.HighlightTheWords',
     };
 
     return definition;
@@ -322,7 +322,7 @@ export default class HighlightTheWords extends H5P.Question {
   getxAPIContextExtensions() {
     return {
       result: this.content.getOutput('xapi-result'),
-      solution: this.content.getOutput('xapi-solution')
+      solution: this.content.getOutput('xapi-solution'),
     };
   }
 
@@ -424,7 +424,7 @@ export default class HighlightTheWords extends H5P.Question {
       (textScore).trim(),
       this.getScore(),
       this.getMaxScore(),
-      ariaMessage
+      ariaMessage,
     );
 
     this.trigger(this.getXAPIAnswerEvent());

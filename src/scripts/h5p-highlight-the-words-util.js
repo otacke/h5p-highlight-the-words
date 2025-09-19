@@ -143,7 +143,7 @@ class Util {
       // eslint-disable-next-line no-magic-numbers
       parseInt(colorCode.substring(2, 4), 16) / 255,
       // eslint-disable-next-line no-magic-numbers
-      parseInt(colorCode.substring(4, 6), 16) / 255
+      parseInt(colorCode.substring(4, 6), 16) / 255,
     ];
 
     // luma (Rec. 709, HDTV standard)

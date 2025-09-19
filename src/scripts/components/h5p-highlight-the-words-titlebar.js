@@ -23,8 +23,8 @@ export default class HighlightTheWordsTitlebar {
     this.params = Util.extend({
       a11y: {
         buttonFullscreenEnter: 'Enter fullscreen mode',
-        buttonFullscreenExit: 'Exit fullscreen mode'
-      }
+        buttonFullscreenExit: 'Exit fullscreen mode',
+      },
     }, params || {});
 
     // Set missing callbacks
@@ -35,7 +35,7 @@ export default class HighlightTheWordsTitlebar {
       onButtonFullscreenClicked: () => {
         console.warn('A function for handling the fullscreen button is missing.');
       },
-      onColorChanged: () => {}
+      onColorChanged: () => {},
     }, callbacks || {});
 
     this.titleBar = document.createElement('div');
@@ -47,18 +47,18 @@ export default class HighlightTheWordsTitlebar {
         type: 'toggle',
         classes: [
           'h5p-highlight-the-words-button',
-          'h5p-highlight-the-words-button-menu'
+          'h5p-highlight-the-words-button-menu',
         ],
         a11y: {
           active: this.params.a11y.buttonMenuClose,
-          inactive: this.params.a11y.buttonMenuOpen
-        }
+          inactive: this.params.a11y.buttonMenuOpen,
+        },
       },
       {
         onClick: (() => {
           this.callbacks.onButtonMenuClicked();
-        })
-      }
+        }),
+      },
     );
 
     // Color picker
@@ -67,10 +67,10 @@ export default class HighlightTheWordsTitlebar {
       previousBackgroundColor: this.params?.colors?.backgroundColor,
       a11y: {
         colorFor: params.a11y.colorFor,
-        eraser: params.a11y.eraser
-      }
+        eraser: params.a11y.eraser,
+      },
     }, {
-      onColorChanged: this.callbacks.onColorChanged
+      onColorChanged: this.callbacks.onColorChanged,
     });
 
     // Fullscreen button
@@ -79,19 +79,19 @@ export default class HighlightTheWordsTitlebar {
         type: 'toggle',
         classes: [
           'h5p-highlight-the-words-button',
-          'h5p-highlight-the-words-button-fullscreen'
+          'h5p-highlight-the-words-button-fullscreen',
         ],
         disabled: true,
         a11y: {
           active: this.params.a11y.buttonFullscreenExit,
-          inactive: this.params.a11y.buttonFullscreenEnter
-        }
+          inactive: this.params.a11y.buttonFullscreenEnter,
+        },
       },
       {
         onClick: (() => {
           this.callbacks.onButtonFullscreenClicked();
-        })
-      }
+        }),
+      },
     );
 
     this.titleBar.appendChild(this.buttonMenu.getDOM());

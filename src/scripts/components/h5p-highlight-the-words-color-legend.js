@@ -12,7 +12,7 @@ export default class HighlightTheWordsColorLegend {
     // Set missing params
     this.params = Util.extend({
       options: [],
-      classes: []
+      classes: [],
     }, params || {});
 
     if (!Array.isArray(this.params.classes)) {

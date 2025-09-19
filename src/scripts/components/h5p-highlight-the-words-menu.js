@@ -17,7 +17,7 @@ export default class HighlightTheWordsMenu {
       a11y: {},
       l10n: {},
       open: false,
-      classes: []
+      classes: [],
     }, params);
 
     if (!Array.isArray(this.params.classes)) {
@@ -52,11 +52,11 @@ export default class HighlightTheWordsMenu {
 
     this.panelSet = new HighlightTheWordsPanelSet(
       {
-        panels: this.params.panelSet.panels
+        panels: this.params.panelSet.panels,
       },
       {
-        onClick: this.callbacks.onItemChanged
-      }
+        onClick: this.callbacks.onItemChanged,
+      },
     );
     this.menu.appendChild(this.panelSet.getDOM());
 

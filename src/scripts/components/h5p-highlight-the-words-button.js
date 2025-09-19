@@ -16,12 +16,12 @@ export default class HighlightTheWordsButton {
       a11y: {
         active: '',
         disabled: '',
-        inactive: ''
+        inactive: '',
       },
       active: false,
       classes: [],
       disabled: false,
-      type: 'pulse'
+      type: 'pulse',
     }, params || {});
 
     if (!Array.isArray(this.params.classes)) {

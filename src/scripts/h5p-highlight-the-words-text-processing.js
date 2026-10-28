@@ -1,4 +1,4 @@
-import he from 'he';
+import { decode, encode } from 'he';
 
 /** @constant {number} Offset for name in highlight text */
 const NAME_OFFSET = 2; // Offset for name in highlight text
@@ -12,7 +12,7 @@ class TextProcessing {
    * @returns {string} Decoded HTML string.
    */
   static htmlDecode(htmlEncoded) {
-    return he.decode(htmlEncoded);
+    return decode(htmlEncoded);
   }
 
   /**
@@ -21,7 +21,7 @@ class TextProcessing {
    * @returns {string} Encoded HTML string.
    */
   static htmlEncode(html) {
-    return he.encode(html);
+    return encode(html);
   }
 
   /**

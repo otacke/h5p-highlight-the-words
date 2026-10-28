@@ -3,7 +3,7 @@
   "description": "Highlight words and sort them into the correct category",
   "private": true,
   "scripts": {
-    "test": "jest --silent",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --silent",
     "lint": "stylelint './src/**/*.scss' && eslint './src/**/*.js'",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch"
